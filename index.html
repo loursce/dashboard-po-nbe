@@ -9,125 +9,149 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --ultramarine:#1e2643;--ultramarine-ink:#141a30;
-      --saffron-yellow:#ffbf00;--sienna:#934834;--blue-wave:#008080;
-      --dark-grey:#333333;--middle-grey:#666666;--light-grey:#cccccc;
-      --light-sand:#f7f0e9;--pearl:#f7f7f7;--cloud-white:#ffffff;
-      --bg:var(--light-sand);--surface:var(--cloud-white);
-      --text:#000;--text-soft:var(--dark-grey);--text-muted:var(--middle-grey);
-      --border:var(--light-grey);
-      --shadow-card:0 1px 2px rgba(0,0,0,0.04),0 8px 20px -10px rgba(20,20,30,0.14);
-      --font-display:'Nunito',ui-rounded,sans-serif;
-      --font-body:'Inter',ui-sans-serif,system-ui,sans-serif;
-      --step-h2:2.75rem;--radius-sm:0.5rem;--radius-md:1rem;--radius-pill:999px;
+      --ultramarine:#1e2643;--saffron:#ffbf00;--sienna:#934834;--teal:#008080;
+      --dark-grey:#333;--mid-grey:#666;--light-grey:#ccc;
+      --sand:#f7f0e9;--pearl:#f7f7f7;--white:#fff;
+      --bg:var(--sand);--surface:var(--white);
+      --text:#000;--soft:var(--dark-grey);--muted:var(--mid-grey);--border:var(--light-grey);
+      --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 20px -10px rgba(20,20,30,.14);
+      --fd:'Nunito',ui-rounded,sans-serif;--fb:'Inter',ui-sans-serif,system-ui,sans-serif;
+      --h2:2.75rem;--rsm:.5rem;--rmd:1rem;--rpill:999px;
     }
     *,*::before,*::after{box-sizing:border-box}
-    body{margin:0;font-family:var(--font-body);color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
-    h1{font-family:var(--font-display);font-weight:800;line-height:1.1;margin:0;letter-spacing:-0.01em}
+    body{margin:0;font-family:var(--fb);color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+    h1{font-family:var(--fd);font-weight:800;line-height:1.1;margin:0;letter-spacing:-.01em}
     p{margin:0;line-height:1.55}
     select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px!important}
+    a{color:inherit;text-decoration:none}
 
     /* Status pills */
-    .pill{display:inline-flex;align-items:center;border-radius:var(--radius-pill);padding:0.25rem 0.65rem;font-size:0.75rem;font-weight:700;border:1px solid transparent;font-family:var(--font-body);white-space:nowrap;line-height:1}
-    .pill-none   {background:transparent;border-color:var(--border);color:var(--text-muted)}
-    .pill-sub    {background:color-mix(in srgb,var(--blue-wave) 13%,var(--cloud-white));color:var(--blue-wave)}
-    .pill-review {background:color-mix(in srgb,var(--saffron-yellow) 22%,var(--cloud-white));color:#7a5200}
-    .pill-merged {background:color-mix(in srgb,var(--ultramarine) 12%,var(--cloud-white));color:var(--ultramarine)}
+    .pill{display:inline-flex;align-items:center;border-radius:var(--rpill);padding:.28rem .65rem;font-size:.72rem;font-weight:700;border:1px solid transparent;font-family:var(--fb);white-space:nowrap;line-height:1}
+    .pn {background:transparent;border-color:var(--border);color:var(--muted)}
+    .ps {background:color-mix(in srgb,var(--teal) 13%,var(--white));color:var(--teal)}
+    .pr {background:color-mix(in srgb,var(--saffron) 22%,var(--white));color:#7a5200}
+    .pm {background:color-mix(in srgb,var(--ultramarine) 12%,var(--white));color:var(--ultramarine)}
+    a.pill:hover{filter:brightness(.96)}
 
-    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-card)}
+    /* Update & extra badges */
+    .ubadge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;color:var(--muted);background:var(--pearl);border:1px solid var(--border);border-radius:99px;padding:1px 7px;cursor:pointer;transition:border-color .12s}
+    .ubadge:hover{border-color:var(--mid-grey)}
+    .xbadge{font-size:11px;font-weight:700;color:var(--muted)}
+    .stale{font-size:11px;cursor:default;opacity:.8}
+
+    /* Cards */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rmd);box-shadow:var(--shadow)}
     .page{max-width:1200px;margin:0 auto;padding:48px 32px 80px}
-    .doc-row{transition:background 0.1s}
+    .doc-row{transition:background .1s}
     .doc-row:hover{background:var(--pearl)}
-    .view-btn{padding:8px 18px;border-radius:var(--radius-pill);border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--font-body)}
-    .view-btn.active{background:var(--ultramarine);color:#fff}
-    .view-btn.inactive{background:transparent;color:var(--text-soft)}
-    .data-badge{font-size:11px;font-weight:600;color:var(--text-muted)}
-    .data-badge.live{color:var(--blue-wave)}
-    .data-badge.error{color:#c03016}
-    .action-btn{font-size:11px;color:var(--text-muted);background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;cursor:pointer;font-family:var(--font-body)}
-    .action-btn:hover{border-color:var(--middle-grey)}
+
+    /* View buttons */
+    .vbtn{padding:8px 18px;border-radius:var(--rpill);border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--fb)}
+    .vbtn.on{background:var(--ultramarine);color:#fff}
+    .vbtn.off{background:transparent;color:var(--soft)}
+
+    /* Summary bar */
+    .sum-row{display:flex;gap:24px;flex-wrap:wrap;margin-top:20px;padding:14px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .sum-block{display:flex;flex-direction:column;gap:6px}
+    .sum-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+    .sum-pills{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+    .sum-pill{font-size:12px;font-weight:600;color:var(--soft)}
+    .sum-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+
+    /* Data badge & action buttons */
+    .dbadge{font-size:11px;font-weight:600;color:var(--muted)}
+    .dbadge.live{color:var(--teal)}
+    .dbadge.err{color:#c03016}
+    .abtn{font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:var(--rsm);padding:4px 10px;cursor:pointer;font-family:var(--fb)}
+    .abtn:hover{border-color:var(--mid-grey)}
 
     /* Modal */
-    .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center}
-    .modal-backdrop.open{display:flex}
-    .modal{background:var(--surface);border-radius:var(--radius-md);padding:28px 32px;width:480px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
-    .modal label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);display:block;margin-bottom:6px}
-    .modal input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:13px;color:var(--text);background:var(--surface);outline:none;transition:border-color 0.15s;margin-bottom:14px}
+    .mbk{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+    .mbk.on{display:flex}
+    .modal{background:var(--surface);border-radius:var(--rmd);padding:28px 32px;width:480px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+    .modal label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:block;margin-bottom:6px}
+    .modal input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--rsm);font-family:var(--fb);font-size:13px;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s;margin-bottom:14px}
     .modal input:focus{border-color:var(--ultramarine)}
-    .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
-    .btn-cancel{padding:8px 16px;border:1px solid var(--border);background:none;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-body);font-size:13px;color:var(--text-soft)}
-    .btn-save{padding:8px 20px;background:var(--ultramarine);color:white;border:none;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:700}
+    .mact{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+    .mcancel{padding:8px 16px;border:1px solid var(--border);background:none;border-radius:var(--rsm);cursor:pointer;font-family:var(--fb);font-size:13px;color:var(--soft)}
+    .msave{padding:8px 20px;background:var(--ultramarine);color:#fff;border:none;border-radius:var(--rsm);cursor:pointer;font-family:var(--fb);font-size:13px;font-weight:700}
   </style>
 </head>
 <body>
 <div style="background:var(--bg);min-height:100vh">
-  <div class="page">
+<div class="page">
 
-    <!-- Header -->
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:12px">
-      <div>
-        <div style="font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Product tracking</div>
-        <h1 style="font-size:var(--step-h2);color:var(--ultramarine)">Product documents</h1>
-        <p style="margin-top:10px;font-size:15px;color:var(--text-soft);max-width:560px">Statut des PRDs et Specs dans le repo <code style="font-size:12px;background:var(--pearl);padding:1px 6px;border-radius:4px">ClubMediterranee/knowledge-base</code>, par workstream.</p>
-        <p style="margin-top:6px;font-size:13px;color:var(--text-muted)">PR soumise → relue par une PO → corrections → mergée sur main.</p>
+  <!-- Header -->
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:4px">
+    <div>
+      <div style="font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Product tracking</div>
+      <h1 style="font-size:var(--h2);color:var(--ultramarine)">Product documents</h1>
+      <p style="margin-top:10px;font-size:15px;color:var(--soft);max-width:560px">Statut des PRDs et Specs dans <code style="font-size:12px;background:var(--pearl);padding:1px 6px;border-radius:4px">ClubMediterranee/knowledge-base</code>, par workstream.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+      <div style="display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--rmd);padding:12px 16px;box-shadow:var(--shadow)">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-right:2px">Team</div>
+        <div id="team-avatars" style="display:flex;gap:6px;align-items:center"></div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
-        <div style="display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 16px;box-shadow:var(--shadow-card)">
-          <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-right:2px">Team</div>
-          <div id="team-avatars" style="display:flex;gap:6px;align-items:center"></div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <span id="data-badge" class="data-badge">Chargement…</span>
-          <button class="action-btn" onclick="openConfig()">⚙ Config</button>
-          <button class="action-btn" onclick="refreshData()">↺ Refresh</button>
-        </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span id="dbadge" class="dbadge">Chargement…</span>
+        <button class="abtn" onclick="openConfig()">⚙ Config</button>
+        <button class="abtn" onclick="refreshData()">↺ Refresh</button>
       </div>
     </div>
-
-    <!-- Controls -->
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:28px">
-      <div style="display:inline-flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);padding:4px">
-        <button id="btn-table"  class="view-btn active"  onclick="setView('table')">Table</button>
-        <button id="btn-kanban" class="view-btn inactive" onclick="setView('kanban')">Kanban</button>
-      </div>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <select id="doc-filter" onchange="setState({selectedDoc:this.value})"
-          style="padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);font-size:13px;font-family:var(--font-body);background:var(--surface);color:var(--text);cursor:pointer"></select>
-        <select id="po-filter" onchange="setState({selectedPO:this.value})"
-          style="padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);font-size:13px;font-family:var(--font-body);background:var(--surface);color:var(--text);cursor:pointer"></select>
-      </div>
-    </div>
-
-    <div id="main-content"></div>
-
-    <!-- Legend -->
-    <div style="margin-top:48px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin-bottom:12px">Légende des statuts repo</div>
-      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
-        <div style="display:flex;align-items:center;gap:8px"><span class="pill pill-none">—</span><span style="font-size:13px;color:var(--text-soft)">Pas dans le repo</span></div>
-        <div style="display:flex;align-items:center;gap:8px"><span class="pill pill-sub">Submitted</span><span style="font-size:13px;color:var(--text-soft)">PR ouverte, pas encore relue</span></div>
-        <div style="display:flex;align-items:center;gap:8px"><span class="pill pill-review">In review</span><span style="font-size:13px;color:var(--text-soft)">Une PO a commenté la PR</span></div>
-        <div style="display:flex;align-items:center;gap:8px"><span class="pill pill-merged">Merged</span><span style="font-size:13px;color:var(--text-soft)">Sur main, aucune PR ouverte</span></div>
-      </div>
-    </div>
-
   </div>
+
+  <!-- Summary stats -->
+  <div id="summary" class="sum-row"></div>
+
+  <!-- Controls -->
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:20px">
+    <div style="display:inline-flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rpill);padding:4px">
+      <button id="bt" class="vbtn on"  onclick="setView('table')">Table</button>
+      <button id="bk" class="vbtn off" onclick="setView('kanban')">Kanban</button>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <select id="df" onchange="setState({sd:this.value})"
+        style="padding:8px 12px;border-radius:var(--rsm);border:1px solid var(--border);font-size:13px;font-family:var(--fb);background:var(--surface);color:var(--text);cursor:pointer"></select>
+      <select id="pf" onchange="setState({sp:this.value})"
+        style="padding:8px 12px;border-radius:var(--rsm);border:1px solid var(--border);font-size:13px;font-family:var(--fb);background:var(--surface);color:var(--text);cursor:pointer"></select>
+    </div>
+  </div>
+
+  <div id="main"></div>
+
+  <!-- Legend -->
+  <div style="margin-top:40px;border-top:1px solid var(--border);padding-top:20px">
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px">Légende</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;gap:8px"><span class="pill pn">—</span><span style="font-size:12px;color:var(--soft)">Pas dans le repo</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span class="pill ps">Submitted</span><span style="font-size:12px;color:var(--soft)">PR ouverte, pas encore relue</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span class="pill pr">In review</span><span style="font-size:12px;color:var(--soft)">Une PO a commenté la PR</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span class="pill pm">Merged</span><span style="font-size:12px;color:var(--soft)">Sur main, aucune PR ouverte</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <div style="display:flex;align-items:center;gap:8px"><span class="ubadge">↑2</span><span style="font-size:12px;color:var(--soft)">N PRs de mise à jour sur un doc déjà mergé</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><span class="stale">⏱</span><span style="font-size:12px;color:var(--soft)">PR sans activité depuis + de 7 jours</span></div>
+        <div style="font-size:12px;color:var(--soft)">Avatar gauche = auteur · Avatar droit = reviewer</div>
+      </div>
+    </div>
+  </div>
+
+</div>
 </div>
 
 <!-- Config modal -->
-<div id="modal-backdrop" class="modal-backdrop" onclick="if(event.target===this)closeConfig()">
+<div id="mbk" class="mbk" onclick="if(event.target===this)closeConfig()">
   <div class="modal">
-    <div style="font-family:var(--font-display);font-weight:800;font-size:1.05rem;color:var(--text);margin-bottom:6px">GitHub configuration</div>
-    <p style="font-size:13px;color:var(--text-soft);margin-bottom:20px">Token GitHub (scope <code style="font-size:12px;background:var(--pearl);padding:1px 5px;border-radius:4px">repo</code>) pour charger les données live. Stocké dans ton navigateur uniquement.</p>
-    <label for="token-input">GitHub Token</label>
-    <input id="token-input" type="password" placeholder="ghp_…" autocomplete="off">
-    <label for="owner-input">Organisation</label>
-    <input id="owner-input" type="text" placeholder="ClubMediterranee">
-    <label for="repo-input">Repo</label>
-    <input id="repo-input" type="text" placeholder="knowledge-base">
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeConfig()">Annuler</button>
-      <button class="btn-save" onclick="saveConfig()">Enregistrer & refresh</button>
+    <div style="font-family:var(--fd);font-weight:800;font-size:1.05rem;margin-bottom:6px">GitHub configuration</div>
+    <p style="font-size:13px;color:var(--soft);margin-bottom:20px">Token GitHub (scope <code style="font-size:12px;background:var(--pearl);padding:1px 5px;border-radius:4px">repo</code>) pour les données live. Stocké dans ton navigateur.</p>
+    <label for="ti">GitHub Token</label><input id="ti" type="password" placeholder="ghp_…" autocomplete="off">
+    <label for="oi">Organisation</label><input id="oi" type="text" placeholder="ClubMediterranee">
+    <label for="ri">Repo</label><input id="ri" type="text" placeholder="knowledge-base">
+    <div class="mact">
+      <button class="mcancel" onclick="closeConfig()">Annuler</button>
+      <button class="msave" onclick="saveConfig()">Enregistrer & refresh</button>
     </div>
   </div>
 </div>
@@ -135,23 +159,27 @@
 <script>
 /* ── Team ── */
 const PO = {
-  cl:  { key:'cl',  initials:'CL', name:'Clémence L.',  github:'LoquiC',       bg:'#1e2643', fg:'#fff' },
-  cel: { key:'cel', initials:'CE', name:'Cécile L.',    github:'loursce',      bg:'#008080', fg:'#fff' },
-  cn:  { key:'cn',  initials:'CN', name:'Céline N.',    github:'Celine-sorya', bg:'#934834', fg:'#fff' },
-  og:  { key:'og',  initials:'OG', name:'Océane G.',    github:'LiliYoru',     bg:'#ffbf00', fg:'#000' },
+  cl:  { key:'cl',  init:'CL', name:'Clémence L.',  login:'LoquiC',       bg:'#1e2643', fg:'#fff' },
+  cel: { key:'cel', init:'CE', name:'Cécile L.',    login:'loursce',      bg:'#008080', fg:'#fff' },
+  cn:  { key:'cn',  init:'CN', name:'Céline N.',    login:'Celine-sorya', bg:'#934834', fg:'#fff' },
+  og:  { key:'og',  init:'OG', name:'Océane G.',    login:'LiliYoru',     bg:'#ffbf00', fg:'#000' },
 };
-const LOGIN_MAP = Object.fromEntries(Object.values(PO).map(p => [p.github.toLowerCase(), p.key]));
+const LOGIN = Object.fromEntries(Object.values(PO).map(p=>[p.login.toLowerCase(), p.key]));
 
-/* ── Repo statuses (GitHub reality) ── */
-const STATUS = {
-  none:   { label:'—',         cls:'pill-none'  },
-  sub:    { label:'Submitted', cls:'pill-sub'   },
-  review: { label:'In review', cls:'pill-review'},
-  merged: { label:'Merged',    cls:'pill-merged'},
+/* ── Statuses ── */
+const ST = {
+  none:  { label:'—',         cls:'pn' },
+  sub:   { label:'Submitted', cls:'ps' },
+  review:{ label:'In review', cls:'pr' },
+  merged:{ label:'Merged',    cls:'pm' },
 };
-const STATUS_ORDER = ['none','sub','review','merged'];
+// Kanban column order (no "none")
+const KAN_COLS = ['sub','review','merged'];
 
-/* ── Document catalog ── */
+/* ── Summary dot colors ── */
+const DOT = { none:'#ccc', sub:'#008080', review:'#e6a800', merged:'#1e2643' };
+
+/* ── Catalog ── */
 const CATALOG = [
   { letter:'A', title:'Core booking engine', docs:[
     { id:'prd00', name:'Booking Engine Foundations' },
@@ -175,287 +203,353 @@ const CATALOG = [
   ]},
 ];
 
-/* ── Baseline status (2026-08-21, replaced by live data) ── */
+/* ── Baseline (sourced from repo 2026-08-21)
+   Fields: base, authorKey, reviewerKey, prNumber, prCount, isStale
+   base='merged'+prCount>0 → merged doc with open update PRs
+   base='sub'|'review' → new doc being created / reviewed
+── */
+function mk(base,ak,rk,n,c,s){ return {base,authorKey:ak,reviewerKey:rk,prNumber:n,prCount:c,isStale:s} }
 const BASELINE = {
-  prd00: { prd:{ status:'sub',    reviewer:null  }, specs:{ status:'merged', reviewer:null  } },
-  prd04: { prd:{ status:'none',   reviewer:null  }, specs:{ status:'merged', reviewer:null  } },
-  prd05: { prd:{ status:'sub',    reviewer:null  }, specs:{ status:'review', reviewer:'cel' } },
-  prd06: { prd:{ status:'merged', reviewer:null  }, specs:{ status:'sub',    reviewer:null  } },
-  prd07: { prd:{ status:'merged', reviewer:null  }, specs:{ status:'sub',    reviewer:null  } },
-  prd13: { prd:{ status:'merged', reviewer:null  }, specs:{ status:'review', reviewer:'cel' } },
-  prd03: { prd:{ status:'sub',    reviewer:null  }, specs:{ status:'sub',    reviewer:null  } },
-  prd12: { prd:{ status:'review', reviewer:'cel' }, specs:{ status:'none',   reviewer:null  } },
-  prd08: { prd:{ status:'sub',    reviewer:null  }, specs:{ status:'none',   reviewer:null  } },
-  prd09: { prd:{ status:'sub',    reviewer:null  }, specs:{ status:'none',   reviewer:null  } },
-  prd11: { prd:{ status:'sub',    reviewer:null  }, specs:{ status:'none',   reviewer:null  } },
-  prd14: { prd:{ status:'sub',    reviewer:null  }, specs:{ status:'none',   reviewer:null  } },
-  prd15: { prd:{ status:'sub',    reviewer:null  }, specs:{ status:'none',   reviewer:null  } },
-  prd20: { prd:{ status:'sub',    reviewer:null  }, specs:{ status:'none',   reviewer:null  } },
+  // A — Core
+  prd00:{ prd: mk('merged',null, null, null,0,false), specs:mk('merged',null, null, 80,  6,true ) },
+  prd04:{ prd: mk('none',  null, null, null,0,false), specs:mk('merged','cl', null, 61,  1,false) },
+  prd05:{ prd: mk('merged','cl', null, 91,  1,false), specs:mk('merged','cn','cel', 76,  1,false) },
+  prd06:{ prd: mk('merged',null, null, null,0,false), specs:mk('merged','cel',null, 72,  1,true ) },
+  prd07:{ prd: mk('merged',null, null, null,0,false), specs:mk('sub',  'cel',null,  70,  1,false) },
+  prd13:{ prd: mk('merged',null, null, null,0,false), specs:mk('review','cl','cel', 86,  1,false) },
+  // B — Criteria
+  prd03:{ prd: mk('sub',  'cel', null, 83,  1,false), specs:mk('sub',  'cel',null,  85,  1,false) },
+  prd12:{ prd: mk('review','cl','cel', 84,  2,false), specs:mk('none',  null,null,  null,0,false) },
+  // C — Funnel
+  prd08:{ prd: mk('sub',  'cl',  null, 67,  1,false), specs:mk('none',  null,null,  null,0,false) },
+  prd09:{ prd: mk('sub',  'cl',  null, 68,  1,false), specs:mk('none',  null,null,  null,0,false) },
+  prd11:{ prd: mk('sub',  'cl',  null, 90,  1,false), specs:mk('none',  null,null,  null,0,false) },
+  prd14:{ prd: mk('sub',  'cl',  null, 87,  1,false), specs:mk('none',  null,null,  null,0,false) },
+  prd15:{ prd: mk('sub',  'cl',  null, 82,  1,false), specs:mk('none',  null,null,  null,0,false) },
+  prd20:{ prd: mk('sub',  'cl',  null, 88,  1,false), specs:mk('none',  null,null,  null,0,false) },
 };
-const EMPTY = { prd:{ status:'none', reviewer:null }, specs:{ status:'none', reviewer:null } };
+const EMPTY = { prd:mk('none',null,null,null,0,false), specs:mk('none',null,null,null,0,false) };
 
 /* ── App state ── */
-let S = { view:'table', selectedDoc:'', selectedPO:'', statusMap:{ ...BASELINE } };
-function setState(p){ Object.assign(S, p); render(); }
-function setView(v){ setState({ view:v }); }
-function get(id){ return S.statusMap[id] || EMPTY; }
+const GH_PR = 'https://github.com/ClubMediterranee/knowledge-base/pull/';
+let S = { view:'table', sd:'', sp:'', map:{...BASELINE} };
+function setState(p){ Object.assign(S,p); render(); }
+function setView(v){ setState({view:v}); }
+function get(id){ return S.map[id]||EMPTY; }
 
-/* ── Config storage ── */
-const CFG_KEY = 'kb_cfg3';
-function loadCfg(){ try{ return JSON.parse(localStorage.getItem(CFG_KEY)||'{}'); }catch{ return {}; } }
-function saveCfg(c){ try{ localStorage.setItem(CFG_KEY, JSON.stringify(c)); }catch{} }
+/* ── Config ── */
+const CFG_KEY='kb4';
+function loadCfg(){ try{return JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}catch{return{}} }
+function saveCfg(c){ try{localStorage.setItem(CFG_KEY,JSON.stringify(c))}catch{} }
+const ORG='ClubMediterranee', REPO='knowledge-base';
 
 /* ── GitHub API ── */
-const ORG  = 'ClubMediterranee';
-const REPO = 'knowledge-base';
-
-async function gh(owner, repo, path, token){
-  const h = { 'Accept':'application/vnd.github+json', 'X-GitHub-Api-Version':'2022-11-28' };
-  if(token) h['Authorization'] = `Bearer ${token}`;
-  const r = await fetch(`https://api.github.com/repos/${owner}/${repo}${path}`, { headers:h });
-  if(r.status===401) throw new Error('Token invalide (401)');
-  if(r.status===403) throw new Error('Accès refusé (403)');
-  if(r.status===404) throw new Error(`Repo introuvable: ${owner}/${repo} (404)`);
-  if(!r.ok) throw new Error(`GitHub ${r.status}`);
-  return r.json();
+async function gh(o,r,path,t){
+  const h={'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};
+  if(t) h['Authorization']=`Bearer ${t}`;
+  const res=await fetch(`https://api.github.com/repos/${o}/${r}${path}`,{headers:h});
+  if(res.status===401) throw new Error('Token invalide (401)');
+  if(res.status===403) throw new Error('Accès refusé (403)');
+  if(res.status===404) throw new Error(`Repo introuvable: ${o}/${r}`);
+  if(!res.ok) throw new Error(`GitHub ${res.status}`);
+  return res.json();
 }
 
-function prStatus(pr, reviews){
+function daysSince(iso){ return (Date.now()-new Date(iso).getTime())/86400000; }
+
+function computePrStatus(pr, reviews){
   if(!pr) return null;
-  if(pr.state==='closed') return pr.merged_at ? 'merged' : null;
-  // formal review states
-  const formal = {};
+  if(pr.state==='closed') return pr.merged_at?'merged':null;
+  const formal={};
   for(const rv of reviews) if(rv.state!=='COMMENTED') formal[rv.user.login]=rv.state;
-  const vals = Object.values(formal);
-  if(vals.includes('APPROVED')) return 'merged'; // treat approved = ready to merge → show as merged-ish? No, keep in-review
-  // any external activity = in review
-  const author = pr.user?.login?.toLowerCase();
-  const external = reviews.some(rv => rv.user.login.toLowerCase() !== author);
-  if(external || pr.requested_reviewers?.length) return 'review';
+  const vals=Object.values(formal);
+  if(vals.includes('CHANGES_REQUESTED')) return 'review';
+  const author=pr.user?.login?.toLowerCase();
+  const external=reviews.some(rv=>rv.user.login.toLowerCase()!==author);
+  if(external||pr.requested_reviewers?.length) return 'review';
   return 'sub';
 }
 
-function getReviewer(pr, reviewMap){
-  if(!pr || pr.state==='closed') return null;
-  const author = pr.user?.login?.toLowerCase();
-  const revs = reviewMap[pr.number] || [];
-  const candidates = [
-    ...(pr.requested_reviewers||[]).map(u=>u.login),
-    ...revs.map(r=>r.user.login),
-  ].filter(l => l.toLowerCase()!==author);
-  for(const l of candidates){
-    const k = LOGIN_MAP[l.toLowerCase()];
-    if(k) return k;
-  }
+function findReviewer(pr, reviewMap){
+  if(!pr||pr.state==='closed') return null;
+  const author=pr.user?.login?.toLowerCase();
+  const revs=reviewMap[pr.number]||[];
+  const cands=[...(pr.requested_reviewers||[]).map(u=>u.login),...revs.map(r=>r.user.login)]
+    .filter(l=>l.toLowerCase()!==author);
+  for(const l of cands){ const k=LOGIN[l.toLowerCase()]; if(k) return k; }
   return null;
 }
 
+function pathMatch(p,id,isSpecs){
+  return p.includes(id)&&(isSpecs?p.includes('/specs/'):p.includes('/prd/'));
+}
+
 async function fetchLive(){
-  const cfg = loadCfg();
+  const cfg=loadCfg();
   if(!cfg.token) throw new Error('Token manquant');
-  const owner = cfg.owner||ORG, repo = cfg.repo||REPO;
-
-  const [open, closed, tree] = await Promise.all([
-    gh(owner, repo, '/pulls?state=open&per_page=100', cfg.token),
-    gh(owner, repo, '/pulls?state=closed&per_page=100&sort=updated&direction=desc', cfg.token),
-    gh(owner, repo, '/git/trees/HEAD?recursive=1', cfg.token).catch(()=>({ tree:[] })),
+  const o=cfg.owner||ORG, r=cfg.repo||REPO;
+  const [open,closed,tree]=await Promise.all([
+    gh(o,r,'/pulls?state=open&per_page=100',cfg.token),
+    gh(o,r,'/pulls?state=closed&per_page=100&sort=updated&direction=desc',cfg.token),
+    gh(o,r,'/git/trees/HEAD?recursive=1',cfg.token).catch(()=>({tree:[]})),
   ]);
-  const allPRs = [...open, ...closed];
-  const mainPaths = (tree.tree||[]).map(f=>f.path.toLowerCase());
+  const allPRs=[...open,...closed];
+  const mainPaths=(tree.tree||[]).map(f=>f.path.toLowerCase());
 
-  // fetch files + reviews per PR (batches of 8)
-  const details = [];
+  // Fetch files + reviews in batches of 8
+  const details=[];
   for(let i=0;i<allPRs.length;i+=8){
-    const b = allPRs.slice(i,i+8);
-    const r = await Promise.all(b.map(pr=>Promise.all([
-      gh(owner, repo, `/pulls/${pr.number}/files`, cfg.token).catch(()=>[]),
-      pr.state==='open' ? gh(owner, repo, `/pulls/${pr.number}/reviews`, cfg.token).catch(()=>[]) : Promise.resolve([]),
-    ]).then(([files,reviews])=>({ pr, files, reviews }))));
-    details.push(...r);
+    const batch=allPRs.slice(i,i+8);
+    const res=await Promise.all(batch.map(pr=>Promise.all([
+      gh(o,r,`/pulls/${pr.number}/files`,cfg.token).catch(()=>[]),
+      pr.state==='open'?gh(o,r,`/pulls/${pr.number}/reviews`,cfg.token).catch(()=>[]):Promise.resolve([]),
+    ]).then(([files,reviews])=>({pr,files,reviews}))));
+    details.push(...res);
   }
-  const reviewMap = Object.fromEntries(details.map(d=>[d.pr.number, d.reviews]));
+  const revMap=Object.fromEntries(details.map(d=>[d.pr.number,d.reviews]));
 
-  const map = {};
+  const map={};
   for(const sec of CATALOG){
     for(const doc of sec.docs){
-      const id = doc.id;
-      const findPR = (isSpecs) => {
-        const matches = details.filter(({ files }) => files.some(f => {
-          const p = f.filename.toLowerCase();
-          return p.includes(id) && (isSpecs ? p.includes('/specs/') : p.includes('/prd/'));
-        }));
-        if(!matches.length) return null;
-        return (matches.find(d=>d.pr.state==='open')||matches[0]).pr;
-      };
+      const id=doc.id;
+      for(const isSpecs of [false,true]){
+        // Find all open PRs touching this doc/type
+        const matching=details.filter(({files})=>
+          files.some(f=>pathMatch(f.filename.toLowerCase(),id,isSpecs))
+        );
+        const openOnes=matching.filter(d=>d.pr.state==='open');
+        const closedMerged=matching.filter(d=>d.pr.state==='closed'&&d.pr.merged_at);
+        const onMain=mainPaths.some(p=>pathMatch(p,id,isSpecs));
 
-      const prdPR   = findPR(false);
-      const specPR  = findPR(true);
+        if(!map[id]) map[id]={};
+        const side=isSpecs?'specs':'prd';
 
-      const onMain = (isSpecs) => mainPaths.some(p =>
-        p.includes(id) && (isSpecs ? p.includes('/specs/') : p.includes('/prd/'))
-      );
+        if(openOnes.length===0){
+          map[id][side]=mk(onMain||closedMerged.length?'merged':'none',null,null,null,0,false);
+          continue;
+        }
 
-      const resolveStatus = (pr, type) => {
-        const s = prStatus(pr, reviewMap[pr?.number]||[]);
-        if(s) return s;
-        return onMain(type==='specs') ? 'merged' : 'none';
-      };
+        // Most recent open PR
+        const sorted=openOnes.sort((a,b)=>new Date(b.pr.updated_at)-new Date(a.pr.updated_at));
+        const main=sorted[0];
+        const reviews=revMap[main.pr.number]||[];
 
-      map[id] = {
-        prd:  { status: resolveStatus(prdPR,  'prd'),   reviewer: getReviewer(prdPR,  reviewMap) },
-        specs:{ status: resolveStatus(specPR, 'specs'),  reviewer: getReviewer(specPR, reviewMap) },
-      };
+        // New file vs update?
+        const isNew=main.files.some(f=>pathMatch(f.filename.toLowerCase(),id,isSpecs)&&f.status==='added');
+        const stale=daysSince(main.pr.updated_at)>7;
+        const authorKey=LOGIN[main.pr.user?.login?.toLowerCase()]||null;
+        const reviewerKey=findReviewer(main.pr,revMap);
+
+        if(isNew){
+          const base=computePrStatus(main.pr,reviews)||'sub';
+          map[id][side]=mk(base,authorKey,reviewerKey,main.pr.number,openOnes.length,stale);
+        } else {
+          // Update on existing merged doc
+          map[id][side]=mk('merged',authorKey,reviewerKey,main.pr.number,openOnes.length,stale);
+        }
+      }
     }
   }
-  return { map, owner, repo };
+  return {map,o,r};
 }
 
 async function refreshData(){
-  const cfg = loadCfg();
-  if(!cfg.token){ setBadge('mock','Données du 2026-08-21 — ⚙ Config pour le live'); return; }
-  setBadge('','Chargement…');
+  const cfg=loadCfg();
+  if(!cfg.token){ setBadge('','Données du 2026-08-21 — ⚙ Config pour le live'); return; }
+  setBadge('','Chargement depuis GitHub…');
   try{
-    const { map, owner, repo } = await fetchLive();
-    setState({ statusMap:map });
-    setBadge('live',`Live · ${owner}/${repo}`);
+    const {map,o,r}=await fetchLive();
+    setState({map});
+    setBadge('live',`Live · ${o}/${r}`);
   }catch(e){
-    setBadge('error','⚠ '+e.message.slice(0,80));
+    setBadge('err','⚠ '+e.message.slice(0,80));
   }
 }
 
-function setBadge(type, txt){
-  const el = document.getElementById('data-badge');
-  el.className = 'data-badge'+(type==='live'?' live':type==='error'?' error':'');
-  el.textContent = txt;
+function setBadge(cls,txt){
+  const el=document.getElementById('dbadge');
+  el.className='dbadge'+(cls?' '+cls:'');
+  el.textContent=txt;
 }
 
 /* ── Config modal ── */
 function openConfig(){
-  const c = loadCfg();
-  document.getElementById('token-input').value = c.token||'';
-  document.getElementById('owner-input').value = c.owner||ORG;
-  document.getElementById('repo-input').value  = c.repo||REPO;
-  document.getElementById('modal-backdrop').classList.add('open');
+  const c=loadCfg();
+  document.getElementById('ti').value=c.token||'';
+  document.getElementById('oi').value=c.owner||ORG;
+  document.getElementById('ri').value=c.repo||REPO;
+  document.getElementById('mbk').classList.add('on');
 }
-function closeConfig(){ document.getElementById('modal-backdrop').classList.remove('open'); }
+function closeConfig(){ document.getElementById('mbk').classList.remove('on'); }
 function saveConfig(){
-  saveCfg({
-    token: document.getElementById('token-input').value.trim(),
-    owner: document.getElementById('owner-input').value.trim()||ORG,
-    repo:  document.getElementById('repo-input').value.trim()||REPO,
-  });
+  saveCfg({token:document.getElementById('ti').value.trim(),owner:document.getElementById('oi').value.trim()||ORG,repo:document.getElementById('ri').value.trim()||REPO});
   closeConfig(); refreshData();
 }
 
 /* ── Helpers ── */
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function pill(status){ const s=STATUS[status]||STATUS.none; return `<span class="pill ${s.cls}">${s.label}</span>`; }
-function avatar(key, size){
-  if(!key||!PO[key]) return '';
-  const p=PO[key], fs=Math.round(size*.41);
-  return `<div title="${esc(p.name)}" style="width:${size}px;height:${size}px;border-radius:50%;background:${p.bg};color:${p.fg};display:flex;align-items:center;justify-content:center;font-size:${fs}px;font-weight:800;flex-shrink:0">${p.initials}</div>`;
+function avatar(key,sz){
+  const p=PO[key]; if(!p) return '';
+  const fs=Math.round(sz*.41);
+  return `<div title="${esc(p.name)}" style="width:${sz}px;height:${sz}px;border-radius:50%;background:${p.bg};color:${p.fg};display:flex;align-items:center;justify-content:center;font-size:${fs}px;font-weight:800;flex-shrink:0">${p.init}</div>`;
+}
+
+/* ── Cell renderer ── */
+function cell(d){
+  const {base,authorKey,reviewerKey,prNumber,prCount,isStale}=d;
+  const s=ST[base];
+  const href=prNumber?GH_PR+prNumber:null;
+
+  // Main pill — clickable only for new docs (not merged updates)
+  const pillEl=`<span class="pill ${s.cls}">${s.label}</span>`;
+  const pill=(href&&base!=='merged')?`<a href="${href}" target="_blank" rel="noopener">${pillEl}</a>`:pillEl;
+
+  // Update badge (merged doc with open PRs)
+  const ubadge=(base==='merged'&&prCount>0&&href)
+    ?`<a href="${href}" target="_blank" rel="noopener" class="ubadge" title="${prCount} PR${prCount>1?'s':''} de mise à jour">↑${prCount}</a>`:'';
+
+  // Extra PR badge (non-merged, multiple PRs)
+  const xbadge=(base!=='merged'&&prCount>1)
+    ?`<span class="xbadge">+${prCount-1}</span>`:'';
+
+  // Stale (only for open PRs)
+  const staleEl=isStale?`<span class="stale" title="PR inactive depuis + de 7 jours">⏱</span>`:'';
+
+  // Avatars — only for open (non-merged, non-none)
+  const showAv=base==='sub'||base==='review';
+  const auth=showAv&&authorKey?avatar(authorKey,20):'';
+  const rev=(base==='review'&&reviewerKey)?avatar(reviewerKey,20):'';
+
+  return `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${auth}${pill}${rev}${ubadge}${xbadge}${staleEl}</div>`;
 }
 
 /* ── Filters ── */
 function matches(doc){
-  if(S.selectedDoc && doc.id!==S.selectedDoc) return false;
-  if(S.selectedPO){
-    const s=get(doc.id);
-    if(s.prd.reviewer!==S.selectedPO && s.specs.reviewer!==S.selectedPO) return false;
+  if(S.sd&&doc.id!==S.sd) return false;
+  if(S.sp){
+    const d=get(doc.id);
+    const ok=(side)=>side.reviewerKey===S.sp||side.authorKey===S.sp;
+    if(!ok(d.prd)&&!ok(d.specs)) return false;
   }
   return true;
 }
 
-/* ── Render ── */
-function renderTableSection(sec){
-  const docs = sec.docs.filter(matches);
+/* ── Summary stats ── */
+function renderSummary(){
+  const all=CATALOG.flatMap(s=>s.docs);
+  const cnt={prd:{none:0,sub:0,review:0,merged:0},specs:{none:0,sub:0,review:0,merged:0}};
+  for(const doc of all){
+    const d=get(doc.id);
+    cnt.prd[d.prd.base]=(cnt.prd[d.prd.base]||0)+1;
+    cnt.specs[d.specs.base]=(cnt.specs[d.specs.base]||0)+1;
+  }
+  const row=(label,c)=>{
+    const items=Object.entries(c).filter(([,v])=>v>0).map(([k,v])=>
+      `<span class="sum-pill"><span class="sum-dot" style="background:${DOT[k]}"></span> ${v} ${k==='none'?'à faire':k==='sub'?'soumis':k==='review'?'en relecture':'mergés'}</span>`
+    ).join('<span style="color:var(--border);font-size:12px">·</span>');
+    return `<div class="sum-block"><div class="sum-label">${label}</div><div class="sum-pills">${items}</div></div>`;
+  };
+  document.getElementById('summary').innerHTML=row('PRDs',cnt.prd)+row('Specs',cnt.specs);
+}
+
+/* ── Table ── */
+function renderSection(sec){
+  const docs=sec.docs.filter(matches);
   if(!docs.length) return '';
-  const rows = docs.map(doc=>{
-    const s=get(doc.id);
-    const cell = (side) => `<div style="display:flex;align-items:center;gap:8px">
-      ${pill(side.status)}
-      ${avatar(side.reviewer, 22)}
-    </div>`;
-    return `<div class="doc-row" style="display:grid;grid-template-columns:80px minmax(220px,1fr) 180px 180px;gap:0 16px;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border)">
-      <div style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;color:var(--text-muted)">${esc(doc.id)}</div>
+  const rows=docs.map(doc=>{
+    const d=get(doc.id);
+    return `<div class="doc-row" style="display:grid;grid-template-columns:80px minmax(200px,1fr) 1fr 1fr;gap:0 16px;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border)">
+      <div style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;color:var(--muted)">${esc(doc.id)}</div>
       <div style="font-size:14px;font-weight:600">${esc(doc.name)}</div>
-      ${cell(s.prd)}
-      ${cell(s.specs)}
+      ${cell(d.prd)}
+      ${cell(d.specs)}
     </div>`;
   }).join('');
-  return `<div style="margin-top:32px">
-    <div style="display:flex;align-items:center;gap:12px;background:var(--pearl);border-radius:var(--radius-sm);padding:10px 16px">
-      <div style="width:24px;height:24px;border-radius:50%;background:var(--ultramarine);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:var(--font-display);flex-shrink:0">${esc(sec.letter)}</div>
+  return `<div style="margin-top:28px">
+    <div style="display:flex;align-items:center;gap:12px;background:var(--pearl);border-radius:var(--rsm);padding:10px 16px">
+      <div style="width:24px;height:24px;border-radius:50%;background:var(--ultramarine);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:var(--fd);flex-shrink:0">${esc(sec.letter)}</div>
       <div style="font-weight:700;font-size:14px">${esc(sec.title)}</div>
     </div>
-    <div style="display:grid;grid-template-columns:80px minmax(220px,1fr) 180px 180px;gap:0 16px;padding:9px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);border-bottom:1px solid var(--border)">
+    <div style="display:grid;grid-template-columns:80px minmax(200px,1fr) 1fr 1fr;gap:0 16px;padding:9px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
       <div></div><div>Document</div><div>PRD</div><div>Specs</div>
     </div>
     ${rows}
   </div>`;
 }
 
+/* ── Kanban ── */
 function renderKanban(){
-  const allCards = CATALOG.flatMap(sec => sec.docs.flatMap(doc => {
-    const s = get(doc.id);
+  // Cards for all docs (one card per PRD, one per Specs — only if base != 'none')
+  const allCards=CATALOG.flatMap(sec=>sec.docs.flatMap(doc=>{
+    const d=get(doc.id);
     return [
-      { id:doc.id, name:doc.name, type:'PRD',   status:s.prd.status,   reviewer:s.prd.reviewer   },
-      { id:doc.id, name:doc.name, type:'Specs', status:s.specs.status, reviewer:s.specs.reviewer },
-    ];
-  })).filter(c => {
-    if(S.selectedDoc && c.id!==S.selectedDoc) return false;
-    if(S.selectedPO && c.reviewer!==S.selectedPO) return false;
+      {id:doc.id,name:doc.name,type:'PRD',  ...d.prd},
+      {id:doc.id,name:doc.name,type:'Specs',...d.specs},
+    ].filter(c=>c.base!=='none');
+  })).filter(c=>{
+    if(S.sd&&c.id!==S.sd) return false;
+    if(S.sp&&c.reviewerKey!==S.sp&&c.authorKey!==S.sp) return false;
     return true;
   });
 
-  const cols = STATUS_ORDER.map(key=>{
-    const cards = allCards.filter(c=>c.status===key);
-    if(!cards.length && key==='none') return ''; // hide empty none column unless there's something to show
-    const cardsHTML = cards.map(c=>`
-      <div class="card" style="padding:12px;display:flex;flex-direction:column;gap:6px">
+  const cols=KAN_COLS.map(key=>{
+    const cards=allCards.filter(c=>c.base===key);
+    if(!cards.length) return '';
+    const cardsH=cards.map(c=>{
+      const href=c.prNumber?GH_PR+c.prNumber:null;
+      const pillEl=`<span class="pill ${ST[c.base].cls}">${ST[c.base].label}</span>`;
+      const pill=href&&c.base!=='merged'?`<a href="${href}" target="_blank" rel="noopener">${pillEl}</a>`:pillEl;
+      const ub=c.base==='merged'&&c.prCount>0&&href
+        ?`<a href="${href}" target="_blank" rel="noopener" class="ubadge" title="${c.prCount} PR de mise à jour">↑${c.prCount}</a>`:'';
+      const staleEl=c.isStale?`<span class="stale" title="PR inactive depuis + de 7 jours">⏱</span>`:'';
+      return `<div class="card" style="padding:12px;display:flex;flex-direction:column;gap:8px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-          <span style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:11px;color:var(--text-muted)">${esc(c.id)}</span>
-          <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-muted)">${esc(c.type)}</span>
+          <span style="font-family:ui-monospace,monospace;font-size:11px;color:var(--muted)">${esc(c.id)}</span>
+          <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)">${esc(c.type)}</span>
         </div>
         <div style="font-size:13px;font-weight:600;line-height:1.3">${esc(c.name)}</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
-          ${pill(c.status)}
-          ${avatar(c.reviewer, 20)}
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+          <div style="display:flex;align-items:center;gap:5px">${pill}${ub}${staleEl}</div>
+          <div style="display:flex;align-items:center;gap:4px">
+            ${c.authorKey?avatar(c.authorKey,18):''}
+            ${c.reviewerKey&&c.reviewerKey!==c.authorKey?avatar(c.reviewerKey,18):''}
+          </div>
         </div>
-      </div>`).join('');
-    const s = STATUS[key];
-    return `<div style="flex:0 0 240px;background:var(--pearl);border-radius:var(--radius-md);padding:12px;max-height:70vh;display:flex;flex-direction:column">
+      </div>`;
+    }).join('');
+    return `<div style="flex:0 0 240px;background:var(--pearl);border-radius:var(--rmd);padding:12px;max-height:70vh;display:flex;flex-direction:column">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 2px">
-        <span class="pill ${s.cls}">${s.label}</span>
-        <span style="font-size:12px;color:var(--text-muted);font-weight:700">${cards.length}</span>
+        <span class="pill ${ST[key].cls}">${ST[key].label}</span>
+        <span style="font-size:12px;color:var(--muted);font-weight:700">${cards.length}</span>
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto">${cardsHTML}</div>
+      <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto">${cardsH}</div>
     </div>`;
   }).join('');
-
   return `<div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:12px;margin-top:24px">${cols}</div>`;
 }
 
+/* ── Filters dropdowns ── */
 function renderFilters(){
-  const allDocs = CATALOG.flatMap(s=>s.docs);
-  document.getElementById('doc-filter').innerHTML =
-    '<option value="">All documents</option>' +
-    allDocs.map(d=>`<option value="${esc(d.id)}" ${S.selectedDoc===d.id?'selected':''}>${esc(d.id)} — ${esc(d.name)}</option>`).join('');
-  document.getElementById('po-filter').innerHTML =
-    '<option value="">All POs</option>' +
-    Object.values(PO).map(p=>`<option value="${p.key}" ${S.selectedPO===p.key?'selected':''}>${esc(p.name)}</option>`).join('');
+  const all=CATALOG.flatMap(s=>s.docs);
+  document.getElementById('df').innerHTML='<option value="">All documents</option>'+
+    all.map(d=>`<option value="${esc(d.id)}" ${S.sd===d.id?'selected':''}>${esc(d.id)} — ${esc(d.name)}</option>`).join('');
+  document.getElementById('pf').innerHTML='<option value="">All POs</option>'+
+    Object.values(PO).map(p=>`<option value="${p.key}" ${S.sp===p.key?'selected':''}>${esc(p.name)}</option>`).join('');
 }
 
+/* ── Main render ── */
 function render(){
-  document.getElementById('btn-table').className  = 'view-btn '+(S.view==='table' ?'active':'inactive');
-  document.getElementById('btn-kanban').className = 'view-btn '+(S.view==='kanban'?'active':'inactive');
+  document.getElementById('bt').className='vbtn '+(S.view==='table'?'on':'off');
+  document.getElementById('bk').className='vbtn '+(S.view==='kanban'?'on':'off');
   renderFilters();
-  document.getElementById('main-content').innerHTML =
-    S.view==='table' ? CATALOG.map(renderTableSection).join('') : renderKanban();
+  renderSummary();
+  document.getElementById('main').innerHTML=S.view==='table'
+    ?CATALOG.map(renderSection).join('')
+    :renderKanban();
 }
 
 /* ── Init ── */
-document.getElementById('team-avatars').innerHTML = Object.values(PO).map(p=>avatar(p.key,26)).join('');
+document.getElementById('team-avatars').innerHTML=Object.values(PO).map(p=>avatar(p.key,26)).join('');
 render();
 refreshData();
 </script>
