@@ -8,102 +8,61 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* ── Design Tokens ── */
     :root {
-      --black-coal: #000000;
-      --ultramarine: #1e2643;
-      --ultramarine-ink: #141a30;
-      --saffron-yellow: #ffbf00;
-      --sienna: #934834;
-      --blue-wave: #008080;
-      --dark-grey: #333333;
-      --middle-grey: #666666;
-      --light-grey: #cccccc;
-      --light-sand: #f7f0e9;
-      --pearl: #f7f7f7;
-      --cloud-white: #ffffff;
-
-      --bg: var(--light-sand);
-      --surface: var(--cloud-white);
-      --text: var(--black-coal);
-      --text-soft: var(--dark-grey);
-      --text-muted: var(--middle-grey);
-      --border: var(--light-grey);
-      --shadow-card: 0 1px 2px rgba(0,0,0,0.04), 0 8px 20px -10px rgba(20,20,30,0.14);
-
-      --font-display: 'Nunito', ui-rounded, sans-serif;
-      --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
-
-      --step-h2: 2.75rem;
-      --lh-tight: 1.1;
-      --lh-normal: 1.55;
-
-      --radius-sm: 0.5rem;
-      --radius-md: 1rem;
-      --radius-pill: 999px;
+      --black-coal:#000000;--ultramarine:#1e2643;--ultramarine-ink:#141a30;
+      --saffron-yellow:#ffbf00;--sienna:#934834;--blue-wave:#008080;
+      --dark-grey:#333333;--middle-grey:#666666;--light-grey:#cccccc;
+      --light-sand:#f7f0e9;--pearl:#f7f7f7;--cloud-white:#ffffff;
+      --bg:var(--light-sand);--surface:var(--cloud-white);
+      --text:var(--black-coal);--text-soft:var(--dark-grey);--text-muted:var(--middle-grey);
+      --border:var(--light-grey);--shadow-card:0 1px 2px rgba(0,0,0,0.04),0 8px 20px -10px rgba(20,20,30,0.14);
+      --font-display:'Nunito',ui-rounded,sans-serif;--font-body:'Inter',ui-sans-serif,system-ui,sans-serif;
+      --step-h2:2.75rem;--lh-tight:1.1;--lh-normal:1.55;
+      --radius-sm:0.5rem;--radius-md:1rem;--radius-pill:999px;
     }
-
-    /* ── Reset & Base ── */
-    *, *::before, *::after { box-sizing: border-box; }
-    body { margin: 0; font-family: var(--font-body); color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased; }
-    h1, h2, h3, h4, h5 { font-family: var(--font-display); font-weight: 800; line-height: var(--lh-tight); margin: 0; letter-spacing: -0.01em; }
-    p { line-height: var(--lh-normal); margin: 0; }
-    select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px !important; }
-
-    /* ── Tag pills ── */
-    .tag { display: inline-flex; align-items: center; border-radius: var(--radius-pill); padding: 0.3125rem 0.75rem; font-size: 0.75rem; font-weight: 700; border: 1px solid transparent; font-family: var(--font-body); white-space: nowrap; line-height: 1; }
-    .tag-outline  { background: transparent; border-color: var(--border); color: var(--text-soft); }
-    .tag-accent   { background: color-mix(in srgb, var(--ultramarine) 12%, var(--cloud-white)); color: var(--ultramarine); }
-    .tag-warm     { background: color-mix(in srgb, var(--saffron-yellow) 22%, var(--cloud-white)); color: #7a5200; }
-    .tag-eco      { background: color-mix(in srgb, var(--blue-wave) 14%, var(--cloud-white)); color: var(--blue-wave); }
-    .tag-promo    { background: color-mix(in srgb, var(--sienna) 16%, var(--cloud-white)); color: var(--sienna); }
-
-    /* ── Card ── */
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-card); }
-
-    /* ── Page layout ── */
-    .page { max-width: 1200px; margin: 0 auto; padding: 48px 32px 80px; }
-
-    /* ── Table row hover ── */
-    .doc-row { transition: background 0.1s; }
-    .doc-row:hover { background: var(--pearl); }
-
-    /* ── View buttons ── */
-    .view-btn { padding: 8px 18px; border-radius: var(--radius-pill); border: none; font-weight: 700; font-size: 13px; cursor: pointer; font-family: var(--font-body); transition: background 0.15s, color 0.15s; }
-    .view-btn.active { background: var(--ultramarine); color: #fff; }
-    .view-btn.inactive { background: transparent; color: var(--text-soft); }
-
-    /* ── Data source badge ── */
-    .data-badge { font-size: 11px; font-weight: 600; color: var(--text-muted); }
-    .data-badge.error { color: #c03016; }
-    .data-badge.live { color: var(--blue-wave); }
-
-    /* ── Action button ── */
-    .action-btn { font-size: 11px; color: var(--text-muted); background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 4px 10px; cursor: pointer; font-family: var(--font-body); transition: border-color 0.15s; }
-    .action-btn:hover { border-color: var(--middle-grey); }
-
-    /* ── Modal ── */
-    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: center; justify-content: center; }
-    .modal-backdrop.open { display: flex; }
-    .modal { background: var(--surface); border-radius: var(--radius-md); padding: 28px 32px; width: 500px; max-width: 90vw; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-    .modal-title { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: var(--text); margin-bottom: 8px; }
-    .modal-desc { font-size: 13px; color: var(--text-soft); line-height: 1.6; margin-bottom: 20px; }
-    .modal-desc code { font-size: 12px; background: var(--pearl); padding: 1px 5px; border-radius: 4px; }
-    .modal-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); display: block; margin-bottom: 6px; }
-    .modal-input { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font-body); font-size: 13px; color: var(--text); background: var(--surface); outline: none; transition: border-color 0.15s; }
-    .modal-input:focus { border-color: var(--ultramarine); }
-    .modal-input-row { margin-bottom: 16px; }
-    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-    .btn-cancel { padding: 8px 16px; border: 1px solid var(--border); background: none; border-radius: var(--radius-sm); cursor: pointer; font-family: var(--font-body); font-size: 13px; color: var(--text-soft); }
-    .btn-save { padding: 8px 20px; background: var(--ultramarine); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-family: var(--font-body); font-size: 13px; font-weight: 700; }
-    .btn-save:hover { background: var(--ultramarine-ink, #141a30); }
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;font-family:var(--font-body);color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+    h1,h2,h3,h4,h5{font-family:var(--font-display);font-weight:800;line-height:var(--lh-tight);margin:0;letter-spacing:-0.01em}
+    p{line-height:var(--lh-normal);margin:0}
+    select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px!important}
+    .tag{display:inline-flex;align-items:center;border-radius:var(--radius-pill);padding:0.3125rem 0.75rem;font-size:0.75rem;font-weight:700;border:1px solid transparent;font-family:var(--font-body);white-space:nowrap;line-height:1}
+    .tag-outline{background:transparent;border-color:var(--border);color:var(--text-soft)}
+    .tag-accent{background:color-mix(in srgb,var(--ultramarine) 12%,var(--cloud-white));color:var(--ultramarine)}
+    .tag-warm{background:color-mix(in srgb,var(--saffron-yellow) 22%,var(--cloud-white));color:#7a5200}
+    .tag-eco{background:color-mix(in srgb,var(--blue-wave) 14%,var(--cloud-white));color:var(--blue-wave)}
+    .tag-promo{background:color-mix(in srgb,var(--sienna) 16%,var(--cloud-white));color:var(--sienna)}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-card)}
+    .page{max-width:1200px;margin:0 auto;padding:48px 32px 80px}
+    .doc-row{transition:background 0.1s}
+    .doc-row:hover{background:var(--pearl)}
+    .view-btn{padding:8px 18px;border-radius:var(--radius-pill);border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--font-body);transition:background 0.15s,color 0.15s}
+    .view-btn.active{background:var(--ultramarine);color:#fff}
+    .view-btn.inactive{background:transparent;color:var(--text-soft)}
+    .data-badge{font-size:11px;font-weight:600;color:var(--text-muted)}
+    .data-badge.error{color:#c03016}
+    .data-badge.live{color:var(--blue-wave)}
+    .action-btn{font-size:11px;color:var(--text-muted);background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;cursor:pointer;font-family:var(--font-body);transition:border-color 0.15s}
+    .action-btn:hover{border-color:var(--middle-grey)}
+    .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center}
+    .modal-backdrop.open{display:flex}
+    .modal{background:var(--surface);border-radius:var(--radius-md);padding:28px 32px;width:500px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+    .modal-title{font-family:var(--font-display);font-weight:800;font-size:1.1rem;color:var(--text);margin-bottom:8px}
+    .modal-desc{font-size:13px;color:var(--text-soft);line-height:1.6;margin-bottom:20px}
+    .modal-desc code{font-size:12px;background:var(--pearl);padding:1px 5px;border-radius:4px}
+    .modal-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);display:block;margin-bottom:6px}
+    .modal-input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:var(--font-body);font-size:13px;color:var(--text);background:var(--surface);outline:none;transition:border-color 0.15s}
+    .modal-input:focus{border-color:var(--ultramarine)}
+    .modal-input-row{margin-bottom:16px}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+    .btn-cancel{padding:8px 16px;border:1px solid var(--border);background:none;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-body);font-size:13px;color:var(--text-soft)}
+    .btn-save{padding:8px 20px;background:var(--ultramarine);color:white;border:none;border-radius:var(--radius-sm);cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:700}
+    .btn-save:hover{background:var(--ultramarine-ink,#141a30)}
   </style>
 </head>
 <body>
 <div style="background:var(--bg);min-height:100vh">
   <div class="page">
 
-    <!-- ── Header ── -->
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:12px">
       <div>
         <div style="font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Product tracking</div>
@@ -117,35 +76,32 @@
           <div id="team-avatars" style="display:flex;gap:6px;align-items:center"></div>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
-          <span id="data-badge" class="data-badge">Données fictives</span>
+          <span id="data-badge" class="data-badge">Chargement…</span>
           <button class="action-btn" onclick="openConfig()">⚙ Config</button>
           <button class="action-btn" onclick="refreshData()">↺ Refresh</button>
         </div>
       </div>
     </div>
 
-    <!-- ── Controls bar ── -->
     <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:28px">
       <div style="display:inline-flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-pill);padding:4px">
         <button id="btn-table"  class="view-btn active"  onclick="setView('table')">Table</button>
         <button id="btn-kanban" class="view-btn inactive" onclick="setView('kanban')">Kanban</button>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <select id="doc-filter" onchange="setState({selectedDoc: this.value})"
+        <select id="doc-filter" onchange="setState({selectedDoc:this.value})"
           style="padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);font-size:13px;font-family:var(--font-body);background:var(--surface);color:var(--text);cursor:pointer">
           <option value="">All documents</option>
         </select>
-        <select id="po-filter" onchange="setState({selectedPO: this.value})"
+        <select id="po-filter" onchange="setState({selectedPO:this.value})"
           style="padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);font-size:13px;font-family:var(--font-body);background:var(--surface);color:var(--text);cursor:pointer">
           <option value="">All POs</option>
         </select>
       </div>
     </div>
 
-    <!-- ── Main content ── -->
     <div id="main-content"></div>
 
-    <!-- ── Legend ── -->
     <div style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:24px">
       <div class="card" style="padding:20px 24px">
         <div style="font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:12px">Document status</div>
@@ -171,25 +127,24 @@
   </div>
 </div>
 
-<!-- ── Config modal ── -->
 <div id="modal-backdrop" class="modal-backdrop" onclick="if(event.target===this)closeConfig()">
   <div class="modal">
     <div class="modal-title">GitHub configuration</div>
     <p class="modal-desc">
-      Entre un GitHub Personal Access Token (scope <code>repo</code>) pour charger les données
-      live depuis <code id="modal-repo-label">club-med/knowledge-base</code>. Stocké uniquement dans ton navigateur.
+      Entre un GitHub Personal Access Token (scope <code>repo</code>) pour charger les données live.
+      Stocké uniquement dans ton navigateur.
     </p>
     <div class="modal-input-row">
       <label class="modal-label" for="token-input">GitHub Token</label>
       <input id="token-input" class="modal-input" type="password" placeholder="ghp_…" autocomplete="off">
     </div>
     <div class="modal-input-row">
-      <label class="modal-label" for="owner-input">Owner / Org</label>
-      <input id="owner-input" class="modal-input" type="text" placeholder="club-med" oninput="updateModalLabel()">
+      <label class="modal-label" for="owner-input">Organisation</label>
+      <input id="owner-input" class="modal-input" type="text" placeholder="ClubMediterranee">
     </div>
     <div class="modal-input-row">
       <label class="modal-label" for="repo-input">Repo</label>
-      <input id="repo-input" class="modal-input" type="text" placeholder="knowledge-base" oninput="updateModalLabel()">
+      <input id="repo-input" class="modal-input" type="text" placeholder="knowledge-base">
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeConfig()">Annuler</button>
@@ -199,16 +154,19 @@
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════
-   TEAM & VOCABULARY
-═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   TEAM  (GitHub login → display info)
+═══════════════════════════════════════ */
 const PO = {
-  cm: { key:'cm', initials:'CM', name:'Camille M.',  bg:'#1e2643', fg:'#ffffff' },
-  jl: { key:'jl', initials:'JL', name:'Julien L.',   bg:'#008080', fg:'#ffffff' },
-  as: { key:'as', initials:'AS', name:'Amel S.',     bg:'#934834', fg:'#ffffff' },
-  tr: { key:'tr', initials:'TR', name:'Thomas R.',   bg:'#ffbf00', fg:'#000000' },
+  cl:  { key:'cl',  initials:'CL', name:'Clémence L.',  github:'LoquiC',       bg:'#1e2643', fg:'#ffffff' },
+  cel: { key:'cel', initials:'CE', name:'Cécile L.',    github:'loursce',      bg:'#008080', fg:'#ffffff' },
+  cn:  { key:'cn',  initials:'CN', name:'Céline N.',    github:'Celine-sorya', bg:'#934834', fg:'#ffffff' },
+  og:  { key:'og',  initials:'OG', name:'Océane G.',    github:'LiliYoru',     bg:'#ffbf00', fg:'#000000' },
 };
 
+/* ═══════════════════════════════════════
+   VOCABULARY
+═══════════════════════════════════════ */
 const STAGE = {
   none:     { label:'–',           variant:'outline' },
   draft:    { label:'Draft',       variant:'warm'    },
@@ -224,153 +182,165 @@ const REPO = {
 };
 const REPO_ORDER = ['none','submitted','inreview','changes','merged'];
 
-/* ═══════════════════════════════════════════════════════════
-   DOCUMENT CATALOG
-═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   DOCUMENT CATALOG  (real repo state)
+═══════════════════════════════════════ */
 const CATALOG = [
-  { letter:'A', title:'Core & product offer', docs:[
-    { id:'prd00', name:'Booking engine Foundations' },
-    { id:'prd05', name:'Childcare' },
-    { id:'prd06', name:'Activities' },
+  { letter:'A', title:'Core booking engine', docs:[
+    { id:'prd00', name:'Booking Engine Foundations' },
     { id:'prd04', name:'Transport & Transfer' },
+    { id:'prd05', name:'Childcare Booking' },
+    { id:'prd06', name:'Activity Booking' },
     { id:'prd07', name:'Food & Drinks' },
-    { id:'prd03', name:'Accommodation booking' },
-    { id:'prd19', name:'Booking confirmation' },
-    { id:'prd24', name:'More Rooms — comparaison' },
-    { id:'prd23', name:'Ski booking journey' },
-    { id:'prd25', name:'Cruise booking' },
+    { id:'prd13', name:'Cruise Booking' },
   ]},
-  { letter:'B', title:'Pricing, criteria & basket', docs:[
-    { id:'prd09', name:'Criteria edition' },
-    { id:'prd01', name:'Ticket price / All-inclusive' },
-    { id:'prd13', name:'Pricing discounts & privilege codes' },
-    { id:'prd14', name:'Rates' },
-    { id:'prd12', name:'Share' },
-    { id:'prd10', name:'Save — criteria' },
-    { id:'prd02', name:'Ticket price list — basket layer' },
+  { letter:'B', title:'Criteria & checkout', docs:[
+    { id:'prd03', name:'Edit Search Criteria' },
+    { id:'prd12', name:'Booking Confirmation' },
   ]},
   { letter:'C', title:'Participant funnel → confirmation', docs:[
-    { id:'prd08', name:'Guest information form' },
-    { id:'prd15', name:'Insurance' },
-    { id:'prd16', name:'Donation' },
-    { id:'prd20', name:'Sign in' },
-    { id:'prd18', name:'Payment' },
-    { id:'prd17', name:'Hold an option' },
-    { id:'prd26', name:'Great member program' },
+    { id:'prd08', name:'Guest Information Form' },
+    { id:'prd09', name:'Donation' },
     { id:'prd11', name:'Save — proposal (travel plan)' },
-    { id:'prd22', name:'Banners (toasters)' },
-    { id:'prd21', name:'Reassurance (incl. footer)' },
+    { id:'prd14', name:'Great Members Program' },
+    { id:'prd15', name:'Insurance' },
+    { id:'prd20', name:'Sign in' },
   ]},
 ];
 
-/* ═══════════════════════════════════════════════════════════
-   MOCK DATA  (from design prototype)
-═══════════════════════════════════════════════════════════ */
-const MOCK_STATUS = {
-  prd00: { prd:{ stageKey:'review',   repoKey:'merged',    reviewerKey:null }, specs:{ stageKey:'draft',    repoKey:'merged',    reviewerKey:null } },
-  prd05: { prd:{ stageKey:'review',   repoKey:'inreview',  reviewerKey:'jl' }, specs:{ stageKey:'draft',    repoKey:'merged',    reviewerKey:null } },
-  prd06: { prd:{ stageKey:'review',   repoKey:'submitted', reviewerKey:null }, specs:{ stageKey:'draft',    repoKey:'merged',    reviewerKey:null } },
-  prd04: { prd:{ stageKey:'none',     repoKey:'none',      reviewerKey:null }, specs:{ stageKey:'draft',    repoKey:'changes',   reviewerKey:'as' } },
-  prd07: { prd:{ stageKey:'review',   repoKey:'inreview',  reviewerKey:'cm' }, specs:{ stageKey:'draft',    repoKey:'submitted', reviewerKey:null } },
-  prd08: { prd:{ stageKey:'progress', repoKey:'changes',   reviewerKey:'tr' }, specs:{ stageKey:'none',     repoKey:'none',      reviewerKey:null } },
-  prd16: { prd:{ stageKey:'progress', repoKey:'submitted', reviewerKey:null }, specs:{ stageKey:'none',     repoKey:'none',      reviewerKey:null } },
+/* ═══════════════════════════════════════
+   BASELINE STATUS (sourced from repo on 2026-08-21)
+   Replaced by live data once token is set.
+═══════════════════════════════════════ */
+const BASELINE_STATUS = {
+  // A — Core
+  prd00: { prd:{ stageKey:'review',   repoKey:'submitted', reviewerKey:null  }, specs:{ stageKey:'review',   repoKey:'merged',    reviewerKey:null  } },
+  prd04: { prd:{ stageKey:'none',     repoKey:'none',      reviewerKey:null  }, specs:{ stageKey:'review',   repoKey:'merged',    reviewerKey:null  } },
+  prd05: { prd:{ stageKey:'review',   repoKey:'submitted', reviewerKey:null  }, specs:{ stageKey:'review',   repoKey:'inreview',  reviewerKey:'cel' } },
+  prd06: { prd:{ stageKey:'review',   repoKey:'merged',    reviewerKey:null  }, specs:{ stageKey:'progress', repoKey:'submitted', reviewerKey:null  } },
+  prd07: { prd:{ stageKey:'review',   repoKey:'merged',    reviewerKey:null  }, specs:{ stageKey:'draft',    repoKey:'submitted', reviewerKey:null  } },
+  prd13: { prd:{ stageKey:'review',   repoKey:'merged',    reviewerKey:null  }, specs:{ stageKey:'draft',    repoKey:'inreview',  reviewerKey:'cel' } },
+  // B — Criteria
+  prd03: { prd:{ stageKey:'review',   repoKey:'submitted', reviewerKey:null  }, specs:{ stageKey:'draft',    repoKey:'submitted', reviewerKey:null  } },
+  prd12: { prd:{ stageKey:'draft',    repoKey:'inreview',  reviewerKey:'cel' }, specs:{ stageKey:'none',     repoKey:'none',      reviewerKey:null  } },
+  // C — Funnel
+  prd08: { prd:{ stageKey:'draft',    repoKey:'submitted', reviewerKey:null  }, specs:{ stageKey:'none',     repoKey:'none',      reviewerKey:null  } },
+  prd09: { prd:{ stageKey:'draft',    repoKey:'submitted', reviewerKey:null  }, specs:{ stageKey:'none',     repoKey:'none',      reviewerKey:null  } },
+  prd11: { prd:{ stageKey:'draft',    repoKey:'submitted', reviewerKey:null  }, specs:{ stageKey:'none',     repoKey:'none',      reviewerKey:null  } },
+  prd14: { prd:{ stageKey:'draft',    repoKey:'submitted', reviewerKey:null  }, specs:{ stageKey:'none',     repoKey:'none',      reviewerKey:null  } },
+  prd15: { prd:{ stageKey:'draft',    repoKey:'submitted', reviewerKey:null  }, specs:{ stageKey:'none',     repoKey:'none',      reviewerKey:null  } },
+  prd20: { prd:{ stageKey:'draft',    repoKey:'submitted', reviewerKey:null  }, specs:{ stageKey:'none',     repoKey:'none',      reviewerKey:null  } },
 };
 const EMPTY_STATUS = { prd:{ stageKey:'none', repoKey:'none', reviewerKey:null }, specs:{ stageKey:'none', repoKey:'none', reviewerKey:null } };
 
-/* ═══════════════════════════════════════════════════════════
-   APPLICATION STATE
-═══════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
 let appState = {
-  view: 'table',
-  selectedDoc: '',
-  selectedPO: '',
-  statusMap: { ...MOCK_STATUS },
+  view:'table', selectedDoc:'', selectedPO:'',
+  statusMap:{ ...BASELINE_STATUS },
 };
+function setState(patch){ Object.assign(appState, patch); render(); }
+function setView(v){ setState({ view:v }); }
+function getStatus(id){ return appState.statusMap[id] || EMPTY_STATUS; }
 
-function setState(patch) {
-  Object.assign(appState, patch);
-  render();
-}
-function setView(v) { setState({ view: v }); }
-function getStatus(id) { return appState.statusMap[id] || EMPTY_STATUS; }
-
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    LOCAL STORAGE
-═══════════════════════════════════════════════════════════ */
-function loadConfig() {
-  try { return JSON.parse(localStorage.getItem('kb_config') || '{}'); } catch { return {}; }
+═══════════════════════════════════════ */
+function loadConfig(){
+  try{ return JSON.parse(localStorage.getItem('kb_config2') || '{}'); } catch{ return {}; }
 }
-function saveConfigToStorage(cfg) {
-  try { localStorage.setItem('kb_config', JSON.stringify(cfg)); } catch {}
+function saveConfigToStorage(cfg){
+  try{ localStorage.setItem('kb_config2', JSON.stringify(cfg)); } catch{}
 }
 
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    GITHUB API
-═══════════════════════════════════════════════════════════ */
-async function ghFetch(owner, repo, path, token) {
-  const headers = { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+═══════════════════════════════════════ */
+const DEFAULT_OWNER = 'ClubMediterranee';
+const DEFAULT_REPO  = 'knowledge-base';
+
+async function ghFetch(owner, repo, path, token){
+  const headers = { 'Accept':'application/vnd.github+json', 'X-GitHub-Api-Version':'2022-11-28' };
+  if(token) headers['Authorization'] = `Bearer ${token}`;
   const res = await fetch(`https://api.github.com/repos/${owner}/${repo}${path}`, { headers });
-  if (res.status === 401) throw new Error('Token invalide ou expiré (401)');
-  if (res.status === 403) throw new Error('Accès refusé — vérifie les droits du token (403)');
-  if (res.status === 404) throw new Error(`Repo introuvable : ${owner}/${repo} (404)`);
-  if (!res.ok) throw new Error(`GitHub API erreur ${res.status}`);
+  if(res.status === 401) throw new Error('Token invalide ou expiré (401)');
+  if(res.status === 403) throw new Error('Accès refusé — vérifie les droits du token (403)');
+  if(res.status === 404) throw new Error(`Repo introuvable : ${owner}/${repo} (404)`);
+  if(!res.ok) throw new Error(`GitHub API erreur ${res.status}`);
   return res.json();
 }
 
-function prToRepoKey(pr, reviews) {
-  if (!pr) return null;
-  if (pr.state === 'closed') return pr.merged_at ? 'merged' : null;
+/* Map GitHub login → PO key */
+const LOGIN_TO_PO = Object.fromEntries(
+  Object.values(PO).map(p => [p.github.toLowerCase(), p.key])
+);
+
+function loginToPOKey(login){
+  return login ? LOGIN_TO_PO[login.toLowerCase()] || null : null;
+}
+
+function prToRepoKey(pr, reviews){
+  if(!pr) return null;
+  if(pr.state === 'closed') return pr.merged_at ? 'merged' : null;
+  // open PR — check formal review states first
   const latest = {};
-  for (const r of reviews) {
-    if (r.state !== 'COMMENTED') latest[r.user.login] = r.state;
+  for(const r of reviews){
+    if(r.state !== 'COMMENTED') latest[r.user.login] = r.state;
   }
   const states = Object.values(latest);
-  if (states.includes('CHANGES_REQUESTED')) return 'changes';
-  if (states.length > 0 || pr.requested_reviewers?.length > 0) return 'inreview';
+  if(states.includes('CHANGES_REQUESTED')) return 'changes';
+  if(states.length > 0 || pr.requested_reviewers?.length > 0) return 'inreview';
+  // fall back: if someone other than the author left any comment → in review
+  const authorLogin = pr.user?.login?.toLowerCase();
+  const hasExternalComment = reviews.some(r => r.user.login.toLowerCase() !== authorLogin);
+  if(hasExternalComment) return 'inreview';
   return 'submitted';
 }
 
-function stageFromRepoKey(repoKey, reviews) {
-  if (repoKey === 'none' || !repoKey) return 'none';
-  if (repoKey === 'merged') return 'review';
-  if (reviews && reviews.some(r => r.state === 'APPROVED')) return 'review';
-  if (repoKey === 'changes') return 'progress';
+function stageFromRepoKey(repoKey, reviews){
+  if(repoKey === 'none' || !repoKey) return 'none';
+  if(repoKey === 'merged') return 'review';
+  if(reviews && reviews.some(r => r.state === 'APPROVED')) return 'review';
+  if(repoKey === 'changes') return 'progress';
   return 'draft';
 }
 
-function matchReviewer(pr, reviewMap) {
-  if (!pr || pr.state === 'closed') return null;
+function matchReviewer(pr, reviewMap){
+  if(!pr || pr.state === 'closed') return null;
   const reviews = reviewMap[pr.number] || [];
+  const authorLogin = pr.user?.login?.toLowerCase();
+  // requested reviewers first, then anyone who reviewed (including comments), excluding author
   const candidates = [
     ...(pr.requested_reviewers || []).map(u => u.login),
-    ...reviews.filter(r => r.state !== 'COMMENTED').map(r => r.user.login),
-  ];
-  for (const login of candidates) {
-    const po = Object.values(PO).find(p =>
-      login.toLowerCase().includes(p.initials.toLowerCase()) ||
-      login.toLowerCase().includes(p.name.split(' ')[0].toLowerCase())
-    );
-    if (po) return po;
+    ...reviews.map(r => r.user.login),
+  ].filter(l => l.toLowerCase() !== authorLogin);
+  for(const login of candidates){
+    const key = loginToPOKey(login);
+    if(key) return PO[key];
   }
   return null;
 }
 
-async function fetchFromGitHub() {
-  const { token, owner, repo } = loadConfig();
-  if (!token || !owner || !repo) throw new Error('Config incomplète (token / owner / repo manquant)');
+async function fetchFromGitHub(){
+  const cfg = loadConfig();
+  const token = cfg.token;
+  if(!token) throw new Error('Token manquant — clique sur ⚙ Config');
+  const owner = cfg.owner || DEFAULT_OWNER;
+  const repo  = cfg.repo  || DEFAULT_REPO;
 
   const [openPRs, closedPRs, mainTree] = await Promise.all([
     ghFetch(owner, repo, '/pulls?state=open&per_page=100', token),
     ghFetch(owner, repo, '/pulls?state=closed&per_page=100&sort=updated&direction=desc', token),
-    ghFetch(owner, repo, '/git/trees/HEAD?recursive=1', token).catch(() => ({ tree: [] })),
+    ghFetch(owner, repo, '/git/trees/HEAD?recursive=1', token).catch(() => ({ tree:[] })),
   ]);
   const allPRs = [...openPRs, ...closedPRs];
   const mainPaths = (mainTree.tree || []).map(f => f.path.toLowerCase());
 
-  const BATCH = 10;
+  // Fetch files + reviews in batches of 8
+  const BATCH = 8;
   const prDetails = [];
-  for (let i = 0; i < allPRs.length; i += BATCH) {
+  for(let i = 0; i < allPRs.length; i += BATCH){
     const batch = allPRs.slice(i, i + BATCH);
     const results = await Promise.all(batch.map(pr =>
       Promise.all([
@@ -386,34 +356,41 @@ async function fetchFromGitHub() {
   const reviewMap = Object.fromEntries(prDetails.map(d => [d.pr.number, d.reviews]));
 
   const statusMap = {};
-  for (const section of CATALOG) {
-    for (const doc of section.docs) {
-      const id = doc.id;
+  for(const section of CATALOG){
+    for(const doc of section.docs){
+      const id = doc.id; // e.g. 'prd05'
 
+      // Is it a spec file? path contains /specs/ or 'spec'
       const findPR = (typeHint) => {
         const filtered = prDetails.filter(({ files }) =>
           files.some(f => {
             const p = f.filename.toLowerCase();
-            return p.includes(id) && (typeHint === 'specs' ? p.includes('spec') : !p.includes('spec'));
+            return p.includes(id) && (typeHint === 'specs'
+              ? p.includes('/specs/') || (p.includes('spec') && !p.includes('/prd/'))
+              : p.includes('/prd/') || (!p.includes('/specs/') && !p.includes('spec'))
+            );
           })
         );
-        if (!filtered.length) return null;
+        if(!filtered.length) return null;
         return (filtered.find(d => d.pr.state === 'open') || filtered[0]).pr;
       };
 
       const prdPR   = findPR('prd');
       const specsPR = findPR('specs');
 
-      const existsOnMain = (typeHint) =>
-        mainPaths.some(p => p.includes(id) && (typeHint === 'specs' ? p.includes('spec') : !p.includes('spec')));
+      const existsOnMain = (typeHint) => mainPaths.some(p =>
+        p.includes(id) && (typeHint === 'specs'
+          ? p.includes('/specs/')
+          : p.includes('/prd/'))
+      );
 
       const getRepoKey = (pr, type) => {
         const key = prToRepoKey(pr, reviewMap[pr?.number] || []);
-        if (key) return key;
+        if(key) return key;
         return existsOnMain(type) ? 'merged' : 'none';
       };
 
-      const prdRepoKey   = getRepoKey(prdPR, 'prd');
+      const prdRepoKey   = getRepoKey(prdPR,   'prd');
       const specsRepoKey = getRepoKey(specsPR, 'specs');
 
       statusMap[id] = {
@@ -433,83 +410,79 @@ async function fetchFromGitHub() {
   return { statusMap, owner, repo };
 }
 
-async function refreshData() {
+async function refreshData(){
   const cfg = loadConfig();
-  if (!cfg.token) { setBadge('mock', 'Données fictives — configure un token pour les données live'); return; }
+  if(!cfg.token){
+    setBadge('mock', 'Données du 2026-08-21 — ⚙ Config pour les données live');
+    return;
+  }
   setBadge('loading', 'Chargement depuis GitHub…');
-  try {
+  try{
     const { statusMap, owner, repo } = await fetchFromGitHub();
     setState({ statusMap });
     setBadge('live', `Live — ${owner}/${repo}`);
-  } catch (err) {
-    setBadge('error', '⚠ ' + err.message.slice(0, 70));
+  } catch(err){
+    setBadge('error', '⚠ ' + err.message.slice(0, 80));
   }
 }
 
-function setBadge(type, text) {
+function setBadge(type, text){
   const el = document.getElementById('data-badge');
   el.className = 'data-badge' + (type === 'live' ? ' live' : type === 'error' ? ' error' : '');
   el.textContent = text;
 }
 
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    CONFIG MODAL
-═══════════════════════════════════════════════════════════ */
-function openConfig() {
+═══════════════════════════════════════ */
+function openConfig(){
   const cfg = loadConfig();
   document.getElementById('token-input').value = cfg.token || '';
-  document.getElementById('owner-input').value = cfg.owner || 'club-med';
-  document.getElementById('repo-input').value  = cfg.repo  || 'knowledge-base';
-  updateModalLabel();
+  document.getElementById('owner-input').value = cfg.owner || DEFAULT_OWNER;
+  document.getElementById('repo-input').value  = cfg.repo  || DEFAULT_REPO;
   document.getElementById('modal-backdrop').classList.add('open');
 }
-function closeConfig() { document.getElementById('modal-backdrop').classList.remove('open'); }
-function updateModalLabel() {
-  const o = document.getElementById('owner-input').value || 'club-med';
-  const r = document.getElementById('repo-input').value  || 'knowledge-base';
-  document.getElementById('modal-repo-label').textContent = `${o}/${r}`;
-}
-function saveConfig() {
+function closeConfig(){ document.getElementById('modal-backdrop').classList.remove('open'); }
+function saveConfig(){
   const cfg = {
     token: document.getElementById('token-input').value.trim(),
-    owner: document.getElementById('owner-input').value.trim() || 'club-med',
-    repo:  document.getElementById('repo-input').value.trim()  || 'knowledge-base',
+    owner: document.getElementById('owner-input').value.trim() || DEFAULT_OWNER,
+    repo:  document.getElementById('repo-input').value.trim()  || DEFAULT_REPO,
   };
   saveConfigToStorage(cfg);
   closeConfig();
   refreshData();
 }
 
-/* ═══════════════════════════════════════════════════════════
-   FILTERS & RENDER HELPERS
-═══════════════════════════════════════════════════════════ */
-function matchesFilters(doc) {
-  if (appState.selectedDoc && doc.id !== appState.selectedDoc) return false;
-  if (appState.selectedPO) {
+/* ═══════════════════════════════════════
+   FILTERS
+═══════════════════════════════════════ */
+function matchesFilters(doc){
+  if(appState.selectedDoc && doc.id !== appState.selectedDoc) return false;
+  if(appState.selectedPO){
     const s = getStatus(doc.id);
-    if (s.prd.reviewerKey !== appState.selectedPO && s.specs.reviewerKey !== appState.selectedPO) return false;
+    if(s.prd.reviewerKey !== appState.selectedPO && s.specs.reviewerKey !== appState.selectedPO) return false;
   }
   return true;
 }
 
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function tag(variant, label) {
-  return `<span class="tag tag-${variant}">${esc(label)}</span>`;
-}
-function avatar(po, size) {
-  if (!po) return '';
+/* ═══════════════════════════════════════
+   HTML HELPERS
+═══════════════════════════════════════ */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function tag(variant, label){ return `<span class="tag tag-${variant}">${esc(label)}</span>`; }
+function avatar(po, size){
+  if(!po) return '';
   const fs = Math.round(size * 0.41);
   return `<div title="${esc(po.name)}" style="width:${size}px;height:${size}px;border-radius:50%;background:${po.bg};color:${po.fg};display:flex;align-items:center;justify-content:center;font-size:${fs}px;font-weight:800;flex-shrink:0">${po.initials}</div>`;
 }
 
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    RENDER
-═══════════════════════════════════════════════════════════ */
-function renderTableSection(section) {
+═══════════════════════════════════════ */
+function renderTableSection(section){
   const docs = section.docs.filter(matchesFilters);
-  if (!docs.length) return '';
+  if(!docs.length) return '';
   const rows = docs.map(doc => {
     const s = getStatus(doc.id);
     return `
@@ -541,7 +514,7 @@ function renderTableSection(section) {
     </div>`;
 }
 
-function renderKanban() {
+function renderKanban(){
   const allCards = CATALOG.flatMap(s => s.docs.flatMap(doc => {
     const st = getStatus(doc.id);
     return [
@@ -549,8 +522,8 @@ function renderKanban() {
       { id:doc.id, name:doc.name, type:'Specs', stageKey:st.specs.stageKey, repoKey:st.specs.repoKey, reviewerKey:st.specs.reviewerKey },
     ];
   })).filter(c => {
-    if (appState.selectedDoc && c.id !== appState.selectedDoc) return false;
-    if (appState.selectedPO && c.reviewerKey !== appState.selectedPO) return false;
+    if(appState.selectedDoc && c.id !== appState.selectedDoc) return false;
+    if(appState.selectedPO && c.reviewerKey !== appState.selectedPO) return false;
     return true;
   });
 
@@ -580,7 +553,7 @@ function renderKanban() {
   return `<div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:12px;margin-top:24px">${cols}</div>`;
 }
 
-function renderFilters() {
+function renderFilters(){
   const allDocs = CATALOG.flatMap(s => s.docs);
   document.getElementById('doc-filter').innerHTML = '<option value="">All documents</option>' +
     allDocs.map(d => `<option value="${esc(d.id)}" ${appState.selectedDoc===d.id?'selected':''}>${esc(d.id)} — ${esc(d.name)}</option>`).join('');
@@ -588,28 +561,20 @@ function renderFilters() {
     Object.values(PO).map(p => `<option value="${p.key}" ${appState.selectedPO===p.key?'selected':''}>${esc(p.name)}</option>`).join('');
 }
 
-function render() {
+function render(){
   document.getElementById('btn-table').className  = 'view-btn ' + (appState.view==='table'  ? 'active' : 'inactive');
   document.getElementById('btn-kanban').className = 'view-btn ' + (appState.view==='kanban' ? 'active' : 'inactive');
   renderFilters();
   document.getElementById('main-content').innerHTML =
-    appState.view === 'table'
-      ? CATALOG.map(renderTableSection).join('')
-      : renderKanban();
+    appState.view === 'table' ? CATALOG.map(renderTableSection).join('') : renderKanban();
 }
 
-/* ═══════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    INIT
-═══════════════════════════════════════════════════════════ */
+═══════════════════════════════════════ */
 document.getElementById('team-avatars').innerHTML = Object.values(PO).map(p => avatar(p, 26)).join('');
 render();
-
-const initCfg = loadConfig();
-if (initCfg.token) {
-  refreshData();
-} else {
-  setBadge('mock', 'Données fictives — clique sur ⚙ Config pour connecter GitHub');
-}
+refreshData();
 </script>
 </body>
 </html>
