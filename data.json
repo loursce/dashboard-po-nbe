@@ -1,0 +1,491 @@
+{
+  "updatedAt": "2026-08-21T17:10:12.845Z",
+  "map": {
+    "prd00": {
+      "prd": {
+        "base": "merged",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "sub",
+        "authorKey": "cl",
+        "reviewerKey": null,
+        "prNumber": 80,
+        "prCount": 6,
+        "isStale": true
+      }
+    },
+    "prd05": {
+      "prd": {
+        "base": "sub",
+        "authorKey": "cl",
+        "reviewerKey": null,
+        "prNumber": 91,
+        "prCount": 1,
+        "isStale": false
+      },
+      "specs": {
+        "base": "review",
+        "authorKey": "cn",
+        "reviewerKey": "cel",
+        "prNumber": 76,
+        "prCount": 1,
+        "isStale": false
+      }
+    },
+    "prd06": {
+      "prd": {
+        "base": "merged",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "review",
+        "authorKey": "cel",
+        "reviewerKey": "cl",
+        "prNumber": 72,
+        "prCount": 1,
+        "isStale": true
+      }
+    },
+    "prd04": {
+      "prd": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "review",
+        "authorKey": "cl",
+        "reviewerKey": "cel",
+        "prNumber": 61,
+        "prCount": 2,
+        "isStale": false
+      }
+    },
+    "prd07": {
+      "prd": {
+        "base": "merged",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "review",
+        "authorKey": "cel",
+        "reviewerKey": "cn",
+        "prNumber": 70,
+        "prCount": 1,
+        "isStale": false
+      }
+    },
+    "prd03": {
+      "prd": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd19": {
+      "prd": {
+        "base": "review",
+        "authorKey": "cl",
+        "reviewerKey": "cel",
+        "prNumber": 84,
+        "prCount": 1,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd24": {
+      "prd": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd23": {
+      "prd": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd25": {
+      "prd": {
+        "base": "review",
+        "authorKey": "cl",
+        "reviewerKey": "cel",
+        "prNumber": 86,
+        "prCount": 1,
+        "isStale": false
+      },
+      "specs": {
+        "base": "review",
+        "authorKey": "cl",
+        "reviewerKey": "cel",
+        "prNumber": 86,
+        "prCount": 1,
+        "isStale": false
+      }
+    },
+    "prd09": {
+      "prd": {
+        "base": "review",
+        "authorKey": "cel",
+        "reviewerKey": "cl",
+        "prNumber": 83,
+        "prCount": 1,
+        "isStale": false
+      },
+      "specs": {
+        "base": "sub",
+        "authorKey": "cel",
+        "reviewerKey": null,
+        "prNumber": 85,
+        "prCount": 1,
+        "isStale": false
+      }
+    },
+    "prd01": {
+      "prd": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd13": {
+      "prd": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd14": {
+      "prd": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd12": {
+      "prd": {
+        "base": "sub",
+        "authorKey": "cl",
+        "reviewerKey": null,
+        "prNumber": 89,
+        "prCount": 2,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd10": {
+      "prd": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd02": {
+      "prd": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd08": {
+      "prd": {
+        "base": "review",
+        "authorKey": "cl",
+        "reviewerKey": "cn",
+        "prNumber": 67,
+        "prCount": 1,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd15": {
+      "prd": {
+        "base": "review",
+        "authorKey": "cl",
+        "reviewerKey": "cel",
+        "prNumber": 82,
+        "prCount": 1,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd16": {
+      "prd": {
+        "base": "review",
+        "authorKey": "cl",
+        "reviewerKey": "cn",
+        "prNumber": 68,
+        "prCount": 1,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd20": {
+      "prd": {
+        "base": "sub",
+        "authorKey": "cl",
+        "reviewerKey": null,
+        "prNumber": 88,
+        "prCount": 1,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd18": {
+      "prd": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd17": {
+      "prd": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd26": {
+      "prd": {
+        "base": "sub",
+        "authorKey": "cl",
+        "reviewerKey": null,
+        "prNumber": 87,
+        "prCount": 1,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd11": {
+      "prd": {
+        "base": "sub",
+        "authorKey": "cl",
+        "reviewerKey": null,
+        "prNumber": 90,
+        "prCount": 1,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd22": {
+      "prd": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    },
+    "prd21": {
+      "prd": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      },
+      "specs": {
+        "base": "none",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
+      }
+    }
+  }
+}
