@@ -136,9 +136,10 @@
         <div style="display:flex;align-items:center;gap:8px"><span class="pill pm">Merged</span><span style="font-size:12px;color:var(--soft)">Sur main, aucune PR ouverte</span></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:7px">
-        <div style="display:flex;align-items:center;gap:8px"><span class="ubadge">↑2</span><span style="font-size:12px;color:var(--soft)">N PRs de mise à jour sur un doc déjà mergé</span></div>
         <div style="display:flex;align-items:center;gap:8px"><span class="stale">⏱</span><span style="font-size:12px;color:var(--soft)">PR sans activité depuis + de 7 jours</span></div>
-        <div style="font-size:12px;color:var(--soft)">Avatar gauche = auteur · Avatar droit = reviewer</div>
+        <div style="display:flex;align-items:center;gap:8px"><span class="xbadge">+2</span><span style="font-size:12px;color:var(--soft)">Plusieurs PRs ouvertes sur ce document</span></div>
+        <div style="font-size:12px;color:var(--soft)">Avatar gauche = auteur de la PR · Avatar droit = reviewer</div>
+        <div style="font-size:12px;color:var(--soft)"><strong>Merged</strong> = sur main, aucune PR ouverte</div>
       </div>
     </div>
   </div>
@@ -223,11 +224,12 @@ function mk(base,ak,rk,n,c,s){ return {base,authorKey:ak,reviewerKey:rk,prNumber
 const N = mk('none',null,null,null,0,false); // shorthand for absent
 const BASELINE = {
   // A — Socle & offre produit
-  prd00:{ prd:mk('merged',null, null, null,0,false), specs:mk('merged',null, null, 80,  6,true ) },
-  prd05:{ prd:mk('merged','cl', null, 91,  1,false), specs:mk('merged','cn','cel', 76,  1,false) },
-  prd06:{ prd:mk('merged',null, null, null,0,false), specs:mk('merged','cel',null, 72,  1,true ) },
-  prd04:{ prd:N,                                     specs:mk('merged','cl', null, 61,  1,false) },
-  prd07:{ prd:mk('merged',null, null, null,0,false), specs:mk('sub',  'cel',null,  70,  1,false) },
+  // merged = sur main, AUCUNE PR ouverte. Si une PR est ouverte, c'est sub/review.
+  prd00:{ prd:mk('merged',null, null, null,0,false), specs:mk('sub',  null, null, 80,  6,true ) },
+  prd05:{ prd:mk('sub',  'cl',  null, 91,  1,false), specs:mk('review','cn','cel',76,  1,false) },
+  prd06:{ prd:mk('merged',null, null, null,0,false), specs:mk('sub',  'cel',null, 72,  1,true ) },
+  prd04:{ prd:N,                                     specs:mk('sub',  'cl', null, 61,  1,false) },
+  prd07:{ prd:mk('merged',null, null, null,0,false), specs:mk('sub',  'cel',null, 70,  1,false) },
   prd03:{ prd:N,                                     specs:N },
   prd19:{ prd:N,                                     specs:N },
   prd24:{ prd:N,                                     specs:N },
@@ -355,11 +357,8 @@ async function fetchLive(){
         const stale=daysSince(main.pr.updated_at)>7;
         const authorKey=LOGIN[main.pr.user?.login?.toLowerCase()]||null;
         const reviewerKey=findReviewer(main.pr,revMap);
-        if(isNew){
-          map[id][side]=mk(computePrStatus(main.pr,reviews)||'sub',authorKey,reviewerKey,main.pr.number,openOnes.length,stale);
-        } else {
-          map[id][side]=mk('merged',authorKey,reviewerKey,main.pr.number,openOnes.length,stale);
-        }
+        // Open PR drives the status — regardless of whether it adds or modifies
+        map[id][side]=mk(computePrStatus(main.pr,reviews)||'sub',authorKey,reviewerKey,main.pr.number,openOnes.length,stale);
       }
     }
   }
@@ -410,15 +409,13 @@ function cell(d){
   const s=ST[base];
   const href=prNumber?GH_PR+prNumber:null;
   const pillEl=`<span class="pill ${s.cls}">${s.label}</span>`;
-  const pill=(href&&base!=='merged')?`<a href="${href}" target="_blank" rel="noopener">${pillEl}</a>`:pillEl;
-  const ubadge=(base==='merged'&&prCount>0&&href)
-    ?`<a href="${href}" target="_blank" rel="noopener" class="ubadge" title="${prCount} PR${prCount>1?'s':''} de mise à jour">↑${prCount}</a>`:'';
-  const xbadge=(base!=='merged'&&prCount>1)?`<span class="xbadge">+${prCount-1}</span>`:'';
+  const pill=href?`<a href="${href}" target="_blank" rel="noopener">${pillEl}</a>`:pillEl;
+  const xbadge=(prCount>1)?`<span class="xbadge" title="${prCount} PRs ouvertes">+${prCount-1}</span>`:'';
   const staleEl=isStale?`<span class="stale" title="PR inactive depuis + de 7 jours">⏱</span>`:'';
   const showAv=base==='sub'||base==='review';
   const auth=showAv&&authorKey?avatar(authorKey,20):'';
   const rev=(base==='review'&&reviewerKey)?avatar(reviewerKey,20):'';
-  return `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${auth}${pill}${rev}${ubadge}${xbadge}${staleEl}</div>`;
+  return `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${auth}${pill}${rev}${xbadge}${staleEl}</div>`;
 }
 
 function matches(doc){
@@ -507,9 +504,7 @@ function renderKanban(){
         </div>`;
       }
       const pillEl=`<span class="pill ${ST[c.base].cls}">${ST[c.base].label}</span>`;
-      const pill=href&&c.base!=='merged'?`<a href="${href}" target="_blank" rel="noopener">${pillEl}</a>`:pillEl;
-      const ub=c.base==='merged'&&c.prCount>0&&href
-        ?`<a href="${href}" target="_blank" rel="noopener" class="ubadge" title="${c.prCount} PR de mise à jour">↑${c.prCount}</a>`:'';
+      const pill=href?`<a href="${href}" target="_blank" rel="noopener">${pillEl}</a>`:pillEl;
       const staleEl=c.isStale?`<span class="stale" title="PR inactive depuis + de 7 jours">⏱</span>`:'';
       return `<div class="card" style="padding:12px;display:flex;flex-direction:column;gap:8px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
@@ -518,7 +513,7 @@ function renderKanban(){
         </div>
         <div style="font-size:13px;font-weight:600;line-height:1.3">${esc(c.name)}</div>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
-          <div style="display:flex;align-items:center;gap:5px">${pill}${ub}${staleEl}</div>
+          <div style="display:flex;align-items:center;gap:5px">${pill}${staleEl}</div>
           <div style="display:flex;align-items:center;gap:4px">
             ${c.authorKey?avatar(c.authorKey,18):''}
             ${c.reviewerKey&&c.reviewerKey!==c.authorKey?avatar(c.reviewerKey,18):''}
