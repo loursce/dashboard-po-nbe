@@ -177,50 +177,83 @@ const ST = {
   review:{ label:'In review', cls:'pr' },
   merged:{ label:'Merged',    cls:'pm' },
 };
-const KAN_COLS = ['sub','review','merged'];
+const KAN_COLS = ['none','sub','review','merged'];
+const KAN_LABELS = { none:'Absent du repo', sub:'Submitted', review:'In review', merged:'Merged' };
 const DOT = { none:'#ccc', sub:'#008080', review:'#e6a800', merged:'#1e2643' };
 
+// hint[] = path keywords used for GitHub file matching
+// (needed when planning IDs differ from repo file names)
 const CATALOG = [
-  { letter:'A', title:'Core booking engine', docs:[
-    { id:'prd00', name:'Booking Engine Foundations' },
-    { id:'prd04', name:'Transport & Transfer' },
-    { id:'prd05', name:'Childcare Booking' },
-    { id:'prd06', name:'Activity Booking' },
-    { id:'prd07', name:'Food & Drinks' },
-    { id:'prd13', name:'Cruise Booking' },
+  { letter:'A', title:'Socle & offre produit', sub:'Le socle et les sections du séjour de front, puis hébergement, confirmation, More Rooms et ski.', docs:[
+    { id:'prd00', name:'Booking engine Foundations',   hint:['prd00'] },
+    { id:'prd05', name:'Childcare',                    hint:['prd05','childcare'] },
+    { id:'prd06', name:'Activities',                   hint:['prd06','activit'] },
+    { id:'prd04', name:'Transport & Transfer',         hint:['prd04','transport'] },
+    { id:'prd07', name:'Food & Drinks',                hint:['prd07','food'] },
+    { id:'prd03', name:'Accommodation booking',        hint:['accommodation'] },
+    { id:'prd19', name:'Booking confirmation',         hint:['prd19','booking-confirmation'] },
+    { id:'prd24', name:'More Rooms — comparaison',     hint:['prd24','more-room'] },
+    { id:'prd23', name:'Ski booking journey',          hint:['prd23','ski'] },
+    { id:'prd25', name:'Cruise booking',               hint:['cruise','prd13'] },
   ]},
-  { letter:'B', title:'Criteria & checkout', docs:[
-    { id:'prd03', name:'Edit Search Criteria' },
-    { id:'prd12', name:'Booking Confirmation' },
+  { letter:'B', title:'Prix, critères & panier', sub:'Critères, prix et codes promo ; le panier boucle sur la butée.', docs:[
+    { id:'prd09', name:'Criteria edition',             hint:['criteria','prd03-criteria'] },
+    { id:'prd01', name:'Ticket price / All-inclusive', hint:['prd01','ticket-price'] },
+    { id:'prd13', name:'Pricing discounts & privilege codes', hint:['prd13-pricing','discount','privilege'] },
+    { id:'prd14', name:'Rates',                        hint:['prd14-rates','rates'] },
+    { id:'prd12', name:'Share',                        hint:['prd12','share','booking-confirmation'] },
+    { id:'prd10', name:'Save — criteria',              hint:['prd10','save-criteria'] },
+    { id:'prd02', name:'Ticket price list — basket layer', hint:['prd02','basket'] },
   ]},
-  { letter:'C', title:'Participant funnel → confirmation', docs:[
-    { id:'prd08', name:'Guest Information Form' },
-    { id:'prd09', name:'Donation' },
-    { id:'prd11', name:'Save — proposal (travel plan)' },
-    { id:'prd14', name:'Great Members Program' },
-    { id:'prd15', name:'Insurance' },
-    { id:'prd20', name:'Sign in' },
+  { letter:'C', title:'Tunnel participant → confirmation', sub:'Le participant et le don ouvrent en premier, l\'assurance suit, la réassurance ferme la marche.', docs:[
+    { id:'prd08', name:'Guest information form',       hint:['prd08','guest'] },
+    { id:'prd15', name:'Insurance',                    hint:['prd15','insurance'] },
+    { id:'prd16', name:'Donation',                     hint:['donation','prd09-donation'] },
+    { id:'prd20', name:'Sign in',                      hint:['prd20','sign-in'] },
+    { id:'prd18', name:'Payment',                      hint:['prd18','payment'] },
+    { id:'prd17', name:'Hold an option',               hint:['prd17','hold'] },
+    { id:'prd26', name:'Great member program',         hint:['great-member','prd14'] },
+    { id:'prd11', name:'Save — proposal (travel plan)',hint:['prd11','save-proposal'] },
+    { id:'prd22', name:'Banners (toasters)',           hint:['prd22','banner','toaster'] },
+    { id:'prd21', name:'Reassurance (incl. footer)',   hint:['prd21','reassurance'] },
   ]},
 ];
 
 function mk(base,ak,rk,n,c,s){ return {base,authorKey:ak,reviewerKey:rk,prNumber:n,prCount:c,isStale:s} }
+const N = mk('none',null,null,null,0,false); // shorthand for absent
 const BASELINE = {
+  // A — Socle & offre produit
   prd00:{ prd:mk('merged',null, null, null,0,false), specs:mk('merged',null, null, 80,  6,true ) },
-  prd04:{ prd:mk('none',  null, null, null,0,false), specs:mk('merged','cl', null, 61,  1,false) },
   prd05:{ prd:mk('merged','cl', null, 91,  1,false), specs:mk('merged','cn','cel', 76,  1,false) },
   prd06:{ prd:mk('merged',null, null, null,0,false), specs:mk('merged','cel',null, 72,  1,true ) },
+  prd04:{ prd:N,                                     specs:mk('merged','cl', null, 61,  1,false) },
   prd07:{ prd:mk('merged',null, null, null,0,false), specs:mk('sub',  'cel',null,  70,  1,false) },
-  prd13:{ prd:mk('merged',null, null, null,0,false), specs:mk('review','cl','cel', 86,  1,false) },
-  prd03:{ prd:mk('sub',  'cel', null, 83,  1,false), specs:mk('sub',  'cel',null,  85,  1,false) },
-  prd12:{ prd:mk('review','cl','cel', 84,  2,false), specs:mk('none',  null,null,  null,0,false) },
-  prd08:{ prd:mk('sub',  'cl',  null, 67,  1,false), specs:mk('none',  null,null,  null,0,false) },
-  prd09:{ prd:mk('sub',  'cl',  null, 68,  1,false), specs:mk('none',  null,null,  null,0,false) },
-  prd11:{ prd:mk('sub',  'cl',  null, 90,  1,false), specs:mk('none',  null,null,  null,0,false) },
-  prd14:{ prd:mk('sub',  'cl',  null, 87,  1,false), specs:mk('none',  null,null,  null,0,false) },
-  prd15:{ prd:mk('sub',  'cl',  null, 82,  1,false), specs:mk('none',  null,null,  null,0,false) },
-  prd20:{ prd:mk('sub',  'cl',  null, 88,  1,false), specs:mk('none',  null,null,  null,0,false) },
+  prd03:{ prd:N,                                     specs:N },
+  prd19:{ prd:N,                                     specs:N },
+  prd24:{ prd:N,                                     specs:N },
+  prd23:{ prd:N,                                     specs:N },
+  prd25:{ prd:mk('merged',null, null, null,0,false), specs:mk('review','cl','cel', 86,  1,false) },
+  // B — Prix, critères & panier
+  prd09:{ prd:mk('sub',  'cel', null, 83,  1,false), specs:mk('sub',  'cel',null,  85,  1,false) },
+  prd01:{ prd:N,                                     specs:N },
+  prd13:{ prd:N,                                     specs:N },
+  prd14:{ prd:N,                                     specs:N },
+  prd12:{ prd:mk('review','cl','cel', 84,  2,false), specs:N },
+  prd10:{ prd:N,                                     specs:N },
+  prd02:{ prd:N,                                     specs:N },
+  // C — Tunnel participant → confirmation
+  prd08:{ prd:mk('sub',  'cl',  null, 67,  1,false), specs:N },
+  prd15:{ prd:mk('sub',  'cl',  null, 82,  1,false), specs:N },
+  prd16:{ prd:mk('sub',  'cl',  null, 68,  1,false), specs:N },
+  prd20:{ prd:mk('sub',  'cl',  null, 88,  1,false), specs:N },
+  prd18:{ prd:N,                                     specs:N },
+  prd17:{ prd:N,                                     specs:N },
+  prd26:{ prd:mk('sub',  'cl',  null, 87,  1,false), specs:N },
+  prd11:{ prd:mk('sub',  'cl',  null, 90,  1,false), specs:N },
+  prd22:{ prd:N,                                     specs:N },
+  prd21:{ prd:N,                                     specs:N },
 };
-const EMPTY = { prd:mk('none',null,null,null,0,false), specs:mk('none',null,null,null,0,false) };
+const EMPTY = { prd:N, specs:N };
 
 const GH_PR = 'https://github.com/ClubMediterranee/knowledge-base/pull/';
 let S = { view:'table', showPRD:true, showSpecs:true, sp:'', map:{...BASELINE} };
@@ -274,8 +307,12 @@ function findReviewer(pr,reviewMap){
   return null;
 }
 
-function pathMatch(p,id,isSpecs){
-  return p.includes(id)&&(isSpecs?p.includes('/specs/'):p.includes('/prd/'));
+function pathMatch(p, doc, isSpecs){
+  // doc can be a string (id) or a catalog entry with hint[]
+  const id = typeof doc === 'string' ? doc : doc.id;
+  const hints = typeof doc === 'object' && doc.hint ? doc.hint : [id];
+  const typeMatch = isSpecs ? p.includes('/specs/') : p.includes('/prd/');
+  return typeMatch && hints.some(h => p.includes(h));
 }
 
 async function fetchLive(){
@@ -304,17 +341,17 @@ async function fetchLive(){
     for(const doc of sec.docs){
       const id=doc.id;
       for(const isSpecs of [false,true]){
-        const matching=details.filter(({files})=>files.some(f=>pathMatch(f.filename.toLowerCase(),id,isSpecs)));
+        const matching=details.filter(({files})=>files.some(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)));
         const openOnes=matching.filter(d=>d.pr.state==='open');
         const closedMerged=matching.filter(d=>d.pr.state==='closed'&&d.pr.merged_at);
-        const onMain=mainPaths.some(p=>pathMatch(p,id,isSpecs));
+        const onMain=mainPaths.some(p=>pathMatch(p,doc,isSpecs));
         if(!map[id]) map[id]={};
         const side=isSpecs?'specs':'prd';
         if(openOnes.length===0){ map[id][side]=mk(onMain||closedMerged.length?'merged':'none',null,null,null,0,false); continue; }
         const sorted=openOnes.sort((a,b)=>new Date(b.pr.updated_at)-new Date(a.pr.updated_at));
         const main=sorted[0];
         const reviews=revMap[main.pr.number]||[];
-        const isNew=main.files.some(f=>pathMatch(f.filename.toLowerCase(),id,isSpecs)&&f.status==='added');
+        const isNew=main.files.some(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)&&f.status==='added');
         const stale=daysSince(main.pr.updated_at)>7;
         const authorKey=LOGIN[main.pr.user?.login?.toLowerCase()]||null;
         const reviewerKey=findReviewer(main.pr,revMap);
@@ -429,7 +466,10 @@ function renderSection(sec){
   return `<div style="margin-top:28px">
     <div style="display:flex;align-items:center;gap:12px;background:var(--pearl);border-radius:var(--rsm);padding:10px 16px">
       <div style="width:24px;height:24px;border-radius:50%;background:var(--ultramarine);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:var(--fd);flex-shrink:0">${esc(sec.letter)}</div>
-      <div style="font-weight:700;font-size:14px">${esc(sec.title)}</div>
+      <div>
+        <div style="font-weight:700;font-size:14px">${esc(sec.title)}</div>
+        ${sec.sub?`<div style="font-size:12px;color:var(--muted);margin-top:1px">${esc(sec.sub)}</div>`:''}
+      </div>
     </div>
     <div style="display:grid;grid-template-columns:${cols};gap:0 16px;padding:9px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
       <div></div><div>Document</div>${showPRD?'<div>PRD</div>':''}${showSpecs?'<div>Specs</div>':''}
@@ -444,7 +484,7 @@ function renderKanban(){
     return [
       {id:doc.id,name:doc.name,type:'PRD',  ...d.prd},
       {id:doc.id,name:doc.name,type:'Specs',...d.specs},
-    ].filter(c=>c.base!=='none'&&(c.type==='PRD'?S.showPRD:S.showSpecs));
+    ].filter(c=>(c.type==='PRD'?S.showPRD:S.showSpecs));
   })).filter(c=>{
     if(S.sp&&c.reviewerKey!==S.sp&&c.authorKey!==S.sp) return false;
     return true;
@@ -452,8 +492,20 @@ function renderKanban(){
   const cols=KAN_COLS.map(key=>{
     const cards=allCards.filter(c=>c.base===key);
     if(!cards.length) return '';
+    const isAbsent=key==='none';
+    const colBg=isAbsent?'#f0f0f0':'var(--pearl)';
     const cardsH=cards.map(c=>{
       const href=c.prNumber?GH_PR+c.prNumber:null;
+      if(isAbsent){
+        // Absent cards — simpler, no pill
+        return `<div style="background:var(--surface);border:1px dashed var(--border);border-radius:var(--rsm);padding:10px 12px;display:flex;flex-direction:column;gap:4px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+            <span style="font-family:ui-monospace,monospace;font-size:11px;color:var(--muted)">${esc(c.id)}</span>
+            <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)">${esc(c.type)}</span>
+          </div>
+          <div style="font-size:13px;font-weight:600;line-height:1.3;color:var(--soft)">${esc(c.name)}</div>
+        </div>`;
+      }
       const pillEl=`<span class="pill ${ST[c.base].cls}">${ST[c.base].label}</span>`;
       const pill=href&&c.base!=='merged'?`<a href="${href}" target="_blank" rel="noopener">${pillEl}</a>`:pillEl;
       const ub=c.base==='merged'&&c.prCount>0&&href
@@ -474,12 +526,15 @@ function renderKanban(){
         </div>
       </div>`;
     }).join('');
-    return `<div style="flex:0 0 240px;background:var(--pearl);border-radius:var(--rmd);padding:12px;max-height:70vh;display:flex;flex-direction:column">
+    const colLabel=KAN_LABELS[key]||ST[key].label;
+    return `<div style="flex:0 0 240px;background:${colBg};border-radius:var(--rmd);padding:12px;max-height:70vh;display:flex;flex-direction:column">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 2px">
-        <span class="pill ${ST[key].cls}">${ST[key].label}</span>
+        ${isAbsent
+          ? `<span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">${colLabel}</span>`
+          : `<span class="pill ${ST[key].cls}">${ST[key].label}</span>`}
         <span style="font-size:12px;color:var(--muted);font-weight:700">${cards.length}</span>
       </div>
-      <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto">${cardsH}</div>
+      <div style="display:flex;flex-direction:column;gap:6px;overflow-y:auto">${cardsH}</div>
     </div>`;
   }).join('');
   return `<div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:12px;margin-top:24px">${cols}</div>`;
