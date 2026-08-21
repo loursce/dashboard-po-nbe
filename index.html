@@ -25,32 +25,34 @@
     select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px!important}
     a{color:inherit;text-decoration:none}
 
-    /* Status pills */
     .pill{display:inline-flex;align-items:center;border-radius:var(--rpill);padding:.28rem .65rem;font-size:.72rem;font-weight:700;border:1px solid transparent;font-family:var(--fb);white-space:nowrap;line-height:1}
-    .pn {background:transparent;border-color:var(--border);color:var(--muted)}
-    .ps {background:color-mix(in srgb,var(--teal) 13%,var(--white));color:var(--teal)}
-    .pr {background:color-mix(in srgb,var(--saffron) 22%,var(--white));color:#7a5200}
-    .pm {background:color-mix(in srgb,var(--ultramarine) 12%,var(--white));color:var(--ultramarine)}
+    .pn{background:transparent;border-color:var(--border);color:var(--muted)}
+    .ps{background:color-mix(in srgb,var(--teal) 13%,var(--white));color:var(--teal)}
+    .pr{background:color-mix(in srgb,var(--saffron) 22%,var(--white));color:#7a5200}
+    .pm{background:color-mix(in srgb,var(--ultramarine) 12%,var(--white));color:var(--ultramarine)}
     a.pill:hover{filter:brightness(.96)}
 
-    /* Update & extra badges */
     .ubadge{display:inline-flex;align-items:center;font-size:11px;font-weight:700;color:var(--muted);background:var(--pearl);border:1px solid var(--border);border-radius:99px;padding:1px 7px;cursor:pointer;transition:border-color .12s}
     .ubadge:hover{border-color:var(--mid-grey)}
     .xbadge{font-size:11px;font-weight:700;color:var(--muted)}
     .stale{font-size:11px;cursor:default;opacity:.8}
 
-    /* Cards */
     .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rmd);box-shadow:var(--shadow)}
     .page{max-width:1200px;margin:0 auto;padding:48px 32px 80px}
     .doc-row{transition:background .1s}
     .doc-row:hover{background:var(--pearl)}
 
-    /* View buttons */
+    /* View switcher buttons (mutually exclusive) */
     .vbtn{padding:8px 18px;border-radius:var(--rpill);border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:var(--fb)}
     .vbtn.on{background:var(--ultramarine);color:#fff}
     .vbtn.off{background:transparent;color:var(--soft)}
 
-    /* Summary bar */
+    /* Type toggle buttons (independent, with border when off) */
+    .tbtn{padding:7px 14px;border-radius:var(--rpill);font-weight:700;font-size:13px;cursor:pointer;font-family:var(--fb);transition:background .12s,color .12s,border-color .12s}
+    .tbtn.on{background:var(--ultramarine);color:#fff;border:1px solid var(--ultramarine)}
+    .tbtn.off{background:transparent;color:var(--soft);border:1px solid var(--border)}
+    .tbtn.off:hover{border-color:var(--mid-grey)}
+
     .sum-row{display:flex;gap:24px;flex-wrap:wrap;margin-top:20px;padding:14px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
     .sum-block{display:flex;flex-direction:column;gap:6px}
     .sum-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
@@ -58,14 +60,12 @@
     .sum-pill{font-size:12px;font-weight:600;color:var(--soft)}
     .sum-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
 
-    /* Data badge & action buttons */
     .dbadge{font-size:11px;font-weight:600;color:var(--muted)}
     .dbadge.live{color:var(--teal)}
     .dbadge.err{color:#c03016}
     .abtn{font-size:11px;color:var(--muted);background:none;border:1px solid var(--border);border-radius:var(--rsm);padding:4px 10px;cursor:pointer;font-family:var(--fb)}
     .abtn:hover{border-color:var(--mid-grey)}
 
-    /* Modal */
     .mbk{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
     .mbk.on{display:flex}
     .modal{background:var(--surface);border-radius:var(--rmd);padding:28px 32px;width:480px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,.2)}
@@ -106,16 +106,21 @@
 
   <!-- Controls -->
   <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:20px">
-    <div style="display:inline-flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rpill);padding:4px">
-      <button id="bt" class="vbtn on"  onclick="setView('table')">Table</button>
-      <button id="bk" class="vbtn off" onclick="setView('kanban')">Kanban</button>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <!-- View switcher -->
+      <div style="display:inline-flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rpill);padding:4px">
+        <button id="bt" class="vbtn on"  onclick="setView('table')">Table</button>
+        <button id="bk" class="vbtn off" onclick="setView('kanban')">Kanban</button>
+      </div>
+      <!-- Divider -->
+      <div style="width:1px;height:20px;background:var(--border)"></div>
+      <!-- Type toggles -->
+      <button id="bp" class="tbtn on" onclick="toggleType('prd')">PRD</button>
+      <button id="bs" class="tbtn on" onclick="toggleType('specs')">Specs</button>
     </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <select id="df" onchange="setState({sd:this.value})"
-        style="padding:8px 12px;border-radius:var(--rsm);border:1px solid var(--border);font-size:13px;font-family:var(--fb);background:var(--surface);color:var(--text);cursor:pointer"></select>
-      <select id="pf" onchange="setState({sp:this.value})"
-        style="padding:8px 12px;border-radius:var(--rsm);border:1px solid var(--border);font-size:13px;font-family:var(--fb);background:var(--surface);color:var(--text);cursor:pointer"></select>
-    </div>
+    <!-- PO filter -->
+    <select id="pf" onchange="setState({sp:this.value})"
+      style="padding:8px 12px;border-radius:var(--rsm);border:1px solid var(--border);font-size:13px;font-family:var(--fb);background:var(--surface);color:var(--text);cursor:pointer"></select>
   </div>
 
   <div id="main"></div>
@@ -166,20 +171,15 @@ const PO = {
 };
 const LOGIN = Object.fromEntries(Object.values(PO).map(p=>[p.login.toLowerCase(), p.key]));
 
-/* ── Statuses ── */
 const ST = {
   none:  { label:'—',         cls:'pn' },
   sub:   { label:'Submitted', cls:'ps' },
   review:{ label:'In review', cls:'pr' },
   merged:{ label:'Merged',    cls:'pm' },
 };
-// Kanban column order (no "none")
 const KAN_COLS = ['sub','review','merged'];
-
-/* ── Summary dot colors ── */
 const DOT = { none:'#ccc', sub:'#008080', review:'#e6a800', merged:'#1e2643' };
 
-/* ── Catalog ── */
 const CATALOG = [
   { letter:'A', title:'Core booking engine', docs:[
     { id:'prd00', name:'Booking Engine Foundations' },
@@ -203,47 +203,41 @@ const CATALOG = [
   ]},
 ];
 
-/* ── Baseline (sourced from repo 2026-08-21)
-   Fields: base, authorKey, reviewerKey, prNumber, prCount, isStale
-   base='merged'+prCount>0 → merged doc with open update PRs
-   base='sub'|'review' → new doc being created / reviewed
-── */
 function mk(base,ak,rk,n,c,s){ return {base,authorKey:ak,reviewerKey:rk,prNumber:n,prCount:c,isStale:s} }
 const BASELINE = {
-  // A — Core
-  prd00:{ prd: mk('merged',null, null, null,0,false), specs:mk('merged',null, null, 80,  6,true ) },
-  prd04:{ prd: mk('none',  null, null, null,0,false), specs:mk('merged','cl', null, 61,  1,false) },
-  prd05:{ prd: mk('merged','cl', null, 91,  1,false), specs:mk('merged','cn','cel', 76,  1,false) },
-  prd06:{ prd: mk('merged',null, null, null,0,false), specs:mk('merged','cel',null, 72,  1,true ) },
-  prd07:{ prd: mk('merged',null, null, null,0,false), specs:mk('sub',  'cel',null,  70,  1,false) },
-  prd13:{ prd: mk('merged',null, null, null,0,false), specs:mk('review','cl','cel', 86,  1,false) },
-  // B — Criteria
-  prd03:{ prd: mk('sub',  'cel', null, 83,  1,false), specs:mk('sub',  'cel',null,  85,  1,false) },
-  prd12:{ prd: mk('review','cl','cel', 84,  2,false), specs:mk('none',  null,null,  null,0,false) },
-  // C — Funnel
-  prd08:{ prd: mk('sub',  'cl',  null, 67,  1,false), specs:mk('none',  null,null,  null,0,false) },
-  prd09:{ prd: mk('sub',  'cl',  null, 68,  1,false), specs:mk('none',  null,null,  null,0,false) },
-  prd11:{ prd: mk('sub',  'cl',  null, 90,  1,false), specs:mk('none',  null,null,  null,0,false) },
-  prd14:{ prd: mk('sub',  'cl',  null, 87,  1,false), specs:mk('none',  null,null,  null,0,false) },
-  prd15:{ prd: mk('sub',  'cl',  null, 82,  1,false), specs:mk('none',  null,null,  null,0,false) },
-  prd20:{ prd: mk('sub',  'cl',  null, 88,  1,false), specs:mk('none',  null,null,  null,0,false) },
+  prd00:{ prd:mk('merged',null, null, null,0,false), specs:mk('merged',null, null, 80,  6,true ) },
+  prd04:{ prd:mk('none',  null, null, null,0,false), specs:mk('merged','cl', null, 61,  1,false) },
+  prd05:{ prd:mk('merged','cl', null, 91,  1,false), specs:mk('merged','cn','cel', 76,  1,false) },
+  prd06:{ prd:mk('merged',null, null, null,0,false), specs:mk('merged','cel',null, 72,  1,true ) },
+  prd07:{ prd:mk('merged',null, null, null,0,false), specs:mk('sub',  'cel',null,  70,  1,false) },
+  prd13:{ prd:mk('merged',null, null, null,0,false), specs:mk('review','cl','cel', 86,  1,false) },
+  prd03:{ prd:mk('sub',  'cel', null, 83,  1,false), specs:mk('sub',  'cel',null,  85,  1,false) },
+  prd12:{ prd:mk('review','cl','cel', 84,  2,false), specs:mk('none',  null,null,  null,0,false) },
+  prd08:{ prd:mk('sub',  'cl',  null, 67,  1,false), specs:mk('none',  null,null,  null,0,false) },
+  prd09:{ prd:mk('sub',  'cl',  null, 68,  1,false), specs:mk('none',  null,null,  null,0,false) },
+  prd11:{ prd:mk('sub',  'cl',  null, 90,  1,false), specs:mk('none',  null,null,  null,0,false) },
+  prd14:{ prd:mk('sub',  'cl',  null, 87,  1,false), specs:mk('none',  null,null,  null,0,false) },
+  prd15:{ prd:mk('sub',  'cl',  null, 82,  1,false), specs:mk('none',  null,null,  null,0,false) },
+  prd20:{ prd:mk('sub',  'cl',  null, 88,  1,false), specs:mk('none',  null,null,  null,0,false) },
 };
 const EMPTY = { prd:mk('none',null,null,null,0,false), specs:mk('none',null,null,null,0,false) };
 
-/* ── App state ── */
 const GH_PR = 'https://github.com/ClubMediterranee/knowledge-base/pull/';
-let S = { view:'table', sd:'', sp:'', map:{...BASELINE} };
+let S = { view:'table', showPRD:true, showSpecs:true, sp:'', map:{...BASELINE} };
 function setState(p){ Object.assign(S,p); render(); }
 function setView(v){ setState({view:v}); }
 function get(id){ return S.map[id]||EMPTY; }
 
-/* ── Config ── */
+function toggleType(t){
+  if(t==='prd'){ if(S.showSpecs) setState({showPRD:!S.showPRD}); }
+  else          { if(S.showPRD)  setState({showSpecs:!S.showSpecs}); }
+}
+
 const CFG_KEY='kb4';
 function loadCfg(){ try{return JSON.parse(localStorage.getItem(CFG_KEY)||'{}')}catch{return{}} }
 function saveCfg(c){ try{localStorage.setItem(CFG_KEY,JSON.stringify(c))}catch{} }
 const ORG='ClubMediterranee', REPO='knowledge-base';
 
-/* ── GitHub API ── */
 async function gh(o,r,path,t){
   const h={'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};
   if(t) h['Authorization']=`Bearer ${t}`;
@@ -257,7 +251,7 @@ async function gh(o,r,path,t){
 
 function daysSince(iso){ return (Date.now()-new Date(iso).getTime())/86400000; }
 
-function computePrStatus(pr, reviews){
+function computePrStatus(pr,reviews){
   if(!pr) return null;
   if(pr.state==='closed') return pr.merged_at?'merged':null;
   const formal={};
@@ -270,7 +264,7 @@ function computePrStatus(pr, reviews){
   return 'sub';
 }
 
-function findReviewer(pr, reviewMap){
+function findReviewer(pr,reviewMap){
   if(!pr||pr.state==='closed') return null;
   const author=pr.user?.login?.toLowerCase();
   const revs=reviewMap[pr.number]||[];
@@ -295,8 +289,6 @@ async function fetchLive(){
   ]);
   const allPRs=[...open,...closed];
   const mainPaths=(tree.tree||[]).map(f=>f.path.toLowerCase());
-
-  // Fetch files + reviews in batches of 8
   const details=[];
   for(let i=0;i<allPRs.length;i+=8){
     const batch=allPRs.slice(i,i+8);
@@ -307,44 +299,28 @@ async function fetchLive(){
     details.push(...res);
   }
   const revMap=Object.fromEntries(details.map(d=>[d.pr.number,d.reviews]));
-
   const map={};
   for(const sec of CATALOG){
     for(const doc of sec.docs){
       const id=doc.id;
       for(const isSpecs of [false,true]){
-        // Find all open PRs touching this doc/type
-        const matching=details.filter(({files})=>
-          files.some(f=>pathMatch(f.filename.toLowerCase(),id,isSpecs))
-        );
+        const matching=details.filter(({files})=>files.some(f=>pathMatch(f.filename.toLowerCase(),id,isSpecs)));
         const openOnes=matching.filter(d=>d.pr.state==='open');
         const closedMerged=matching.filter(d=>d.pr.state==='closed'&&d.pr.merged_at);
         const onMain=mainPaths.some(p=>pathMatch(p,id,isSpecs));
-
         if(!map[id]) map[id]={};
         const side=isSpecs?'specs':'prd';
-
-        if(openOnes.length===0){
-          map[id][side]=mk(onMain||closedMerged.length?'merged':'none',null,null,null,0,false);
-          continue;
-        }
-
-        // Most recent open PR
+        if(openOnes.length===0){ map[id][side]=mk(onMain||closedMerged.length?'merged':'none',null,null,null,0,false); continue; }
         const sorted=openOnes.sort((a,b)=>new Date(b.pr.updated_at)-new Date(a.pr.updated_at));
         const main=sorted[0];
         const reviews=revMap[main.pr.number]||[];
-
-        // New file vs update?
         const isNew=main.files.some(f=>pathMatch(f.filename.toLowerCase(),id,isSpecs)&&f.status==='added');
         const stale=daysSince(main.pr.updated_at)>7;
         const authorKey=LOGIN[main.pr.user?.login?.toLowerCase()]||null;
         const reviewerKey=findReviewer(main.pr,revMap);
-
         if(isNew){
-          const base=computePrStatus(main.pr,reviews)||'sub';
-          map[id][side]=mk(base,authorKey,reviewerKey,main.pr.number,openOnes.length,stale);
+          map[id][side]=mk(computePrStatus(main.pr,reviews)||'sub',authorKey,reviewerKey,main.pr.number,openOnes.length,stale);
         } else {
-          // Update on existing merged doc
           map[id][side]=mk('merged',authorKey,reviewerKey,main.pr.number,openOnes.length,stale);
         }
       }
@@ -372,7 +348,6 @@ function setBadge(cls,txt){
   el.textContent=txt;
 }
 
-/* ── Config modal ── */
 function openConfig(){
   const c=loadCfg();
   document.getElementById('ti').value=c.token||'';
@@ -386,7 +361,6 @@ function saveConfig(){
   closeConfig(); refreshData();
 }
 
-/* ── Helpers ── */
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function avatar(key,sz){
   const p=PO[key]; if(!p) return '';
@@ -394,38 +368,23 @@ function avatar(key,sz){
   return `<div title="${esc(p.name)}" style="width:${sz}px;height:${sz}px;border-radius:50%;background:${p.bg};color:${p.fg};display:flex;align-items:center;justify-content:center;font-size:${fs}px;font-weight:800;flex-shrink:0">${p.init}</div>`;
 }
 
-/* ── Cell renderer ── */
 function cell(d){
   const {base,authorKey,reviewerKey,prNumber,prCount,isStale}=d;
   const s=ST[base];
   const href=prNumber?GH_PR+prNumber:null;
-
-  // Main pill — clickable only for new docs (not merged updates)
   const pillEl=`<span class="pill ${s.cls}">${s.label}</span>`;
   const pill=(href&&base!=='merged')?`<a href="${href}" target="_blank" rel="noopener">${pillEl}</a>`:pillEl;
-
-  // Update badge (merged doc with open PRs)
   const ubadge=(base==='merged'&&prCount>0&&href)
     ?`<a href="${href}" target="_blank" rel="noopener" class="ubadge" title="${prCount} PR${prCount>1?'s':''} de mise à jour">↑${prCount}</a>`:'';
-
-  // Extra PR badge (non-merged, multiple PRs)
-  const xbadge=(base!=='merged'&&prCount>1)
-    ?`<span class="xbadge">+${prCount-1}</span>`:'';
-
-  // Stale (only for open PRs)
+  const xbadge=(base!=='merged'&&prCount>1)?`<span class="xbadge">+${prCount-1}</span>`:'';
   const staleEl=isStale?`<span class="stale" title="PR inactive depuis + de 7 jours">⏱</span>`:'';
-
-  // Avatars — only for open (non-merged, non-none)
   const showAv=base==='sub'||base==='review';
   const auth=showAv&&authorKey?avatar(authorKey,20):'';
   const rev=(base==='review'&&reviewerKey)?avatar(reviewerKey,20):'';
-
   return `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${auth}${pill}${rev}${ubadge}${xbadge}${staleEl}</div>`;
 }
 
-/* ── Filters ── */
 function matches(doc){
-  if(S.sd&&doc.id!==S.sd) return false;
   if(S.sp){
     const d=get(doc.id);
     const ok=(side)=>side.reviewerKey===S.sp||side.authorKey===S.sp;
@@ -434,7 +393,6 @@ function matches(doc){
   return true;
 }
 
-/* ── Summary stats ── */
 function renderSummary(){
   const all=CATALOG.flatMap(s=>s.docs);
   const cnt={prd:{none:0,sub:0,review:0,merged:0},specs:{none:0,sub:0,review:0,merged:0}};
@@ -443,26 +401,29 @@ function renderSummary(){
     cnt.prd[d.prd.base]=(cnt.prd[d.prd.base]||0)+1;
     cnt.specs[d.specs.base]=(cnt.specs[d.specs.base]||0)+1;
   }
-  const row=(label,c)=>{
+  const row=(label,c,visible)=>{
+    if(!visible) return '';
     const items=Object.entries(c).filter(([,v])=>v>0).map(([k,v])=>
       `<span class="sum-pill"><span class="sum-dot" style="background:${DOT[k]}"></span> ${v} ${k==='none'?'à faire':k==='sub'?'soumis':k==='review'?'en relecture':'mergés'}</span>`
     ).join('<span style="color:var(--border);font-size:12px">·</span>');
     return `<div class="sum-block"><div class="sum-label">${label}</div><div class="sum-pills">${items}</div></div>`;
   };
-  document.getElementById('summary').innerHTML=row('PRDs',cnt.prd)+row('Specs',cnt.specs);
+  document.getElementById('summary').innerHTML=
+    row('PRDs',cnt.prd,S.showPRD)+row('Specs',cnt.specs,S.showSpecs);
 }
 
-/* ── Table ── */
 function renderSection(sec){
   const docs=sec.docs.filter(matches);
   if(!docs.length) return '';
+  const {showPRD,showSpecs}=S;
+  const cols=`80px minmax(200px,1fr)${showPRD?' 1fr':''}${showSpecs?' 1fr':''}`;
   const rows=docs.map(doc=>{
     const d=get(doc.id);
-    return `<div class="doc-row" style="display:grid;grid-template-columns:80px minmax(200px,1fr) 1fr 1fr;gap:0 16px;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border)">
+    return `<div class="doc-row" style="display:grid;grid-template-columns:${cols};gap:0 16px;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border)">
       <div style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;color:var(--muted)">${esc(doc.id)}</div>
       <div style="font-size:14px;font-weight:600">${esc(doc.name)}</div>
-      ${cell(d.prd)}
-      ${cell(d.specs)}
+      ${showPRD?cell(d.prd):''}
+      ${showSpecs?cell(d.specs):''}
     </div>`;
   }).join('');
   return `<div style="margin-top:28px">
@@ -470,28 +431,24 @@ function renderSection(sec){
       <div style="width:24px;height:24px;border-radius:50%;background:var(--ultramarine);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:var(--fd);flex-shrink:0">${esc(sec.letter)}</div>
       <div style="font-weight:700;font-size:14px">${esc(sec.title)}</div>
     </div>
-    <div style="display:grid;grid-template-columns:80px minmax(200px,1fr) 1fr 1fr;gap:0 16px;padding:9px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
-      <div></div><div>Document</div><div>PRD</div><div>Specs</div>
+    <div style="display:grid;grid-template-columns:${cols};gap:0 16px;padding:9px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
+      <div></div><div>Document</div>${showPRD?'<div>PRD</div>':''}${showSpecs?'<div>Specs</div>':''}
     </div>
     ${rows}
   </div>`;
 }
 
-/* ── Kanban ── */
 function renderKanban(){
-  // Cards for all docs (one card per PRD, one per Specs — only if base != 'none')
   const allCards=CATALOG.flatMap(sec=>sec.docs.flatMap(doc=>{
     const d=get(doc.id);
     return [
       {id:doc.id,name:doc.name,type:'PRD',  ...d.prd},
       {id:doc.id,name:doc.name,type:'Specs',...d.specs},
-    ].filter(c=>c.base!=='none');
+    ].filter(c=>c.base!=='none'&&(c.type==='PRD'?S.showPRD:S.showSpecs));
   })).filter(c=>{
-    if(S.sd&&c.id!==S.sd) return false;
     if(S.sp&&c.reviewerKey!==S.sp&&c.authorKey!==S.sp) return false;
     return true;
   });
-
   const cols=KAN_COLS.map(key=>{
     const cards=allCards.filter(c=>c.base===key);
     if(!cards.length) return '';
@@ -528,19 +485,16 @@ function renderKanban(){
   return `<div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:12px;margin-top:24px">${cols}</div>`;
 }
 
-/* ── Filters dropdowns ── */
 function renderFilters(){
-  const all=CATALOG.flatMap(s=>s.docs);
-  document.getElementById('df').innerHTML='<option value="">All documents</option>'+
-    all.map(d=>`<option value="${esc(d.id)}" ${S.sd===d.id?'selected':''}>${esc(d.id)} — ${esc(d.name)}</option>`).join('');
   document.getElementById('pf').innerHTML='<option value="">All POs</option>'+
     Object.values(PO).map(p=>`<option value="${p.key}" ${S.sp===p.key?'selected':''}>${esc(p.name)}</option>`).join('');
 }
 
-/* ── Main render ── */
 function render(){
-  document.getElementById('bt').className='vbtn '+(S.view==='table'?'on':'off');
+  document.getElementById('bt').className='vbtn '+(S.view==='table' ?'on':'off');
   document.getElementById('bk').className='vbtn '+(S.view==='kanban'?'on':'off');
+  document.getElementById('bp').className='tbtn '+(S.showPRD  ?'on':'off');
+  document.getElementById('bs').className='tbtn '+(S.showSpecs?'on':'off');
   renderFilters();
   renderSummary();
   document.getElementById('main').innerHTML=S.view==='table'
@@ -548,7 +502,6 @@ function render(){
     :renderKanban();
 }
 
-/* ── Init ── */
 document.getElementById('team-avatars').innerHTML=Object.values(PO).map(p=>avatar(p.key,26)).join('');
 render();
 refreshData();
