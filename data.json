@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-25T07:44:08.057Z",
+  "updatedAt": "2026-08-25T07:53:50.924Z",
   "map": {
     "prd00": {
       "prd": {
@@ -52,7 +52,7 @@
         "reviewerKey": "cl",
         "prNumber": 72,
         "prCount": 1,
-        "isStale": true
+        "isStale": false
       }
     },
     "prd04": {
