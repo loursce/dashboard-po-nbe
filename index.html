@@ -387,18 +387,28 @@ async function loadDataJson(){
   }
 }
 
+async function triggerWorkflow(token){
+  // Triggers the GitHub Action so data.json is regenerated for all viewers
+  await fetch('https://api.github.com/repos/loursce/dashboard-po-nbe/actions/workflows/update-data.yml/dispatches',{
+    method:'POST',
+    headers:{'Authorization':`Bearer ${token}`,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
+    body:JSON.stringify({ref:'main'}),
+  });
+}
+
 async function refreshData(){
   setBadge('','Chargement…');
   const cfg=loadCfg();
   if(cfg.token){
-    // Token configured → always fetch live from GitHub API
+    // Token configured → fetch live from GitHub API
     try{
       const {map,o,r}=await fetchLive();
       setState({map});
       setBadge('live',`Live · ${o}/${r}`);
+      // Trigger the workflow in background so data.json updates for everyone
+      triggerWorkflow(cfg.token).catch(()=>{});
     }catch(e){
       setBadge('err','⚠ '+e.message.slice(0,80));
-      // Fall back to data.json on error
       await loadDataJson();
     }
   } else {
