@@ -594,7 +594,10 @@ function render(){
 
 document.getElementById('team-avatars').innerHTML=Object.values(PO).map(p=>avatar(p.key,26)).join('');
 render();
-refreshData();
+// On page load: always read data.json (fast, no token needed)
+loadDataJson().then(ok=>{
+  if(!ok) setBadge('','Données du 2026-08-21 — ⚙ Config ou ↺ Refresh pour le live');
+});
 </script>
 </body>
 </html>
