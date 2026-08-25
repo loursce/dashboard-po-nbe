@@ -404,7 +404,7 @@ async function refreshData(){
     try{
       const {map,o,r}=await fetchLive();
       setState({map});
-      setBadge('live',`Live · ${o}/${r}`);
+      setBadge('live',`Mis à jour ${timeAgo(new Date().toISOString())}`);
       // Trigger the workflow in background so data.json updates for everyone
       triggerWorkflow(cfg.token).catch(()=>{});
     }catch(e){
