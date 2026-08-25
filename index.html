@@ -388,20 +388,23 @@ async function loadDataJson(){
 }
 
 async function refreshData(){
-  // 1. Try automated data.json (GitHub Actions, no token needed)
   setBadge('','Chargement…');
-  const ok=await loadDataJson();
-  if(ok) return;
-  // 2. Fall back to direct API call with user token
   const cfg=loadCfg();
-  if(!cfg.token){ setBadge('','Données statiques du 2026-08-21 — ⚙ Config pour le live'); return; }
-  setBadge('','Chargement depuis GitHub…');
-  try{
-    const {map,o,r}=await fetchLive();
-    setState({map});
-    setBadge('live',`Live · ${o}/${r}`);
-  }catch(e){
-    setBadge('err','⚠ '+e.message.slice(0,80));
+  if(cfg.token){
+    // Token configured → always fetch live from GitHub API
+    try{
+      const {map,o,r}=await fetchLive();
+      setState({map});
+      setBadge('live',`Live · ${o}/${r}`);
+    }catch(e){
+      setBadge('err','⚠ '+e.message.slice(0,80));
+      // Fall back to data.json on error
+      await loadDataJson();
+    }
+  } else {
+    // No token → load pre-fetched data.json from GitHub Actions
+    const ok=await loadDataJson();
+    if(!ok) setBadge('','Données statiques du 2026-08-21 — ⚙ Config pour le live');
   }
 }
 
