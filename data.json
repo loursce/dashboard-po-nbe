@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-25T08:51:23.773Z",
+  "updatedAt": "2026-08-26T07:56:34.940Z",
   "map": {
     "prd00": {
       "prd": {
@@ -21,10 +21,10 @@
     },
     "prd05": {
       "prd": {
-        "base": "sub",
-        "authorKey": "cn",
-        "reviewerKey": null,
-        "prNumber": 93,
+        "base": "review",
+        "authorKey": "cl",
+        "reviewerKey": "cn",
+        "prNumber": 91,
         "prCount": 2,
         "isStale": false
       },
@@ -39,19 +39,19 @@
     },
     "prd06": {
       "prd": {
-        "base": "merged",
-        "authorKey": null,
-        "reviewerKey": null,
-        "prNumber": null,
-        "prCount": 0,
+        "base": "review",
+        "authorKey": "cel",
+        "reviewerKey": "cl",
+        "prNumber": 94,
+        "prCount": 1,
         "isStale": false
       },
       "specs": {
-        "base": "merged",
-        "authorKey": null,
-        "reviewerKey": null,
-        "prNumber": null,
-        "prCount": 0,
+        "base": "review",
+        "authorKey": "cel",
+        "reviewerKey": "cl",
+        "prNumber": 94,
+        "prCount": 1,
         "isStale": false
       }
     },
@@ -70,7 +70,7 @@
         "reviewerKey": null,
         "prNumber": 85,
         "prCount": 1,
-        "isStale": false
+        "isStale": true
       }
     },
     "prd07": {
@@ -196,7 +196,7 @@
         "reviewerKey": null,
         "prNumber": 85,
         "prCount": 1,
-        "isStale": false
+        "isStale": true
       }
     },
     "prd01": {
