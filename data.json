@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-27T14:55:22.934Z",
+  "updatedAt": "2026-08-27T19:00:38.612Z",
   "map": {
     "prd00": {
       "prd": {
@@ -129,11 +129,11 @@
     },
     "prd24": {
       "prd": {
-        "base": "none",
-        "authorKey": null,
+        "base": "sub",
+        "authorKey": "cl",
         "reviewerKey": null,
-        "prNumber": null,
-        "prCount": 0,
+        "prNumber": 98,
+        "prCount": 1,
         "isStale": false
       },
       "specs": {
@@ -219,11 +219,11 @@
     },
     "prd13": {
       "prd": {
-        "base": "none",
-        "authorKey": null,
+        "base": "sub",
+        "authorKey": "cl",
         "reviewerKey": null,
-        "prNumber": null,
-        "prCount": 0,
+        "prNumber": 98,
+        "prCount": 1,
         "isStale": false
       },
       "specs": {
@@ -440,7 +440,7 @@
         "reviewerKey": null,
         "prNumber": 90,
         "prCount": 1,
-        "isStale": false
+        "isStale": true
       },
       "specs": {
         "base": "none",
