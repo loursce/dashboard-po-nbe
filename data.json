@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-26T08:52:39.435Z",
+  "updatedAt": "2026-08-27T08:20:58.360Z",
   "map": {
     "prd00": {
       "prd": {
@@ -15,7 +15,7 @@
         "authorKey": "cl",
         "reviewerKey": null,
         "prNumber": 80,
-        "prCount": 6,
+        "prCount": 5,
         "isStale": true
       }
     },
@@ -116,7 +116,7 @@
         "reviewerKey": "cel",
         "prNumber": 84,
         "prCount": 1,
-        "isStale": false
+        "isStale": true
       },
       "specs": {
         "base": "none",
@@ -147,11 +147,11 @@
     },
     "prd23": {
       "prd": {
-        "base": "none",
-        "authorKey": null,
+        "base": "sub",
+        "authorKey": "cl",
         "reviewerKey": null,
-        "prNumber": null,
-        "prCount": 0,
+        "prNumber": 96,
+        "prCount": 1,
         "isStale": false
       },
       "specs": {
@@ -309,11 +309,11 @@
     },
     "prd08": {
       "prd": {
-        "base": "review",
-        "authorKey": "cl",
-        "reviewerKey": "cn",
-        "prNumber": 67,
-        "prCount": 1,
+        "base": "merged",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
         "isStale": false
       },
       "specs": {
@@ -363,9 +363,9 @@
     },
     "prd20": {
       "prd": {
-        "base": "sub",
+        "base": "review",
         "authorKey": "cl",
-        "reviewerKey": null,
+        "reviewerKey": "og",
         "prNumber": 88,
         "prCount": 1,
         "isStale": false
@@ -399,11 +399,11 @@
     },
     "prd17": {
       "prd": {
-        "base": "none",
-        "authorKey": null,
+        "base": "sub",
+        "authorKey": "cl",
         "reviewerKey": null,
-        "prNumber": null,
-        "prCount": 0,
+        "prNumber": 95,
+        "prCount": 1,
         "isStale": false
       },
       "specs": {
