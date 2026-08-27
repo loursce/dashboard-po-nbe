@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-27T08:20:58.360Z",
+  "updatedAt": "2026-08-27T14:55:22.934Z",
   "map": {
     "prd00": {
       "prd": {
@@ -14,44 +14,44 @@
         "base": "sub",
         "authorKey": "cl",
         "reviewerKey": null,
-        "prNumber": 80,
-        "prCount": 5,
+        "prNumber": 78,
+        "prCount": 4,
         "isStale": true
       }
     },
     "prd05": {
       "prd": {
-        "base": "review",
-        "authorKey": "cl",
-        "reviewerKey": "cn",
-        "prNumber": 91,
-        "prCount": 2,
+        "base": "sub",
+        "authorKey": "cn",
+        "reviewerKey": null,
+        "prNumber": 93,
+        "prCount": 1,
         "isStale": false
       },
       "specs": {
-        "base": "review",
-        "authorKey": "cn",
-        "reviewerKey": "cel",
-        "prNumber": 76,
-        "prCount": 1,
+        "base": "merged",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
         "isStale": false
       }
     },
     "prd06": {
       "prd": {
-        "base": "review",
-        "authorKey": "cel",
-        "reviewerKey": "cl",
-        "prNumber": 94,
-        "prCount": 1,
+        "base": "merged",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
         "isStale": false
       },
       "specs": {
-        "base": "review",
-        "authorKey": "cel",
-        "reviewerKey": "cl",
-        "prNumber": 94,
-        "prCount": 1,
+        "base": "merged",
+        "authorKey": null,
+        "reviewerKey": null,
+        "prNumber": null,
+        "prCount": 0,
         "isStale": false
       }
     },
@@ -116,7 +116,7 @@
         "reviewerKey": "cel",
         "prNumber": 84,
         "prCount": 1,
-        "isStale": true
+        "isStale": false
       },
       "specs": {
         "base": "none",
@@ -255,10 +255,10 @@
     },
     "prd12": {
       "prd": {
-        "base": "sub",
+        "base": "review",
         "authorKey": "cl",
-        "reviewerKey": null,
-        "prNumber": 89,
+        "reviewerKey": "cel",
+        "prNumber": 84,
         "prCount": 2,
         "isStale": false
       },
@@ -317,11 +317,11 @@
         "isStale": false
       },
       "specs": {
-        "base": "none",
-        "authorKey": null,
+        "base": "sub",
+        "authorKey": "cl",
         "reviewerKey": null,
-        "prNumber": null,
-        "prCount": 0,
+        "prNumber": 97,
+        "prCount": 1,
         "isStale": false
       }
     },
@@ -422,7 +422,7 @@
         "reviewerKey": null,
         "prNumber": 87,
         "prCount": 1,
-        "isStale": false
+        "isStale": true
       },
       "specs": {
         "base": "none",
