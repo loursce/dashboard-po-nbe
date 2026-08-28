@@ -220,7 +220,7 @@ const CATALOG = [
   ]},
 ];
 
-function mk(base,ak,rk,n,c,s){ return {base,authorKey:ak,reviewerKey:rk,prNumber:n,prCount:c,isStale:s} }
+function mk(base,ak,rk,n,c,s){ return {base,authorKey:ak,reviewerKeys:rk?[rk]:[],prNumber:n,prCount:c,isStale:s} }
 const N = mk('none',null,null,null,0,false); // shorthand for absent
 const BASELINE = {
   // A — Socle & offre produit
@@ -299,14 +299,18 @@ function computePrStatus(pr,reviews){
   return 'sub';
 }
 
-function findReviewer(pr,reviewMap){
-  if(!pr||pr.state==='closed') return null;
+function findReviewers(pr,reviewMap){
+  if(!pr||pr.state==='closed') return [];
   const author=pr.user?.login?.toLowerCase();
   const revs=reviewMap[pr.number]||[];
+  const seen=new Set(), result=[];
   const cands=[...(pr.requested_reviewers||[]).map(u=>u.login),...revs.map(r=>r.user.login)]
     .filter(l=>l.toLowerCase()!==author);
-  for(const l of cands){ const k=LOGIN[l.toLowerCase()]; if(k) return k; }
-  return null;
+  for(const l of cands){
+    const k=LOGIN_MAP[l.toLowerCase()];
+    if(k&&!seen.has(k)){ seen.add(k); result.push(k); }
+  }
+  return result;
 }
 
 function pathMatch(p, doc, isSpecs){
@@ -356,9 +360,10 @@ async function fetchLive(){
         const isNew=main.files.some(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)&&f.status==='added');
         const stale=daysSince(main.pr.updated_at)>7;
         const authorKey=LOGIN[main.pr.user?.login?.toLowerCase()]||null;
-        const reviewerKey=findReviewer(main.pr,revMap);
+        const reviewerKeys=findReviewers(main.pr,revMap);
         // Open PR drives the status — regardless of whether it adds or modifies
-        map[id][side]=mk(computePrStatus(main.pr,reviews)||'sub',authorKey,reviewerKey,main.pr.number,openOnes.length,stale);
+        const st=computePrStatus(main.pr,reviews)||'sub';
+        map[id][side]={base:st,authorKey,reviewerKeys,prNumber:main.pr.number,prCount:openOnes.length,isStale:stale};
       }
     }
   }
@@ -379,7 +384,15 @@ async function loadDataJson(){
     const res=await fetch('./data.json?v='+Date.now());
     if(!res.ok) throw new Error('no data.json');
     const data=await res.json();
-    setState({map:data.map});
+    // backwards compat: data.json may have old reviewerKey field
+    const map={};
+    for(const [id,sides] of Object.entries(data.map)){
+      map[id]={};
+      for(const [side,val] of Object.entries(sides)){
+        map[id][side]={...val,reviewerKeys:val.reviewerKeys||(val.reviewerKey?[val.reviewerKey]:[])};
+      }
+    }
+    setState({map});
     setBadge('live',`Mis à jour ${timeAgo(data.updatedAt)}`);
     return true;
   }catch{
@@ -445,7 +458,7 @@ function avatar(key,sz){
 }
 
 function cell(d){
-  const {base,authorKey,reviewerKey,prNumber,prCount,isStale}=d;
+  const {base,authorKey,reviewerKeys,prNumber,prCount,isStale}=d;
   const s=ST[base];
   const href=prNumber?GH_PR+prNumber:null;
   const pillEl=`<span class="pill ${s.cls}">${s.label}</span>`;
@@ -454,14 +467,15 @@ function cell(d){
   const staleEl=isStale?`<span class="stale" title="PR inactive depuis + de 7 jours">⏱</span>`:'';
   const showAv=base==='sub'||base==='review';
   const auth=showAv&&authorKey?avatar(authorKey,20):'';
-  const rev=(base==='review'&&reviewerKey)?avatar(reviewerKey,20):'';
-  return `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${auth}${pill}${rev}${xbadge}${staleEl}</div>`;
+  const revs=(base==='review'&&reviewerKeys?.length)
+    ?reviewerKeys.map(k=>avatar(k,20)).join(''):'';
+  return `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${auth}${pill}${revs}${xbadge}${staleEl}</div>`;
 }
 
 function matches(doc){
   if(S.sp){
     const d=get(doc.id);
-    const ok=(side)=>side.reviewerKey===S.sp||side.authorKey===S.sp;
+    const ok=(side)=>(side.reviewerKeys||[]).includes(S.sp)||side.authorKey===S.sp;
     if(!ok(d.prd)&&!ok(d.specs)) return false;
   }
   return true;
@@ -523,7 +537,7 @@ function renderKanban(){
       {id:doc.id,name:doc.name,type:'Specs',...d.specs},
     ].filter(c=>(c.type==='PRD'?S.showPRD:S.showSpecs));
   })).filter(c=>{
-    if(S.sp&&c.reviewerKey!==S.sp&&c.authorKey!==S.sp) return false;
+    if(S.sp&&!(c.reviewerKeys||[]).includes(S.sp)&&c.authorKey!==S.sp) return false;
     return true;
   });
   const cols=KAN_COLS.map(key=>{
@@ -556,7 +570,7 @@ function renderKanban(){
           <div style="display:flex;align-items:center;gap:5px">${pill}${staleEl}</div>
           <div style="display:flex;align-items:center;gap:4px">
             ${c.authorKey?avatar(c.authorKey,18):''}
-            ${c.reviewerKey&&c.reviewerKey!==c.authorKey?avatar(c.reviewerKey,18):''}
+            ${(c.reviewerKeys||[]).filter(k=>k!==c.authorKey).map(k=>avatar(k,18)).join('')}
           </div>
         </div>
       </div>`;
