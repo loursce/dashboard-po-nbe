@@ -37,6 +37,9 @@
     .ubadge:hover{border-color:var(--mid-grey)}
     .xbadge{font-size:11px;font-weight:700;color:var(--muted)}
     .stale{font-size:11px;cursor:default;opacity:.8}
+    .av-stack{display:inline-flex;align-items:center}
+    .av-stack>div{border:2px solid var(--surface);margin-left:-6px}
+    .av-stack>div:first-child{margin-left:0}
 
     .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rmd);box-shadow:var(--shadow)}
     .page{max-width:1200px;margin:0 auto;padding:48px 32px 80px}
@@ -456,6 +459,11 @@ function avatar(key,sz){
   const fs=Math.round(sz*.41);
   return `<div title="${esc(p.name)}" style="width:${sz}px;height:${sz}px;border-radius:50%;background:${p.bg};color:${p.fg};display:flex;align-items:center;justify-content:center;font-size:${fs}px;font-weight:800;flex-shrink:0">${p.init}</div>`;
 }
+function avatarStack(keys,sz){
+  if(!keys?.length) return '';
+  const avs=keys.map(k=>avatar(k,sz)).filter(Boolean).join('');
+  return `<div class="av-stack">${avs}</div>`;
+}
 
 function cell(d){
   const {base,authorKey,reviewerKeys,prNumber,prCount,isStale}=d;
@@ -466,10 +474,10 @@ function cell(d){
   const xbadge=(prCount>1)?`<span class="xbadge" title="${prCount} PRs ouvertes">+${prCount-1}</span>`:'';
   const staleEl=isStale?`<span class="stale" title="PR inactive depuis + de 7 jours">⏱</span>`:'';
   const showAv=base==='sub'||base==='review';
-  const auth=showAv&&authorKey?avatar(authorKey,20):'';
+  const auth=showAv&&authorKey?avatar(authorKey,18):'';
   const revs=(base==='review'&&reviewerKeys?.length)
-    ?reviewerKeys.map(k=>avatar(k,20)).join(''):'';
-  return `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${auth}${pill}${revs}${xbadge}${staleEl}</div>`;
+    ?avatarStack(reviewerKeys,18):'';
+  return `<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">${auth}${pill}${revs}${xbadge}${staleEl}</div>`;
 }
 
 function matches(doc){
@@ -569,8 +577,8 @@ function renderKanban(){
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
           <div style="display:flex;align-items:center;gap:5px">${pill}${staleEl}</div>
           <div style="display:flex;align-items:center;gap:4px">
-            ${c.authorKey?avatar(c.authorKey,18):''}
-            ${(c.reviewerKeys||[]).filter(k=>k!==c.authorKey).map(k=>avatar(k,18)).join('')}
+            ${c.authorKey?avatar(c.authorKey,16):''}
+            ${avatarStack((c.reviewerKeys||[]).filter(k=>k!==c.authorKey),16)}
           </div>
         </div>
       </div>`;
