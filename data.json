@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-28T07:39:32.067Z",
+  "updatedAt": "2026-08-28T13:12:54.918Z",
   "map": {
     "prd00": {
       "prd": {
@@ -65,12 +65,12 @@
         "isStale": false
       },
       "specs": {
-        "base": "sub",
-        "authorKey": "cel",
+        "base": "merged",
+        "authorKey": null,
         "reviewerKeys": [],
-        "prNumber": 85,
-        "prCount": 1,
-        "isStale": true
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
       }
     },
     "prd07": {
@@ -93,11 +93,11 @@
     },
     "prd03": {
       "prd": {
-        "base": "none",
-        "authorKey": null,
+        "base": "sub",
+        "authorKey": "cl",
         "reviewerKeys": [],
-        "prNumber": null,
-        "prCount": 0,
+        "prNumber": 100,
+        "prCount": 1,
         "isStale": false
       },
       "specs": {
@@ -201,12 +201,12 @@
         "isStale": false
       },
       "specs": {
-        "base": "sub",
-        "authorKey": "cel",
+        "base": "none",
+        "authorKey": null,
         "reviewerKeys": [],
-        "prNumber": 85,
-        "prCount": 1,
-        "isStale": true
+        "prNumber": null,
+        "prCount": 0,
+        "isStale": false
       }
     },
     "prd01": {
