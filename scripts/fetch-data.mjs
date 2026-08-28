@@ -91,19 +91,20 @@ function prStatus(pr, reviews) {
   return 'sub';
 }
 
-function findReviewer(pr, reviewMap) {
-  if (!pr || pr.state === 'closed') return null;
+function findReviewers(pr, reviewMap) {
+  if (!pr || pr.state === 'closed') return [];
   const author = pr.user?.login?.toLowerCase();
   const revs = reviewMap[pr.number] || [];
+  const seen = new Set(), result = [];
   const cands = [
     ...(pr.requested_reviewers || []).map(u => u.login),
     ...revs.map(r => r.user.login),
   ].filter(l => l.toLowerCase() !== author);
   for (const l of cands) {
     const k = LOGIN_MAP[l.toLowerCase()];
-    if (k) return k;
+    if (k && !seen.has(k)) { seen.add(k); result.push(k); }
   }
-  return null;
+  return result;
 }
 
 /* ── Main ── */
@@ -152,7 +153,7 @@ for (const sec of CATALOG) {
       const onMain = mainPaths.some(p => pathMatch(p, doc, isSpecs));
 
       if (openOnes.length === 0) {
-        map[doc.id][side] = { base: onMain ? 'merged' : 'none', authorKey: null, reviewerKey: null, prNumber: null, prCount: 0, isStale: false };
+        map[doc.id][side] = { base: onMain ? 'merged' : 'none', authorKey: null, reviewerKeys: [], prNumber: null, prCount: 0, isStale: false };
         continue;
       }
 
@@ -161,10 +162,10 @@ for (const sec of CATALOG) {
       const reviews = reviewMap[main.pr.number] || [];
       const stale = daysSince(main.pr.updated_at) > 7;
       const authorKey = LOGIN_MAP[main.pr.user?.login?.toLowerCase()] || null;
-      const reviewerKey = findReviewer(main.pr, reviewMap);
+      const reviewerKeys = findReviewers(main.pr, reviewMap);
       const base = prStatus(main.pr, reviews) || 'sub';
 
-      map[doc.id][side] = { base, authorKey, reviewerKey, prNumber: main.pr.number, prCount: openOnes.length, isStale: stale };
+      map[doc.id][side] = { base, authorKey, reviewerKeys, prNumber: main.pr.number, prCount: openOnes.length, isStale: stale };
     }
   }
 }
