@@ -173,7 +173,7 @@ const PO = {
   cn:  { key:'cn',  init:'CN', name:'Céline N.',    login:'Celine-sorya', bg:'#934834', fg:'#fff' },
   og:  { key:'og',  init:'OG', name:'Océane G.',    login:'LiliYoru',     bg:'#ffbf00', fg:'#000' },
 };
-const LOGIN = Object.fromEntries(Object.values(PO).map(p=>[p.login.toLowerCase(), p.key]));
+const LOGIN_MAP = Object.fromEntries(Object.values(PO).map(p=>[p.login.toLowerCase(), p.key]));
 
 const ST = {
   none:  { label:'—',         cls:'pn' },
