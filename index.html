@@ -362,7 +362,7 @@ async function fetchLive(){
         const reviews=revMap[main.pr.number]||[];
         const isNew=main.files.some(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)&&f.status==='added');
         const stale=daysSince(main.pr.updated_at)>7;
-        const authorKey=LOGIN[main.pr.user?.login?.toLowerCase()]||null;
+        const authorKey=LOGIN_MAP[main.pr.user?.login?.toLowerCase()]||null;
         const reviewerKeys=findReviewers(main.pr,revMap);
         // Open PR drives the status — regardless of whether it adds or modifies
         const st=computePrStatus(main.pr,reviews)||'sub';
