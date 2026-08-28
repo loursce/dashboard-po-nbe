@@ -424,8 +424,8 @@ async function refreshData(){
       // Trigger the workflow in background so data.json updates for everyone
       triggerWorkflow(cfg.token).catch(()=>{});
     }catch(e){
-      setBadge('err','⚠ '+e.message.slice(0,80));
-      await loadDataJson();
+      // Keep error visible — don't overwrite with data.json fallback
+      setBadge('err','⚠ '+e.message.slice(0,120));
     }
   } else {
     // No token → load pre-fetched data.json from GitHub Actions
