@@ -1,22 +1,26 @@
 {
-  "updatedAt": "2026-08-30T13:44:26.570Z",
+  "updatedAt": "2026-08-31T07:48:53.914Z",
   "map": {
     "prd00": {
       "prd": {
-        "base": "merged",
-        "authorKey": null,
-        "reviewerKeys": [],
-        "prNumber": null,
-        "prCount": 0,
+        "base": "review",
+        "authorKey": "cl",
+        "reviewerKeys": [
+          "cn"
+        ],
+        "prNumber": 78,
+        "prCount": 1,
         "isStale": false
       },
       "specs": {
-        "base": "sub",
+        "base": "review",
         "authorKey": "cl",
-        "reviewerKeys": [],
-        "prNumber": 78,
+        "reviewerKeys": [
+          "cn"
+        ],
+        "prNumber": 75,
         "prCount": 4,
-        "isStale": true
+        "isStale": false
       }
     },
     "prd05": {
