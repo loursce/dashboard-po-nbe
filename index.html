@@ -37,6 +37,13 @@
     .ubadge:hover{border-color:var(--mid-grey)}
     .xbadge{font-size:11px;font-weight:700;color:var(--muted)}
     .stale{font-size:11px;cursor:default;opacity:.8}
+    /* Doc status pills */
+    .ds{display:inline-flex;align-items:center;border-radius:var(--rpill);padding:.22rem .6rem;font-size:.68rem;font-weight:700;white-space:nowrap;line-height:1;border:1px solid transparent}
+    .ds-none  {background:transparent;border-color:var(--border);color:var(--muted)}
+    .ds-draft {background:color-mix(in srgb,var(--saffron) 22%,var(--white));color:#7a5200}
+    .ds-prog  {background:color-mix(in srgb,var(--teal) 14%,var(--white));color:var(--teal)}
+    .ds-review{background:color-mix(in srgb,var(--ultramarine) 12%,var(--white));color:var(--ultramarine)}
+    .ds-done  {background:color-mix(in srgb,#088c20 12%,var(--white));color:#088c20}
     .av-stack{display:inline-flex;align-items:center}
     .av-stack>div{border:2px solid var(--surface);margin-left:-6px}
     .av-stack>div:first-child{margin-left:0}
@@ -121,28 +128,45 @@
       <button id="bp" class="tbtn on" onclick="toggleType('prd')">PRD</button>
       <button id="bs" class="tbtn on" onclick="toggleType('specs')">Specs</button>
     </div>
-    <!-- PO filter -->
-    <select id="pf" onchange="setState({sp:this.value})"
-      style="padding:8px 12px;border-radius:var(--rsm);border:1px solid var(--border);font-size:13px;font-family:var(--fb);background:var(--surface);color:var(--text);cursor:pointer"></select>
+    <!-- Filters -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <select id="pf" onchange="setState({sp:this.value})"
+        style="padding:8px 12px;border-radius:var(--rsm);border:1px solid var(--border);font-size:13px;font-family:var(--fb);background:var(--surface);color:var(--text);cursor:pointer"></select>
+      <select id="dsf" onchange="setState({sds:this.value})"
+        style="padding:8px 12px;border-radius:var(--rsm);border:1px solid var(--border);font-size:13px;font-family:var(--fb);background:var(--surface);color:var(--text);cursor:pointer"></select>
+    </div>
   </div>
 
   <div id="main"></div>
 
   <!-- Legend -->
   <div style="margin-top:40px;border-top:1px solid var(--border);padding-top:20px">
-    <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px">Légende</div>
-    <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start">
-      <div style="display:flex;flex-direction:column;gap:7px">
-        <div style="display:flex;align-items:center;gap:8px"><span class="pill pn">—</span><span style="font-size:12px;color:var(--soft)">Pas dans le repo</span></div>
-        <div style="display:flex;align-items:center;gap:8px"><span class="pill ps">Submitted</span><span style="font-size:12px;color:var(--soft)">PR ouverte, pas encore relue</span></div>
-        <div style="display:flex;align-items:center;gap:8px"><span class="pill pr">In review</span><span style="font-size:12px;color:var(--soft)">Une PO a commenté la PR</span></div>
-        <div style="display:flex;align-items:center;gap:8px"><span class="pill pm">Merged</span><span style="font-size:12px;color:var(--soft)">Sur main, aucune PR ouverte</span></div>
+    <div style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px">Statut du document (ligne 1)</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:8px"><span class="ds ds-none">—</span><span style="font-size:12px;color:var(--soft)">Pas de fichier</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span class="ds ds-draft">Draft</span><span style="font-size:12px;color:var(--soft)">Premier jet</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span class="ds ds-prog">In progress</span><span style="font-size:12px;color:var(--soft)">En cours d'écriture</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span class="ds ds-review">Review</span><span style="font-size:12px;color:var(--soft)">Relu, en attente de validation</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span class="ds ds-done">Accepted ✓</span><span style="font-size:12px;color:var(--soft)">Validé — état final</span></div>
+        </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:7px">
-        <div style="display:flex;align-items:center;gap:8px"><span class="stale">⏱</span><span style="font-size:12px;color:var(--soft)">PR sans activité depuis + de 7 jours</span></div>
-        <div style="display:flex;align-items:center;gap:8px"><span class="xbadge">+2</span><span style="font-size:12px;color:var(--soft)">Plusieurs PRs ouvertes sur ce document</span></div>
-        <div style="font-size:12px;color:var(--soft)">Avatar gauche = auteur de la PR · Avatar droit = reviewer</div>
-        <div style="font-size:12px;color:var(--soft)"><strong>Merged</strong> = sur main, aucune PR ouverte</div>
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px">Statut repo (ligne 2)</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:8px"><span class="pill pn">—</span><span style="font-size:12px;color:var(--soft)">Pas dans le repo</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span class="pill ps">Submitted</span><span style="font-size:12px;color:var(--soft)">PR ouverte, pas encore relue</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span class="pill pr">In review</span><span style="font-size:12px;color:var(--soft)">Une PO a commenté</span></div>
+          <div style="display:flex;align-items:center;gap:8px"><span class="pill pm">Merged</span><span style="font-size:12px;color:var(--soft)">Sur main, pas de PR ouverte</span></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px">Autres</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:8px"><span class="stale">⏱</span><span style="font-size:12px;color:var(--soft)">PR sans activité depuis + 7j</span></div>
+          <div style="font-size:12px;color:var(--soft)">Avatar gauche = auteur · Avatar droit = reviewer</div>
+        </div>
       </div>
     </div>
   </div>
@@ -183,6 +207,38 @@ const ST = {
 };
 const KAN_COLS = ['none','sub','review','merged'];
 const KAN_LABELS = { none:'Absent du repo', sub:'Submitted', review:'In review', merged:'Merged' };
+
+// Doc status
+const DS = {
+  null:          { label:'—',           cls:'ds-none'  },
+  'draft':      { label:'Draft',       cls:'ds-draft' },
+  'in-progress':{ label:'In progress', cls:'ds-prog'  },
+  'review':     { label:'Review',      cls:'ds-review'},
+  'accepted':   { label:'Accepted ✓',  cls:'ds-done'  },
+};
+const DS_ORDER = [null,'draft','in-progress','review','accepted'];
+// Kanban columns for doc status view
+const KAN_DS_COLS = [null,'draft','in-progress','review','accepted'];
+
+function parseDocStatus(content){
+  const m=content.match(/\bstatus:\s*(\S+)/);
+  if(!m) return null;
+  const s=m[1].toLowerCase().replace(/['"]/g,'');
+  if(s==='in-progress'||s==='in_progress'||s==='progress') return 'in-progress';
+  if(s==='accepted'||s==='done'||s==='approved') return 'accepted';
+  if(s==='review'||s==='reviewed') return 'review';
+  if(s==='draft') return 'draft';
+  return null;
+}
+function minDocStatus(arr){
+  const v=arr.filter(s=>s!==null&&s!==undefined);
+  if(!v.length) return null;
+  return v.reduce((a,b)=>DS_ORDER.indexOf(a)<=DS_ORDER.indexOf(b)?a:b);
+}
+function dsTag(status){
+  const d=DS[status]||DS[null];
+  return `<span class="ds ${d.cls}">${d.label}</span>`;
+}
 const DOT = { none:'#ccc', sub:'#008080', review:'#e6a800', merged:'#1e2643' };
 
 // hint[] = path keywords used for GitHub file matching
@@ -223,7 +279,7 @@ const CATALOG = [
   ]},
 ];
 
-function mk(base,ak,rk,n,c,s){ return {base,authorKey:ak,reviewerKeys:rk?[rk]:[],prNumber:n,prCount:c,isStale:s} }
+function mk(base,ak,rk,n,c,s,ds=null){ return {base,authorKey:ak,reviewerKeys:rk?[rk]:[],prNumber:n,prCount:c,isStale:s,docStatus:ds} }
 const N = mk('none',null,null,null,0,false); // shorthand for absent
 const BASELINE = {
   // A — Socle & offre produit
@@ -261,7 +317,7 @@ const BASELINE = {
 const EMPTY = { prd:N, specs:N };
 
 const GH_PR = 'https://github.com/ClubMediterranee/knowledge-base/pull/';
-let S = { view:'table', showPRD:true, showSpecs:true, sp:'', map:{...BASELINE} };
+let S = { view:'table', showPRD:true, showSpecs:true, sp:'', sds:'', map:{...BASELINE} };
 function setState(p){ Object.assign(S,p); render(); }
 function setView(v){ setState({view:v}); }
 function get(id){ return S.map[id]||EMPTY; }
@@ -345,6 +401,45 @@ async function fetchLive(){
     details.push(...res);
   }
   const revMap=Object.fromEntries(details.map(d=>[d.pr.number,d.reviews]));
+
+  // Build file map from tree: lowercase_path → sha (for doc status)
+  const fileMap={};
+  for(const f of (tree.tree||[])){
+    if(f.type==='blob'&&f.path.endsWith('.md')) fileMap[f.path.toLowerCase()]=f.sha;
+  }
+
+  async function fetchBlobStatus(sha){
+    try{
+      const b=await gh(o,r,`/git/blobs/${sha}`,cfg.token);
+      const raw=atob(b.content.replace(/\n/g,'')).slice(0,600);
+      return parseDocStatus(raw);
+    }catch{ return null; }
+  }
+
+  async function getDocStatus(doc,isSpecs){
+    const files=Object.entries(fileMap).filter(([p])=>pathMatch(p,doc,isSpecs));
+    if(!files.length){
+      // Try from PR patch (new file not yet on main)
+      const prMatch=details.find(({files:pf,pr})=>pr.state==='open'&&pf.some(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)&&f.status==='added'));
+      if(prMatch){
+        const pf=prMatch.files.find(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)&&f.status==='added');
+        if(pf?.patch){
+          const m=pf.patch.match(/^\+status:\s*(\S+)/m);
+          return m?parseDocStatus('+status: '+m[1]):null;
+        }
+      }
+      return null;
+    }
+    if(!isSpecs){
+      return fetchBlobStatus(files[0][1]);
+    } else {
+      const nonIdx=files.filter(([p])=>!p.endsWith('index.md'));
+      const targets=(nonIdx.length?nonIdx:files).slice(0,6);
+      const statuses=await Promise.all(targets.map(([,sha])=>fetchBlobStatus(sha)));
+      return minDocStatus(statuses);
+    }
+  }
+
   const map={};
   for(const sec of CATALOG){
     for(const doc of sec.docs){
@@ -356,17 +451,20 @@ async function fetchLive(){
         const onMain=mainPaths.some(p=>pathMatch(p,doc,isSpecs));
         if(!map[id]) map[id]={};
         const side=isSpecs?'specs':'prd';
-        if(openOnes.length===0){ map[id][side]=mk(onMain||closedMerged.length?'merged':'none',null,null,null,0,false); continue; }
+        const docStatus=await getDocStatus(doc,isSpecs);
+        if(openOnes.length===0){
+          const base=onMain||closedMerged.length?'merged':'none';
+          map[id][side]={base,authorKey:null,reviewerKeys:[],prNumber:null,prCount:0,isStale:false,docStatus};
+          continue;
+        }
         const sorted=openOnes.sort((a,b)=>new Date(b.pr.updated_at)-new Date(a.pr.updated_at));
         const main=sorted[0];
         const reviews=revMap[main.pr.number]||[];
-        const isNew=main.files.some(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)&&f.status==='added');
         const stale=daysSince(main.pr.updated_at)>7;
         const authorKey=LOGIN_MAP[main.pr.user?.login?.toLowerCase()]||null;
         const reviewerKeys=findReviewers(main.pr,revMap);
-        // Open PR drives the status — regardless of whether it adds or modifies
         const st=computePrStatus(main.pr,reviews)||'sub';
-        map[id][side]={base:st,authorKey,reviewerKeys,prNumber:main.pr.number,prCount:openOnes.length,isStale:stale};
+        map[id][side]={base:st,authorKey,reviewerKeys,prNumber:main.pr.number,prCount:openOnes.length,isStale:stale,docStatus};
       }
     }
   }
@@ -392,7 +490,7 @@ async function loadDataJson(){
     for(const [id,sides] of Object.entries(data.map)){
       map[id]={};
       for(const [side,val] of Object.entries(sides)){
-        map[id][side]={...val,reviewerKeys:val.reviewerKeys||(val.reviewerKey?[val.reviewerKey]:[])};
+        map[id][side]={...val,reviewerKeys:val.reviewerKeys||(val.reviewerKey?[val.reviewerKey]:[]),docStatus:val.docStatus||null};
       }
     }
     setState({map});
@@ -466,18 +564,20 @@ function avatarStack(keys,sz){
 }
 
 function cell(d){
-  const {base,authorKey,reviewerKeys,prNumber,prCount,isStale}=d;
+  const {base,authorKey,reviewerKeys,prNumber,prCount,isStale,docStatus}=d;
   const s=ST[base];
   const href=prNumber?GH_PR+prNumber:null;
-  const pillEl=`<span class="pill ${s.cls}">${s.label}</span>`;
-  const pill=href?`<a href="${href}" target="_blank" rel="noopener">${pillEl}</a>`:pillEl;
+  const pillEl=`<span class="pill ${s.cls}" style="font-size:.68rem;padding:.22rem .6rem">${s.label}</span>`;
+  const pill=href?`<a href="${href}" target="_blank" rel="noopener" style="text-decoration:none">${pillEl}</a>`:pillEl;
   const xbadge=(prCount>1)?`<span class="xbadge" title="${prCount} PRs ouvertes">+${prCount-1}</span>`:'';
   const staleEl=isStale?`<span class="stale" title="PR inactive depuis + de 7 jours">⏱</span>`:'';
   const showAv=base==='sub'||base==='review';
-  const auth=showAv&&authorKey?avatar(authorKey,18):'';
-  const revs=(base==='review'&&reviewerKeys?.length)
-    ?avatarStack(reviewerKeys,18):'';
-  return `<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap">${auth}${pill}${revs}${xbadge}${staleEl}</div>`;
+  const auth=showAv&&authorKey?avatar(authorKey,16):'';
+  const revs=(base==='review'&&reviewerKeys?.length)?avatarStack(reviewerKeys,16):'';
+  return `<div style="display:flex;flex-direction:column;gap:3px">
+    <div>${dsTag(docStatus)}</div>
+    <div style="display:flex;align-items:center;gap:4px">${auth}${pill}${revs}${xbadge}${staleEl}</div>
+  </div>`;
 }
 
 function matches(doc){
@@ -485,6 +585,10 @@ function matches(doc){
     const d=get(doc.id);
     const ok=(side)=>(side.reviewerKeys||[]).includes(S.sp)||side.authorKey===S.sp;
     if(!ok(d.prd)&&!ok(d.specs)) return false;
+  }
+  if(S.sds){
+    const d=get(doc.id);
+    if(d.prd.docStatus!==S.sds&&d.specs.docStatus!==S.sds) return false;
   }
   return true;
 }
@@ -548,10 +652,10 @@ function renderKanban(){
     if(S.sp&&!(c.reviewerKeys||[]).includes(S.sp)&&c.authorKey!==S.sp) return false;
     return true;
   });
-  const cols=KAN_COLS.map(key=>{
-    const cards=allCards.filter(c=>c.base===key);
+  const cols=KAN_DS_COLS.map(key=>{
+    const cards=allCards.filter(c=>c.docStatus===key);
     if(!cards.length) return '';
-    const isAbsent=key==='none';
+    const isAbsent=key===null;
     const colBg=isAbsent?'#f0f0f0':'var(--pearl)';
     const cardsH=cards.map(c=>{
       const href=c.prNumber?GH_PR+c.prNumber:null;
@@ -566,16 +670,16 @@ function renderKanban(){
         </div>`;
       }
       const pillEl=`<span class="pill ${ST[c.base].cls}">${ST[c.base].label}</span>`;
-      const pill=href?`<a href="${href}" target="_blank" rel="noopener">${pillEl}</a>`:pillEl;
+      const repoPill=href?`<a href="${href}" target="_blank" rel="noopener" style="text-decoration:none">${pillEl}</a>`:pillEl;
       const staleEl=c.isStale?`<span class="stale" title="PR inactive depuis + de 7 jours">⏱</span>`:'';
-      return `<div class="card" style="padding:12px;display:flex;flex-direction:column;gap:8px">
+      return `<div class="card" style="padding:11px;display:flex;flex-direction:column;gap:6px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
           <span style="font-family:ui-monospace,monospace;font-size:11px;color:var(--muted)">${esc(c.id)}</span>
           <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)">${esc(c.type)}</span>
         </div>
         <div style="font-size:13px;font-weight:600;line-height:1.3">${esc(c.name)}</div>
         <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
-          <div style="display:flex;align-items:center;gap:5px">${pill}${staleEl}</div>
+          <div style="display:flex;align-items:center;gap:4px">${repoPill}${staleEl}</div>
           <div style="display:flex;align-items:center;gap:4px">
             ${c.authorKey?avatar(c.authorKey,16):''}
             ${avatarStack((c.reviewerKeys||[]).filter(k=>k!==c.authorKey),16)}
@@ -583,12 +687,11 @@ function renderKanban(){
         </div>
       </div>`;
     }).join('');
-    const colLabel=KAN_LABELS[key]||ST[key].label;
     return `<div style="flex:0 0 240px;background:${colBg};border-radius:var(--rmd);padding:12px;max-height:70vh;display:flex;flex-direction:column">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 2px">
         ${isAbsent
-          ? `<span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">${colLabel}</span>`
-          : `<span class="pill ${ST[key].cls}">${ST[key].label}</span>`}
+          ? `<span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Absent</span>`
+          : dsTag(key)}
         <span style="font-size:12px;color:var(--muted);font-weight:700">${cards.length}</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;overflow-y:auto">${cardsH}</div>
@@ -600,6 +703,8 @@ function renderKanban(){
 function renderFilters(){
   document.getElementById('pf').innerHTML='<option value="">All POs</option>'+
     Object.values(PO).map(p=>`<option value="${p.key}" ${S.sp===p.key?'selected':''}>${esc(p.name)}</option>`).join('');
+  document.getElementById('dsf').innerHTML='<option value="">Doc status</option>'+
+    ['draft','in-progress','review','accepted'].map(k=>`<option value="${k}" ${S.sds===k?'selected':''}>${DS[k].label}</option>`).join('');
 }
 
 function render(){
