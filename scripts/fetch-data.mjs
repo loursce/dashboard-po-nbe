@@ -107,6 +107,23 @@ function findReviewers(pr, reviewMap) {
   return result;
 }
 
+function parseDocStatus(content){
+  const m=content.match(/status:\s*(\S+)/);
+  if(!m) return null;
+  const v=m[1].toLowerCase().replace(/['"]/g,'');
+  if(v==='in-progress'||v==='in_progress'||v==='progress') return 'in-progress';
+  if(v==='accepted'||v==='done'||v==='approved') return 'accepted';
+  if(v==='review'||v==='reviewed') return 'review';
+  if(v==='draft') return 'draft';
+  return null;
+}
+const DS_ORDER=[null,'draft','in-progress','review','accepted'];
+function minDocStatus(arr){
+  const v=arr.filter(s=>s!=null);
+  if(!v.length) return null;
+  return v.reduce((a,b)=>DS_ORDER.indexOf(a)<=DS_ORDER.indexOf(b)?a:b);
+}
+
 /* ── Main ── */
 console.log('Fetching PRs and repo tree…');
 
@@ -152,8 +169,38 @@ for (const sec of CATALOG) {
       const openOnes = matching.filter(d => d.pr.state === 'open');
       const onMain = mainPaths.some(p => pathMatch(p, doc, isSpecs));
 
+      // Fetch doc status from frontmatter
+      let docStatus = null;
+      const treeFiles = mainPaths.filter(p => pathMatch(p, doc, isSpecs) && p.endsWith('.md'));
+      if (treeFiles.length) {
+        // Get SHA from full tree (we need blob SHA not tree SHA)
+        const treeEntries = (tree.tree || []).filter(f => f.type === 'blob' && pathMatch(f.path.toLowerCase(), doc, isSpecs) && f.path.endsWith('.md'));
+        const targets = isSpecs
+          ? treeEntries.filter(f => !f.path.endsWith('index.md')).slice(0, 5)
+          : treeEntries.slice(0, 1);
+        const statuses = await Promise.all(targets.map(async f => {
+          try {
+            const blob = await gh(`/git/blobs/${f.sha}`);
+            const raw = Buffer.from(blob.content.replace(/
+/g,''), 'base64').toString('utf8').slice(0, 600);
+            return parseDocStatus(raw);
+          } catch { return null; }
+        }));
+        docStatus = isSpecs ? minDocStatus(statuses) : (statuses[0] || null);
+      } else {
+        // Try from PR patch (new file)
+        const prWithPatch = details.find(({files: pf, pr}) => pr.state === 'open' && pf.some(f => pathMatch(f.filename.toLowerCase(), doc, isSpecs) && f.status === 'added'));
+        if (prWithPatch) {
+          const pf = prWithPatch.files.find(f => pathMatch(f.filename.toLowerCase(), doc, isSpecs) && f.status === 'added');
+          if (pf?.patch) {
+            const m = pf.patch.match(/^\+status:\s*(\S+)/m);
+            if (m) docStatus = parseDocStatus('+status: ' + m[1]);
+          }
+        }
+      }
+
       if (openOnes.length === 0) {
-        map[doc.id][side] = { base: onMain ? 'merged' : 'none', authorKey: null, reviewerKeys: [], prNumber: null, prCount: 0, isStale: false };
+        map[doc.id][side] = { base: onMain ? 'merged' : 'none', authorKey: null, reviewerKeys: [], prNumber: null, prCount: 0, isStale: false, docStatus };
         continue;
       }
 
@@ -165,7 +212,7 @@ for (const sec of CATALOG) {
       const reviewerKeys = findReviewers(main.pr, reviewMap);
       const base = prStatus(main.pr, reviews) || 'sub';
 
-      map[doc.id][side] = { base, authorKey, reviewerKeys, prNumber: main.pr.number, prCount: openOnes.length, isStale: stale };
+      map[doc.id][side] = { base, authorKey, reviewerKeys, prNumber: main.pr.number, prCount: openOnes.length, isStale: stale, docStatus };
     }
   }
 }
