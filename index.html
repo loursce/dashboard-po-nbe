@@ -132,6 +132,8 @@
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       <select id="pf" onchange="setState({sp:this.value})"
         style="padding:8px 12px;border-radius:var(--rsm);border:1px solid var(--border);font-size:13px;font-family:var(--fb);background:var(--surface);color:var(--text);cursor:pointer"></select>
+      <select id="srf" onchange="setState({sr:this.value})"
+        style="padding:8px 12px;border-radius:var(--rsm);border:1px solid var(--border);font-size:13px;font-family:var(--fb);background:var(--surface);color:var(--text);cursor:pointer"></select>
       <select id="dsf" onchange="setState({sds:this.value})"
         style="padding:8px 12px;border-radius:var(--rsm);border:1px solid var(--border);font-size:13px;font-family:var(--fb);background:var(--surface);color:var(--text);cursor:pointer"></select>
     </div>
@@ -320,7 +322,7 @@ const BASELINE = {
 const EMPTY = { prd:N, specs:N };
 
 const GH_PR = 'https://github.com/ClubMediterranee/knowledge-base/pull/';
-let S = { view:'table', showPRD:true, showSpecs:true, sp:'', sds:'', map:{...BASELINE} };
+let S = { view:'table', showPRD:true, showSpecs:true, sp:'', sds:'', sr:'', map:{...BASELINE} };
 function setState(p){ Object.assign(S,p); render(); }
 function setView(v){ setState({view:v}); }
 function get(id){ return S.map[id]||EMPTY; }
@@ -599,6 +601,10 @@ function matches(doc){
     const d=get(doc.id);
     if(d.prd.docStatus!==S.sds&&d.specs.docStatus!==S.sds) return false;
   }
+  if(S.sr){
+    const d=get(doc.id);
+    if(d.prd.base!==S.sr&&d.specs.base!==S.sr) return false;
+  }
   return true;
 }
 
@@ -723,6 +729,8 @@ function renderKanban(){
 function renderFilters(){
   document.getElementById('pf').innerHTML='<option value="">All POs</option>'+
     Object.values(PO).map(p=>`<option value="${p.key}" ${S.sp===p.key?'selected':''}>${esc(p.name)}</option>`).join('');
+  document.getElementById('srf').innerHTML='<option value="">Repo status</option>'+
+    ['none','sub','review','merged'].map(k=>`<option value="${k}" ${S.sr===k?'selected':''}>${ST[k].label}</option>`).join('');
   document.getElementById('dsf').innerHTML='<option value="">Doc status</option>'+
     ['draft','in-progress','review','accepted'].map(k=>`<option value="${k}" ${S.sds===k?'selected':''}>${DS[k].label}</option>`).join('');
 }
