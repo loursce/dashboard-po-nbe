@@ -18,17 +18,13 @@ Par défaut, les données sont mises à jour automatiquement chaque matin à 8h0
 
 Pour forcer un refresh immédiat, configure un token GitHub personnel :
 
-### Créer un fine-grained token (recommandé)
+### Créer un token GitHub
 
-1. Va sur **https://github.com/settings/personal-access-tokens/new**
-2. **Token name** : `Dashboard PO NBE`
+1. Va sur **https://github.com/settings/tokens/new**
+2. **Note** : `Dashboard PO NBE`
 3. **Expiration** : 90 jours
-4. **Repository access** → *Only select repositories* → `ClubMediterranee/knowledge-base`
-5. **Permissions** :
-   - `Contents` → Read-only
-   - `Metadata` → Read-only (auto)
-   - `Pull requests` → Read-only
-6. Cliquer **Generate token** — copier la valeur (affichée une seule fois)
+4. **Cocher** : `repo` (donne accès aux repos privés de l'org)
+5. Cliquer **Generate token** — copier la valeur (affichée une seule fois)
 
 ### Configurer dans le dashboard
 
@@ -55,5 +51,5 @@ Le token est stocké uniquement dans ton navigateur (localStorage). Il expire ap
 
 | Secret | Description |
 |---|---|
-| `KB_TOKEN` | Fine-grained token read-only sur `ClubMediterranee/knowledge-base` |
+| `KB_TOKEN` | Token GitHub avec scope `repo` sur `ClubMediterranee/knowledge-base` |
 | `DASHBOARD_PASSWORD` | Mot de passe de chiffrement AES-256-GCM pour `data.json` |
