@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 import { writeFileSync } from 'fs';
+import { createHash, createCipheriv, randomBytes } from 'crypto';
 
 const TOKEN = process.env.GH_TOKEN;
 const OWNER = 'ClubMediterranee';
 const REPO  = 'knowledge-base';
 if (!TOKEN) { console.error('GH_TOKEN not set'); process.exit(1); }
+const PASSWORD = process.env.DASHBOARD_PASSWORD;
 
 /* ── Catalog ── */
 const CATALOG = [
@@ -136,6 +138,20 @@ function findReviewers(pr, reviewMap) {
   return result;
 }
 
+/* ── Encryption ── */
+function encryptJSON(plaintext, password) {
+  const key = createHash('sha256').update(password, 'utf8').digest(); // 32-byte key
+  const iv  = randomBytes(12); // 96-bit IV for AES-GCM
+  const cipher = createCipheriv('aes-256-gcm', key, iv);
+  const enc  = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
+  const tag  = cipher.getAuthTag();
+  return JSON.stringify({
+    enc: enc.toString('base64'),
+    iv:  iv.toString('base64'),
+    tag: tag.toString('base64'),
+  });
+}
+
 /* ── Main ── */
 console.log('Fetching PRs and repo tree…');
 const [open, closed, tree] = await Promise.all([
@@ -244,5 +260,13 @@ for (const sec of CATALOG) {
 }
 
 console.log('\nWriting data.json…');
-writeFileSync('data.json', JSON.stringify({ updatedAt: new Date().toISOString(), map }, null, 2));
-console.log('data.json written ✓');
+const output   = { updatedAt: new Date().toISOString(), map };
+const plaintext = JSON.stringify(output, null, 2);
+
+if (PASSWORD) {
+  writeFileSync('data.json', encryptJSON(plaintext, PASSWORD));
+  console.log('data.json written (AES-256-GCM encrypted) ✓');
+} else {
+  writeFileSync('data.json', plaintext);
+  console.warn('⚠ data.json written unencrypted — set DASHBOARD_PASSWORD secret to enable encryption');
+}
