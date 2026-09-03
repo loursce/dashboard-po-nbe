@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-01T13:24:19.296Z",
+  "updatedAt": "2026-09-03T08:32:59.439Z",
   "map": {
     "prd00": {
       "prd": {
@@ -8,7 +8,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "review"
       },
       "specs": {
         "base": "review",
@@ -18,7 +19,8 @@
         ],
         "prNumber": 74,
         "prCount": 2,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "draft"
       }
     },
     "prd05": {
@@ -30,7 +32,8 @@
         ],
         "prNumber": 93,
         "prCount": 1,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "review"
       },
       "specs": {
         "base": "merged",
@@ -38,7 +41,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "draft"
       }
     },
     "prd06": {
@@ -48,7 +52,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "review"
       },
       "specs": {
         "base": "merged",
@@ -56,7 +61,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "draft"
       }
     },
     "prd04": {
@@ -66,7 +72,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       },
       "specs": {
         "base": "merged",
@@ -74,7 +81,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "draft"
       }
     },
     "prd07": {
@@ -84,7 +92,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "review"
       },
       "specs": {
         "base": "merged",
@@ -92,7 +101,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "draft"
       }
     },
     "prd03": {
@@ -102,7 +112,8 @@
         "reviewerKeys": [],
         "prNumber": 100,
         "prCount": 1,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "review"
       },
       "specs": {
         "base": "none",
@@ -110,7 +121,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd19": {
@@ -122,7 +134,8 @@
         ],
         "prNumber": 84,
         "prCount": 1,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "review"
       },
       "specs": {
         "base": "none",
@@ -130,7 +143,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd24": {
@@ -140,7 +154,8 @@
         "reviewerKeys": [],
         "prNumber": 98,
         "prCount": 1,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "review"
       },
       "specs": {
         "base": "none",
@@ -148,7 +163,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd23": {
@@ -158,7 +174,8 @@
         "reviewerKeys": [],
         "prNumber": 96,
         "prCount": 1,
-        "isStale": false
+        "isStale": true,
+        "docStatus": "review"
       },
       "specs": {
         "base": "none",
@@ -166,7 +183,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd25": {
@@ -178,7 +196,8 @@
         ],
         "prNumber": 86,
         "prCount": 1,
-        "isStale": false
+        "isStale": true,
+        "docStatus": "review"
       },
       "specs": {
         "base": "review",
@@ -188,7 +207,8 @@
         ],
         "prNumber": 86,
         "prCount": 1,
-        "isStale": false
+        "isStale": true,
+        "docStatus": "draft"
       }
     },
     "prd09": {
@@ -202,7 +222,8 @@
         ],
         "prNumber": 83,
         "prCount": 1,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "review"
       },
       "specs": {
         "base": "none",
@@ -210,7 +231,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd01": {
@@ -220,7 +242,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       },
       "specs": {
         "base": "none",
@@ -228,7 +251,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd13": {
@@ -238,7 +262,8 @@
         "reviewerKeys": [],
         "prNumber": 98,
         "prCount": 1,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "review"
       },
       "specs": {
         "base": "none",
@@ -246,7 +271,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd14": {
@@ -256,7 +282,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       },
       "specs": {
         "base": "none",
@@ -264,7 +291,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd12": {
@@ -276,7 +304,8 @@
         ],
         "prNumber": 84,
         "prCount": 2,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "review"
       },
       "specs": {
         "base": "none",
@@ -284,7 +313,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd10": {
@@ -294,7 +324,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       },
       "specs": {
         "base": "none",
@@ -302,7 +333,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd02": {
@@ -312,7 +344,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       },
       "specs": {
         "base": "none",
@@ -320,7 +353,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd08": {
@@ -330,7 +364,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "in-progress"
       },
       "specs": {
         "base": "sub",
@@ -338,7 +373,8 @@
         "reviewerKeys": [],
         "prNumber": 97,
         "prCount": 1,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "draft"
       }
     },
     "prd15": {
@@ -350,7 +386,8 @@
         ],
         "prNumber": 82,
         "prCount": 1,
-        "isStale": true
+        "isStale": true,
+        "docStatus": "in-progress"
       },
       "specs": {
         "base": "none",
@@ -358,7 +395,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd16": {
@@ -370,7 +408,8 @@
         ],
         "prNumber": 68,
         "prCount": 1,
-        "isStale": true
+        "isStale": true,
+        "docStatus": "in-progress"
       },
       "specs": {
         "base": "none",
@@ -378,7 +417,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd20": {
@@ -390,7 +430,8 @@
         ],
         "prNumber": 88,
         "prCount": 1,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "review"
       },
       "specs": {
         "base": "none",
@@ -398,7 +439,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd18": {
@@ -408,7 +450,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       },
       "specs": {
         "base": "none",
@@ -416,7 +459,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd17": {
@@ -426,7 +470,8 @@
         "reviewerKeys": [],
         "prNumber": 95,
         "prCount": 1,
-        "isStale": false
+        "isStale": true,
+        "docStatus": "review"
       },
       "specs": {
         "base": "none",
@@ -434,17 +479,21 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd26": {
       "prd": {
-        "base": "sub",
+        "base": "review",
         "authorKey": "cl",
-        "reviewerKeys": [],
+        "reviewerKeys": [
+          "og"
+        ],
         "prNumber": 87,
         "prCount": 1,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "review"
       },
       "specs": {
         "base": "none",
@@ -452,7 +501,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd11": {
@@ -462,7 +512,8 @@
         "reviewerKeys": [],
         "prNumber": 90,
         "prCount": 1,
-        "isStale": true
+        "isStale": true,
+        "docStatus": "review"
       },
       "specs": {
         "base": "none",
@@ -470,7 +521,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd22": {
@@ -480,7 +532,8 @@
         "reviewerKeys": [],
         "prNumber": 101,
         "prCount": 1,
-        "isStale": false
+        "isStale": false,
+        "docStatus": "review"
       },
       "specs": {
         "base": "none",
@@ -488,7 +541,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     },
     "prd21": {
@@ -498,7 +552,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       },
       "specs": {
         "base": "none",
@@ -506,7 +561,8 @@
         "reviewerKeys": [],
         "prNumber": null,
         "prCount": 0,
-        "isStale": false
+        "isStale": false,
+        "docStatus": null
       }
     }
   }
