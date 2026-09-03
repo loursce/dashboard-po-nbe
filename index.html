@@ -536,12 +536,18 @@ async function loadDataJson(){
 }
 
 async function triggerWorkflow(token){
-  // Triggers the GitHub Action so data.json is regenerated for all viewers
-  await fetch('https://api.github.com/repos/loursce/dashboard-po-nbe/actions/workflows/update-data.yml/dispatches',{
-    method:'POST',
-    headers:{'Authorization':`Bearer ${token}`,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
-    body:JSON.stringify({ref:'main'}),
-  });
+  // Rate-limit: max 1 workflow dispatch per 5 minutes
+  const RATE_KEY='last_wf_trigger';
+  const last=parseInt(localStorage.getItem(RATE_KEY)||'0');
+  if(Date.now()-last < 5*60*1000) return; // still within 5-min window
+  try{
+    await fetch('https://api.github.com/repos/loursce/dashboard-po-nbe/actions/workflows/update-data.yml/dispatches',{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${token}`,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
+      body:JSON.stringify({ref:'main'}),
+    });
+    localStorage.setItem(RATE_KEY, Date.now().toString());
+  }catch{ /* silent — dispatch is best-effort */ }
 }
 
 async function refreshData(){
