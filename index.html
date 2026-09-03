@@ -572,21 +572,21 @@ function avatarStack(keys,sz){
   return `<div class="av-stack">${avs}</div>`;
 }
 
-function cell(d){
-  const {base,authorKey,reviewerKeys,prNumber,prCount,isStale,docStatus}=d;
+function cellDoc(d){
+  return dsTag(d.docStatus);
+}
+function cellRepo(d){
+  const {base,authorKey,reviewerKeys,prNumber,prCount,isStale}=d;
   const s=ST[base];
   const href=prNumber?GH_PR+prNumber:null;
-  const pillEl=`<span class="pill ${s.cls}" style="font-size:.68rem;padding:.22rem .6rem">${s.label}</span>`;
+  const pillEl=`<span class="pill ${s.cls}">${s.label}</span>`;
   const pill=href?`<a href="${href}" target="_blank" rel="noopener" style="text-decoration:none">${pillEl}</a>`:pillEl;
   const xbadge=(prCount>1)?`<span class="xbadge" title="${prCount} PRs ouvertes">+${prCount-1}</span>`:'';
   const staleEl=isStale?`<span class="stale" title="PR inactive depuis + de 7 jours">⏱</span>`:'';
   const showAv=base==='sub'||base==='review';
-  const auth=showAv&&authorKey?avatar(authorKey,16):'';
-  const revs=(base==='review'&&reviewerKeys?.length)?avatarStack(reviewerKeys,16):'';
-  return `<div style="display:flex;flex-direction:column;gap:3px">
-    <div>${dsTag(docStatus)}</div>
-    <div style="display:flex;align-items:center;gap:4px">${auth}${pill}${revs}${xbadge}${staleEl}</div>
-  </div>`;
+  const auth=showAv&&authorKey?avatar(authorKey,18):'';
+  const revs=(base==='review'&&reviewerKeys?.length)?avatarStack(reviewerKeys,18):'';
+  return `<div style="display:flex;align-items:center;gap:5px">${auth}${pill}${revs}${xbadge}${staleEl}</div>`;
 }
 
 function matches(doc){
@@ -625,16 +625,27 @@ function renderSection(sec){
   const docs=sec.docs.filter(matches);
   if(!docs.length) return '';
   const {showPRD,showSpecs}=S;
-  const cols=`80px minmax(200px,1fr)${showPRD?' 1fr':''}${showSpecs?' 1fr':''}`;
+  // 4 data columns: PRD-doc, PRD-repo, Specs-doc, Specs-repo
+  const dataCols=[];
+  if(showPRD){  dataCols.push({label:'PRD status',key:'prd-doc'},{label:'PRD repo',key:'prd-repo'}); }
+  if(showSpecs){ dataCols.push({label:'Specs status',key:'specs-doc'},{label:'Specs repo',key:'specs-repo'}); }
+  const colTemplate='80px minmax(200px,1fr) '+dataCols.map(c=>c.key.endsWith('-doc')?'110px':'1fr').join(' ');
   const rows=docs.map(doc=>{
     const d=get(doc.id);
-    return `<div class="doc-row" style="display:grid;grid-template-columns:${cols};gap:0 16px;align-items:center;padding:13px 16px;border-bottom:1px solid var(--border)">
+    const cells=dataCols.map(c=>{
+      if(c.key==='prd-doc')   return `<div style="display:flex;align-items:center">${cellDoc(d.prd)}</div>`;
+      if(c.key==='prd-repo')  return `<div>${cellRepo(d.prd)}</div>`;
+      if(c.key==='specs-doc') return `<div style="display:flex;align-items:center">${cellDoc(d.specs)}</div>`;
+      if(c.key==='specs-repo')return `<div>${cellRepo(d.specs)}</div>`;
+      return '<div></div>';
+    }).join('');
+    return `<div class="doc-row" style="display:grid;grid-template-columns:${colTemplate};gap:0 12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)">
       <div style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;color:var(--muted)">${esc(doc.id)}</div>
       <div style="font-size:14px;font-weight:600">${esc(doc.name)}</div>
-      ${showPRD?cell(d.prd):''}
-      ${showSpecs?cell(d.specs):''}
+      ${cells}
     </div>`;
   }).join('');
+  const headerCells=dataCols.map(c=>`<div>${esc(c.label)}</div>`).join('');
   return `<div style="margin-top:28px">
     <div style="display:flex;align-items:center;gap:12px;background:var(--pearl);border-radius:var(--rsm);padding:10px 16px">
       <div style="width:24px;height:24px;border-radius:50%;background:var(--ultramarine);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:var(--fd);flex-shrink:0">${esc(sec.letter)}</div>
@@ -643,8 +654,8 @@ function renderSection(sec){
         ${sec.sub?`<div style="font-size:12px;color:var(--muted);margin-top:1px">${esc(sec.sub)}</div>`:''}
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:${cols};gap:0 16px;padding:9px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
-      <div></div><div>Document</div>${showPRD?'<div>PRD</div>':''}${showSpecs?'<div>Specs</div>':''}
+    <div style="display:grid;grid-template-columns:${colTemplate};gap:0 12px;padding:9px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
+      <div></div><div>Document</div>${headerCells}
     </div>
     ${rows}
   </div>`;
