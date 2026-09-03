@@ -1,16 +1,12 @@
 #!/usr/bin/env node
-// Runs in GitHub Actions — fetches PR data from ClubMediterranee/knowledge-base
-// and writes data.json consumed by the dashboard HTML (no auth needed client-side).
-
 import { writeFileSync } from 'fs';
 
 const TOKEN = process.env.GH_TOKEN;
 const OWNER = 'ClubMediterranee';
 const REPO  = 'knowledge-base';
-
 if (!TOKEN) { console.error('GH_TOKEN not set'); process.exit(1); }
 
-/* ── Same catalog as index.html ── */
+/* ── Catalog ── */
 const CATALOG = [
   { letter:'A', docs:[
     { id:'prd00', hint:['prd00'] },
@@ -47,15 +43,11 @@ const CATALOG = [
   ]},
 ];
 
-/* ── GitHub login → PO key ── */
 const LOGIN_MAP = {
-  'loquic':       'cl',
-  'loursce':      'cel',
-  'celine-sorya': 'cn',
-  'liliyoru':     'og',
+  'loquic': 'cl', 'loursce': 'cel', 'celine-sorya': 'cn', 'liliyoru': 'og',
 };
 
-/* ── Helpers ── */
+/* ── GitHub helpers ── */
 async function gh(path) {
   const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}${path}`, {
     headers: {
@@ -64,100 +56,154 @@ async function gh(path) {
       'X-GitHub-Api-Version': '2022-11-28',
     },
   });
-  if (!res.ok) throw new Error(`GitHub ${res.status} on ${path}: ${await res.text()}`);
+  if (!res.ok) throw new Error(`GitHub ${res.status} on ${path}`);
   return res.json();
 }
 
+// Decode base64 blob content (GitHub adds line breaks every 60 chars)
+function decodeBlob(b64) {
+  return Buffer.from(b64.replace(/\n/g, ''), 'base64').toString('utf8');
+}
+
+async function fetchBlobContent(sha) {
+  const blob = await gh(`/git/blobs/${sha}`);
+  return decodeBlob(blob.content).slice(0, 800);
+}
+
+async function fetchContentAtRef(filePath, ref) {
+  const encoded = filePath.split('/').map(s => encodeURIComponent(s)).join('/');
+  const file = await gh(`/contents/${encoded}?ref=${ref}`);
+  if (!file.content) return null;
+  return decodeBlob(file.content).slice(0, 800);
+}
+
+/* ── Doc status helpers ── */
+const SKIP_FILE = (name) =>
+  name.endsWith('index.md') || name.endsWith('canonical-memory.md');
+
+function parseDocStatus(content) {
+  // Extract frontmatter block between first pair of ---
+  const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
+  const src = fmMatch ? fmMatch[1] : content.slice(0, 500);
+  const m = src.match(/^status:\s*(\S+)/m);
+  if (!m) return null;
+  const v = m[1].toLowerCase().replace(/['"]/g, '');
+  if (v === 'in-progress' || v === 'in_progress' || v === 'progress') return 'in-progress';
+  if (v === 'accepted' || v === 'done' || v === 'approved') return 'accepted';
+  if (v === 'review' || v === 'reviewed') return 'review';
+  if (v === 'draft') return 'draft';
+  return null;
+}
+
+const DS_ORDER = [null, 'draft', 'in-progress', 'review', 'accepted'];
+function minDocStatus(arr) {
+  const valid = arr.filter(s => s != null);
+  if (!valid.length) return null;
+  return valid.reduce((a, b) =>
+    DS_ORDER.indexOf(a) <= DS_ORDER.indexOf(b) ? a : b
+  );
+}
+
+/* ── PR / repo helpers ── */
 function pathMatch(filePath, doc, isSpecs) {
   const hints = doc.hint || [doc.id];
   const typeMatch = isSpecs ? filePath.includes('/specs/') : filePath.includes('/prd/');
   return typeMatch && hints.some(h => filePath.includes(h));
 }
-
-function daysSince(iso) {
-  return (Date.now() - new Date(iso).getTime()) / 86400000;
-}
-
+function daysSince(iso) { return (Date.now() - new Date(iso).getTime()) / 86400000; }
 function prStatus(pr, reviews) {
   if (!pr) return null;
   if (pr.state === 'closed') return pr.merged_at ? 'merged' : null;
   const formal = {};
   for (const rv of reviews) if (rv.state !== 'COMMENTED') formal[rv.user.login] = rv.state;
-  const vals = Object.values(formal);
-  if (vals.includes('CHANGES_REQUESTED')) return 'review';
+  if (Object.values(formal).includes('CHANGES_REQUESTED')) return 'review';
   const author = pr.user?.login?.toLowerCase();
   const external = reviews.some(rv => rv.user.login.toLowerCase() !== author);
   if (external || pr.requested_reviewers?.length) return 'review';
   return 'sub';
 }
-
 function findReviewers(pr, reviewMap) {
   if (!pr || pr.state === 'closed') return [];
   const author = pr.user?.login?.toLowerCase();
   const revs = reviewMap[pr.number] || [];
   const seen = new Set(), result = [];
-  const cands = [
-    ...(pr.requested_reviewers || []).map(u => u.login),
-    ...revs.map(r => r.user.login),
-  ].filter(l => l.toLowerCase() !== author);
-  for (const l of cands) {
-    const k = LOGIN_MAP[l.toLowerCase()];
-    if (k && !seen.has(k)) { seen.add(k); result.push(k); }
-  }
+  [...(pr.requested_reviewers || []).map(u => u.login), ...revs.map(r => r.user.login)]
+    .filter(l => l.toLowerCase() !== author)
+    .forEach(l => {
+      const k = LOGIN_MAP[l.toLowerCase()];
+      if (k && !seen.has(k)) { seen.add(k); result.push(k); }
+    });
   return result;
-}
-
-function parseDocStatus(content){
-  const m=content.match(/status:\s*(\S+)/);
-  if(!m) return null;
-  const v=m[1].toLowerCase().replace(/['"]/g,'');
-  if(v==='in-progress'||v==='in_progress'||v==='progress') return 'in-progress';
-  if(v==='accepted'||v==='done'||v==='approved') return 'accepted';
-  if(v==='review'||v==='reviewed') return 'review';
-  if(v==='draft') return 'draft';
-  return null;
-}
-const DS_ORDER=[null,'draft','in-progress','review','accepted'];
-function minDocStatus(arr){
-  const v=arr.filter(s=>s!=null);
-  if(!v.length) return null;
-  return v.reduce((a,b)=>DS_ORDER.indexOf(a)<=DS_ORDER.indexOf(b)?a:b);
 }
 
 /* ── Main ── */
 console.log('Fetching PRs and repo tree…');
-
 const [open, closed, tree] = await Promise.all([
   gh('/pulls?state=open&per_page=100'),
   gh('/pulls?state=closed&per_page=100&sort=updated&direction=desc'),
   gh('/git/trees/HEAD?recursive=1').catch(() => ({ tree: [] })),
 ]);
-
 const allPRs = [...open, ...closed];
-const mainPaths = (tree.tree || []).map(f => f.path.toLowerCase());
+const treeBlobs = (tree.tree || []).filter(f => f.type === 'blob' && f.path.endsWith('.md'));
+const mainPaths = treeBlobs.map(f => f.path.toLowerCase());
 
-console.log(`Found ${open.length} open PRs, ${closed.length} closed PRs, ${mainPaths.length} files on main`);
+console.log(`${open.length} open PRs, ${closed.length} closed, ${treeBlobs.length} .md files on main`);
 
-// Fetch files + reviews in batches of 8
+// Fetch PR files + reviews
 const details = [];
 for (let i = 0; i < allPRs.length; i += 8) {
   const batch = allPRs.slice(i, i + 8);
-  const results = await Promise.all(batch.map(pr =>
-    Promise.all([
-      gh(`/pulls/${pr.number}/files`).catch(() => []),
-      pr.state === 'open'
-        ? gh(`/pulls/${pr.number}/reviews`).catch(() => [])
-        : Promise.resolve([]),
-    ]).then(([files, reviews]) => ({ pr, files, reviews }))
-  ));
-  details.push(...results);
-  process.stdout.write(`  Fetched PR details ${Math.min(i + 8, allPRs.length)}/${allPRs.length}\r`);
+  const res = await Promise.all(batch.map(pr => Promise.all([
+    gh(`/pulls/${pr.number}/files`).catch(() => []),
+    pr.state === 'open' ? gh(`/pulls/${pr.number}/reviews`).catch(() => []) : Promise.resolve([]),
+  ]).then(([files, reviews]) => ({ pr, files, reviews }))));
+  details.push(...res);
+  process.stdout.write(`  PR details ${Math.min(i + 8, allPRs.length)}/${allPRs.length}\r`);
 }
-console.log('\nBuilding status map…');
+console.log('\nFetching doc statuses from file content…');
 
 const reviewMap = Object.fromEntries(details.map(d => [d.pr.number, d.reviews]));
-const map = {};
 
+// Fetch doc status: from main tree if available, else from PR head
+async function getDocStatus(doc, isSpecs) {
+  // Files on main matching this doc/type (excluding skip files)
+  const mainFiles = treeBlobs.filter(f =>
+    pathMatch(f.path.toLowerCase(), doc, isSpecs) &&
+    !SKIP_FILE(f.path.toLowerCase())
+  );
+
+  if (mainFiles.length > 0) {
+    const targets = isSpecs ? mainFiles.slice(0, 8) : [mainFiles[0]];
+    const statuses = await Promise.all(targets.map(async f => {
+      try { return parseDocStatus(await fetchBlobContent(f.sha)); } catch { return null; }
+    }));
+    return isSpecs ? minDocStatus(statuses) : (statuses[0] ?? null);
+  }
+
+  // Not on main → try open PR head commit
+  const prEntry = details.find(({ files, pr }) =>
+    pr.state === 'open' &&
+    files.some(f =>
+      pathMatch(f.filename.toLowerCase(), doc, isSpecs) &&
+      !SKIP_FILE(f.filename.toLowerCase())
+    )
+  );
+  if (!prEntry) return null;
+
+  const prFiles = prEntry.files.filter(f =>
+    pathMatch(f.filename.toLowerCase(), doc, isSpecs) &&
+    !SKIP_FILE(f.filename.toLowerCase())
+  );
+  const targets = isSpecs ? prFiles.slice(0, 8) : [prFiles[0]];
+  const ref = prEntry.pr.head.sha;
+  const statuses = await Promise.all(targets.map(async f => {
+    try { return parseDocStatus(await fetchContentAtRef(f.filename, ref)); } catch { return null; }
+  }));
+  return isSpecs ? minDocStatus(statuses) : (statuses[0] ?? null);
+}
+
+const map = {};
+let docCount = 0;
 for (const sec of CATALOG) {
   for (const doc of sec.docs) {
     map[doc.id] = {};
@@ -167,40 +213,16 @@ for (const sec of CATALOG) {
         files.some(f => pathMatch(f.filename.toLowerCase(), doc, isSpecs))
       );
       const openOnes = matching.filter(d => d.pr.state === 'open');
+      const closedMerged = matching.filter(d => d.pr.state === 'closed' && d.pr.merged_at);
       const onMain = mainPaths.some(p => pathMatch(p, doc, isSpecs));
 
-      // Fetch doc status from frontmatter
-      let docStatus = null;
-      const treeFiles = mainPaths.filter(p => pathMatch(p, doc, isSpecs) && p.endsWith('.md'));
-      if (treeFiles.length) {
-        // Get SHA from full tree (we need blob SHA not tree SHA)
-        const treeEntries = (tree.tree || []).filter(f => f.type === 'blob' && pathMatch(f.path.toLowerCase(), doc, isSpecs) && f.path.endsWith('.md'));
-        const targets = isSpecs
-          ? treeEntries.filter(f => !f.path.endsWith('index.md')).slice(0, 5)
-          : treeEntries.slice(0, 1);
-        const statuses = await Promise.all(targets.map(async f => {
-          try {
-            const blob = await gh(`/git/blobs/${f.sha}`);
-            const raw = Buffer.from(blob.content.replace(/
-/g,''), 'base64').toString('utf8').slice(0, 600);
-            return parseDocStatus(raw);
-          } catch { return null; }
-        }));
-        docStatus = isSpecs ? minDocStatus(statuses) : (statuses[0] || null);
-      } else {
-        // Try from PR patch (new file)
-        const prWithPatch = details.find(({files: pf, pr}) => pr.state === 'open' && pf.some(f => pathMatch(f.filename.toLowerCase(), doc, isSpecs) && f.status === 'added'));
-        if (prWithPatch) {
-          const pf = prWithPatch.files.find(f => pathMatch(f.filename.toLowerCase(), doc, isSpecs) && f.status === 'added');
-          if (pf?.patch) {
-            const m = pf.patch.match(/^\+status:\s*(\S+)/m);
-            if (m) docStatus = parseDocStatus('+status: ' + m[1]);
-          }
-        }
-      }
+      const docStatus = await getDocStatus(doc, isSpecs);
+      docCount++;
+      process.stdout.write(`  doc status ${docCount}/54\r`);
 
       if (openOnes.length === 0) {
-        map[doc.id][side] = { base: onMain ? 'merged' : 'none', authorKey: null, reviewerKeys: [], prNumber: null, prCount: 0, isStale: false, docStatus };
+        const base = onMain || closedMerged.length ? 'merged' : 'none';
+        map[doc.id][side] = { base, authorKey: null, reviewerKeys: [], prNumber: null, prCount: 0, isStale: false, docStatus };
         continue;
       }
 
@@ -211,12 +233,11 @@ for (const sec of CATALOG) {
       const authorKey = LOGIN_MAP[main.pr.user?.login?.toLowerCase()] || null;
       const reviewerKeys = findReviewers(main.pr, reviewMap);
       const base = prStatus(main.pr, reviews) || 'sub';
-
       map[doc.id][side] = { base, authorKey, reviewerKeys, prNumber: main.pr.number, prCount: openOnes.length, isStale: stale, docStatus };
     }
   }
 }
 
-const output = { updatedAt: new Date().toISOString(), map };
-writeFileSync('data.json', JSON.stringify(output, null, 2));
+console.log('\nWriting data.json…');
+writeFileSync('data.json', JSON.stringify({ updatedAt: new Date().toISOString(), map }, null, 2));
 console.log('data.json written ✓');
