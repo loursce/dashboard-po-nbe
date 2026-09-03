@@ -663,7 +663,7 @@ function renderKanban(){
   });
   const cols=KAN_DS_COLS.map(key=>{
     const cards=allCards.filter(c=>c.docStatus===key);
-    if(!cards.length) return '';
+    // Always show all doc status columns (even empty)
     const isAbsent=key===null;
     const colBg=isAbsent?'#f0f0f0':'var(--pearl)';
     const cardsH=cards.map(c=>{
