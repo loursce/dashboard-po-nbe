@@ -37,13 +37,14 @@
     .ubadge:hover{border-color:var(--mid-grey)}
     .xbadge{font-size:11px;font-weight:700;color:var(--muted)}
     .stale{font-size:11px;cursor:default;opacity:.8}
-    /* Doc status pills */
-    .ds{display:inline-flex;align-items:center;border-radius:var(--rpill);padding:.22rem .6rem;font-size:.68rem;font-weight:700;white-space:nowrap;line-height:1;border:1px solid transparent}
-    .ds-none  {background:transparent;border-color:var(--border);color:var(--muted)}
-    .ds-draft {background:color-mix(in srgb,var(--saffron) 22%,var(--white));color:#7a5200}
-    .ds-prog  {background:color-mix(in srgb,var(--teal) 14%,var(--white));color:var(--teal)}
-    .ds-review{background:color-mix(in srgb,var(--ultramarine) 12%,var(--white));color:var(--ultramarine)}
-    .ds-done  {background:color-mix(in srgb,#088c20 12%,var(--white));color:#088c20}
+    /* Doc status — neutral gray, same style for all, no competition with repo pills */
+    .ds{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:600;color:var(--muted);white-space:nowrap;line-height:1}
+    .ds::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0}
+    .ds-none  ::before,.ds-none  {color:var(--border)}
+    .ds-draft ::before{background:#ccc}       .ds-draft  {color:var(--muted)}
+    .ds-prog  ::before{background:#aaa}       .ds-prog   {color:var(--soft)}
+    .ds-review::before{background:#666}       .ds-review {color:var(--soft)}
+    .ds-done  ::before{background:#088c20}    .ds-done   {color:#088c20;font-weight:700}
     .av-stack{display:inline-flex;align-items:center}
     .av-stack>div{border:2px solid var(--surface);margin-left:-6px}
     .av-stack>div:first-child{margin-left:0}
