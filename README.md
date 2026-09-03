@@ -53,3 +53,14 @@ Le token est stocké uniquement dans ton navigateur (localStorage). Il expire ap
 |---|---|
 | `KB_TOKEN` | Token GitHub avec scope `repo` sur `ClubMediterranee/knowledge-base` |
 | `DASHBOARD_PASSWORD` | Mot de passe de chiffrement AES-256-GCM pour `data.json` |
+---
+
+## Rotation du mot de passe
+
+Pour changer le mot de passe du dashboard :
+
+1. Aller sur **https://github.com/loursce/dashboard-po-nbe/settings/secrets/actions**
+2. Cliquer sur `DASHBOARD_PASSWORD` → **Update** → saisir le nouveau mot de passe
+3. Lancer le workflow manuellement : **https://github.com/loursce/dashboard-po-nbe/actions/workflows/update-data.yml** → **Run workflow**
+4. Attendre ~3 min que `data.json` soit rechiffré avec le nouveau mot de passe
+5. Partager le nouveau mot de passe à l'équipe — l'ancien ne fonctionnera plus
