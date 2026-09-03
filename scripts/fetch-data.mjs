@@ -117,14 +117,14 @@ function prStatus(pr, reviews) {
   const formal = {};
   for (const rv of reviews) if (rv.state !== 'COMMENTED') formal[rv.user.login] = rv.state;
   if (Object.values(formal).includes('CHANGES_REQUESTED')) return 'review';
-  const author = pr.user?.login?.toLowerCase();
+  const author = pr.user?.login?.toLowerCase() ?? '__unknown__';
   const external = reviews.some(rv => rv.user.login.toLowerCase() !== author);
   if (external || pr.requested_reviewers?.length) return 'review';
   return 'sub';
 }
 function findReviewers(pr, reviewMap) {
   if (!pr || pr.state === 'closed') return [];
-  const author = pr.user?.login?.toLowerCase();
+  const author = pr.user?.login?.toLowerCase() ?? '__unknown__';
   const revs = reviewMap[pr.number] || [];
   const seen = new Set(), result = [];
   [...(pr.requested_reviewers || []).map(u => u.login), ...revs.map(r => r.user.login)]
@@ -204,19 +204,24 @@ async function getDocStatus(doc, isSpecs) {
 
 const map = {};
 let docCount = 0;
+// Pre-compute all doc statuses in parallel
+const _allPairs = CATALOG.flatMap(s => s.docs.flatMap(d => [{doc:d,isSpecs:false},{doc:d,isSpecs:true}]));
+const _statuses = await Promise.all(_allPairs.map(({doc,isSpecs}) => getDocStatus(doc, isSpecs).catch(() => null)));
+const docStatusMap = Object.fromEntries(_allPairs.map(({doc,isSpecs},i) => [`${doc.id}:${isSpecs}`, _statuses[i]]));
+
 for (const sec of CATALOG) {
   for (const doc of sec.docs) {
     map[doc.id] = {};
     for (const isSpecs of [false, true]) {
       const side = isSpecs ? 'specs' : 'prd';
       const matching = details.filter(({ files }) =>
-        files.some(f => pathMatch(f.filename.toLowerCase(), doc, isSpecs))
+        files.some(f => pathMatch(f.filename.toLowerCase(), doc, isSpecs) && !SKIP_FILE(f.filename.toLowerCase()))
       );
       const openOnes = matching.filter(d => d.pr.state === 'open');
       const closedMerged = matching.filter(d => d.pr.state === 'closed' && d.pr.merged_at);
-      const onMain = mainPaths.some(p => pathMatch(p, doc, isSpecs));
+      const onMain = mainPaths.some(p => pathMatch(p, doc, isSpecs) && !SKIP_FILE(p));
 
-      const docStatus = await getDocStatus(doc, isSpecs);
+      const docStatus = docStatusMap[`${doc.id}:${isSpecs}`] ?? null;
       docCount++;
       process.stdout.write(`  doc status ${docCount}/54\r`);
 
