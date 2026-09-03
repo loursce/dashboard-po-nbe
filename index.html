@@ -357,7 +357,7 @@ function computePrStatus(pr,reviews){
   for(const rv of reviews) if(rv.state!=='COMMENTED') formal[rv.user.login]=rv.state;
   const vals=Object.values(formal);
   if(vals.includes('CHANGES_REQUESTED')) return 'review';
-  const author=pr.user?.login?.toLowerCase();
+  const author=pr.user?.login?.toLowerCase()??'__unknown__';
   const external=reviews.some(rv=>rv.user.login.toLowerCase()!==author);
   if(external||pr.requested_reviewers?.length) return 'review';
   return 'sub';
@@ -365,7 +365,7 @@ function computePrStatus(pr,reviews){
 
 function findReviewers(pr,reviewMap){
   if(!pr||pr.state==='closed') return [];
-  const author=pr.user?.login?.toLowerCase();
+  const author=pr.user?.login?.toLowerCase()??'__unknown__';
   const revs=reviewMap[pr.number]||[];
   const seen=new Set(), result=[];
   const cands=[...(pr.requested_reviewers||[]).map(u=>u.login),...revs.map(r=>r.user.login)]
@@ -385,6 +385,8 @@ function pathMatch(p, doc, isSpecs){
   return typeMatch && hints.some(h => p.includes(h));
 }
 
+const SKIP_FILE=n=>n.endsWith('index.md')||n.endsWith('canonical-memory.md');
+
 async function fetchLive(){
   const cfg=loadCfg();
   if(!cfg.token) throw new Error('Token manquant');
@@ -395,7 +397,7 @@ async function fetchLive(){
     gh(o,r,'/git/trees/HEAD?recursive=1',cfg.token).catch(()=>({tree:[]})),
   ]);
   const allPRs=[...open,...closed];
-  const mainPaths=(tree.tree||[]).map(f=>f.path.toLowerCase());
+  const mainPaths=(tree.tree||[]).filter(f=>f.type==='blob'&&f.path.endsWith('.md')).map(f=>f.path.toLowerCase());
   const details=[];
   for(let i=0;i<allPRs.length;i+=8){
     const batch=allPRs.slice(i,i+8);
@@ -408,14 +410,12 @@ async function fetchLive(){
   const revMap=Object.fromEntries(details.map(d=>[d.pr.number,d.reviews]));
 
   // Build file map from tree: lowercase_path → sha (for doc status)
+  // Build fileMap (path→sha) for blob fetches — .md only
   const fileMap={};
-  for(const f of (tree.tree||[])){
-    if(f.type==='blob'&&f.path.endsWith('.md')) fileMap[f.path.toLowerCase()]=f.sha;
-  }
+  const treeBlobs=(tree.tree||[]).filter(f=>f.type==='blob'&&f.path.endsWith('.md'));
+  for(const f of treeBlobs) fileMap[f.path.toLowerCase()]=f.sha;
 
-  const SKIP=(n)=>n.endsWith('index.md')||n.endsWith('canonical-memory.md');
-
-  async function fetchBlobContent(sha){
+async function fetchBlobContent(sha){
     try{
       const b=await gh(o,r,`/git/blobs/${sha}`,cfg.token);
       return atob(b.content.replace(/\n/g,'')).slice(0,800);
@@ -433,7 +433,7 @@ async function fetchLive(){
 
   async function getDocStatus(doc,isSpecs){
     // Files on main matching this doc/type (excluding skip files)
-    const mainFiles=Object.entries(fileMap).filter(([p])=>pathMatch(p,doc,isSpecs)&&!SKIP(p));
+    const mainFiles=Object.entries(fileMap).filter(([p])=>pathMatch(p,doc,isSpecs)&&!SKIP_FILE(p));
     if(mainFiles.length){
       const targets=isSpecs?mainFiles.slice(0,8):[mainFiles[0]];
       const statuses=await Promise.all(targets.map(([,sha])=>fetchBlobContent(sha).then(c=>c?parseDocStatus(c):null)));
@@ -441,10 +441,10 @@ async function fetchLive(){
     }
     // Not on main → try open PR head
     const prEntry=details.find(({files:pf,pr})=>
-      pr.state==='open'&&pf.some(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)&&!SKIP(f.filename.toLowerCase()))
+      pr.state==='open'&&pf.some(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)&&!SKIP_FILE(f.filename.toLowerCase()))
     );
     if(!prEntry) return null;
-    const prFiles=prEntry.files.filter(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)&&!SKIP(f.filename.toLowerCase()));
+    const prFiles=prEntry.files.filter(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)&&!SKIP_FILE(f.filename.toLowerCase()));
     const ref=prEntry.pr.head.sha;
     const targets=isSpecs?prFiles.slice(0,8):[prFiles[0]];
     const statuses=await Promise.all(targets.map(f=>fetchContentAtRef(f.filename,ref).then(c=>c?parseDocStatus(c):null)));
@@ -452,17 +452,22 @@ async function fetchLive(){
   }
 
   const map={};
+  // Pre-compute all doc statuses in parallel (avoid 54 sequential awaits)
+  const _allPairs=CATALOG.flatMap(s=>s.docs.flatMap(d=>[{doc:d,isSpecs:false},{doc:d,isSpecs:true}]));
+  const _statuses=await Promise.all(_allPairs.map(({doc,isSpecs})=>getDocStatus(doc,isSpecs).catch(()=>null)));
+  const docStatusMap=Object.fromEntries(_allPairs.map(({doc,isSpecs},i)=>[`${doc.id}:${isSpecs}`,_statuses[i]]));
+
   for(const sec of CATALOG){
     for(const doc of sec.docs){
       const id=doc.id;
       for(const isSpecs of [false,true]){
-        const matching=details.filter(({files})=>files.some(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)));
+        const matching=details.filter(({files})=>files.some(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)&&!SKIP_FILE(f.filename.toLowerCase())));
         const openOnes=matching.filter(d=>d.pr.state==='open');
         const closedMerged=matching.filter(d=>d.pr.state==='closed'&&d.pr.merged_at);
-        const onMain=mainPaths.some(p=>pathMatch(p,doc,isSpecs));
+        const onMain=mainPaths.some(p=>pathMatch(p,doc,isSpecs)&&!SKIP_FILE(p));
         if(!map[id]) map[id]={};
         const side=isSpecs?'specs':'prd';
-        const docStatus=await getDocStatus(doc,isSpecs);
+        const docStatus=docStatusMap[`${id}:${isSpecs}`]??null;
         if(openOnes.length===0){
           const base=onMain||closedMerged.length?'merged':'none';
           map[id][side]={base,authorKey:null,reviewerKeys:[],prNumber:null,prCount:0,isStale:false,docStatus};
@@ -676,6 +681,7 @@ function renderKanban(){
     ].filter(c=>(c.type==='PRD'?S.showPRD:S.showSpecs));
   })).filter(c=>{
     if(S.sp&&!(c.reviewerKeys||[]).includes(S.sp)&&c.authorKey!==S.sp) return false;
+    if(S.sr&&c.base!==S.sr) return false;
     return true;
   });
   const cols=KAN_DS_COLS.map(key=>{
