@@ -350,7 +350,7 @@ async function gh(o,r,path,t){
 
 function daysSince(iso){ return (Date.now()-new Date(iso).getTime())/86400000; }
 
-function computePrStatus(pr,reviews){
+function computePrStatus(pr,reviews,commits){
   if(!pr) return null;
   if(pr.state==='closed') return pr.merged_at?'merged':null;
   const formal={};
@@ -359,21 +359,24 @@ function computePrStatus(pr,reviews){
   if(vals.includes('CHANGES_REQUESTED')) return 'review';
   const author=pr.user?.login?.toLowerCase()??'__unknown__';
   const external=reviews.some(rv=>rv.user.login.toLowerCase()!==author);
-  if(external||pr.requested_reviewers?.length) return 'review';
+  const externalCommit=(commits||[]).some(c=>(c.author?.login||c.commit?.author?.name||'').toLowerCase()!==author);
+  if(external||externalCommit||pr.requested_reviewers?.length) return 'review';
   return 'sub';
 }
 
-function findReviewers(pr,reviewMap){
+function findReviewers(pr,reviewMap,commitMap){
   if(!pr||pr.state==='closed') return [];
   const author=pr.user?.login?.toLowerCase()??'__unknown__';
   const revs=reviewMap[pr.number]||[];
+  const commits=commitMap?.[pr.number]||[];
+  const commitLogins=commits.map(c=>c.author?.login||c.commit?.author?.name||'').filter(Boolean);
   const seen=new Set(), result=[];
-  const cands=[...(pr.requested_reviewers||[]).map(u=>u.login),...revs.map(r=>r.user.login)]
-    .filter(l=>l.toLowerCase()!==author);
-  for(const l of cands){
-    const k=LOGIN_MAP[l.toLowerCase()];
-    if(k&&!seen.has(k)){ seen.add(k); result.push(k); }
-  }
+  [...(pr.requested_reviewers||[]).map(u=>u.login),...revs.map(r=>r.user.login),...commitLogins]
+    .filter(l=>l.toLowerCase()!==author)
+    .forEach(l=>{
+      const k=LOGIN_MAP[l.toLowerCase()];
+      if(k&&!seen.has(k)){ seen.add(k); result.push(k); }
+    });
   return result;
 }
 
@@ -404,10 +407,12 @@ async function fetchLive(){
     const res=await Promise.all(batch.map(pr=>Promise.all([
       gh(o,r,`/pulls/${pr.number}/files`,cfg.token).catch(()=>[]),
       pr.state==='open'?gh(o,r,`/pulls/${pr.number}/reviews`,cfg.token).catch(()=>[]):Promise.resolve([]),
-    ]).then(([files,reviews])=>({pr,files,reviews}))));
+      pr.state==='open'?gh(o,r,`/pulls/${pr.number}/commits`,cfg.token).catch(()=>[]):Promise.resolve([]),
+    ]).then(([files,reviews,commits])=>({pr,files,reviews,commits}))));
     details.push(...res);
   }
   const revMap=Object.fromEntries(details.map(d=>[d.pr.number,d.reviews]));
+  const comMap=Object.fromEntries(details.map(d=>[d.pr.number,d.commits||[]]));
 
   // Build file map from tree: lowercase_path → sha (for doc status)
   // Build fileMap (path→sha) for blob fetches — .md only
@@ -478,8 +483,8 @@ async function fetchBlobContent(sha){
         const reviews=revMap[main.pr.number]||[];
         const stale=daysSince(main.pr.updated_at)>7;
         const authorKey=LOGIN_MAP[main.pr.user?.login?.toLowerCase()]||null;
-        const reviewerKeys=findReviewers(main.pr,revMap);
-        const st=computePrStatus(main.pr,reviews)||'sub';
+        const reviewerKeys=findReviewers(main.pr,revMap,comMap);
+        const st=computePrStatus(main.pr,reviews,comMap[main.pr.number]||[])||'sub';
         map[id][side]={base:st,authorKey,reviewerKeys,prNumber:main.pr.number,prCount:openOnes.length,isStale:stale,docStatus};
       }
     }
