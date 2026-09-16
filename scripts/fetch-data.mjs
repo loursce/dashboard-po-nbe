@@ -27,7 +27,7 @@ const CATALOG = [
     { id:'prd01', hint:['prd01','ticket-price'] },
     { id:'prd13', hint:['prd13-pricing','discount','privilege'] },
     { id:'prd14', hint:['prd14-rates','rates'] },
-    { id:'prd12', hint:['prd12','share','booking-confirmation'] },
+    { id:'prd12', hint:['prd12','share'] },
     { id:'prd10', hint:['prd10','save-criteria'] },
     { id:'prd02', hint:['prd02','basket'] },
   ]},
