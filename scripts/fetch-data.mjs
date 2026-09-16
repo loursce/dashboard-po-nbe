@@ -113,7 +113,7 @@ function pathMatch(filePath, doc, isSpecs) {
   return typeMatch && hints.some(h => filePath.includes(h));
 }
 function daysSince(iso) { return (Date.now() - new Date(iso).getTime()) / 86400000; }
-function prStatus(pr, reviews) {
+function prStatus(pr, reviews, commits) {
   if (!pr) return null;
   if (pr.state === 'closed') return pr.merged_at ? 'merged' : null;
   const formal = {};
@@ -121,15 +121,24 @@ function prStatus(pr, reviews) {
   if (Object.values(formal).includes('CHANGES_REQUESTED')) return 'review';
   const author = pr.user?.login?.toLowerCase() ?? '__unknown__';
   const external = reviews.some(rv => rv.user.login.toLowerCase() !== author);
-  if (external || pr.requested_reviewers?.length) return 'review';
+  const externalCommit = (commits || []).some(c =>
+    (c.author?.login || c.commit?.author?.name || '').toLowerCase() !== author
+  );
+  if (external || externalCommit || pr.requested_reviewers?.length) return 'review';
   return 'sub';
 }
-function findReviewers(pr, reviewMap) {
+function findReviewers(pr, reviewMap, commitMap) {
   if (!pr || pr.state === 'closed') return [];
   const author = pr.user?.login?.toLowerCase() ?? '__unknown__';
-  const revs = reviewMap[pr.number] || [];
+  const revs    = reviewMap[pr.number] || [];
+  const commits = commitMap?.[pr.number] || [];
+  const commitAuthors = commits.map(c => c.author?.login || c.commit?.author?.name || '').filter(Boolean);
   const seen = new Set(), result = [];
-  [...(pr.requested_reviewers || []).map(u => u.login), ...revs.map(r => r.user.login)]
+  [
+    ...(pr.requested_reviewers || []).map(u => u.login),
+    ...revs.map(r => r.user.login),
+    ...commitAuthors,
+  ]
     .filter(l => l.toLowerCase() !== author)
     .forEach(l => {
       const k = LOGIN_MAP[l.toLowerCase()];
@@ -172,13 +181,15 @@ for (let i = 0; i < allPRs.length; i += 8) {
   const res = await Promise.all(batch.map(pr => Promise.all([
     gh(`/pulls/${pr.number}/files`).catch(() => []),
     pr.state === 'open' ? gh(`/pulls/${pr.number}/reviews`).catch(() => []) : Promise.resolve([]),
-  ]).then(([files, reviews]) => ({ pr, files, reviews }))));
+    pr.state === 'open' ? gh(`/pulls/${pr.number}/commits`).catch(() => [])  : Promise.resolve([]),
+  ]).then(([files, reviews, commits]) => ({ pr, files, reviews, commits }))));
   details.push(...res);
   process.stdout.write(`  PR details ${Math.min(i + 8, allPRs.length)}/${allPRs.length}\r`);
 }
 console.log('\nFetching doc statuses from file content…');
 
-const reviewMap = Object.fromEntries(details.map(d => [d.pr.number, d.reviews]));
+const reviewMap  = Object.fromEntries(details.map(d => [d.pr.number, d.reviews]));
+const commitMap  = Object.fromEntries(details.map(d => [d.pr.number, d.commits || []]));
 
 // Fetch doc status: from main tree if available, else from PR head
 async function getDocStatus(doc, isSpecs) {
@@ -252,8 +263,8 @@ for (const sec of CATALOG) {
       const reviews = reviewMap[main.pr.number] || [];
       const stale = daysSince(main.pr.updated_at) > 7;
       const authorKey = LOGIN_MAP[main.pr.user?.login?.toLowerCase()] || null;
-      const reviewerKeys = findReviewers(main.pr, reviewMap);
-      const base = prStatus(main.pr, reviews) || 'sub';
+      const reviewerKeys = findReviewers(main.pr, reviewMap, commitMap);
+      const base = prStatus(main.pr, reviews, commitMap[main.pr.number] || []) || 'sub';
       map[doc.id][side] = { base, authorKey, reviewerKeys, prNumber: main.pr.number, prCount: openOnes.length, isStale: stale, docStatus };
     }
   }
