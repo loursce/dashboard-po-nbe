@@ -40,7 +40,8 @@ const CATALOG = [
     { id:'prd17', hint:['prd17','hold'] },
     { id:'prd26', hint:['great-member','prd14'] },
     { id:'prd11', hint:['prd11','save-proposal'] },
-    { id:'prd22', hint:['prd22','banner','toaster'] },
+    { id:'prd22', hint:['prd22','banner'] },
+    { id:'prd27', hint:['prd27','toaster'] },
     { id:'prd21', hint:['prd21','reassurance'] },
   ]},
 ];
