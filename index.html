@@ -698,12 +698,11 @@ function renderSummary(){
 }
 
 const STATUS_GROUPS=[
-  {key:'accepted',   label:'Accepted ✓'},
-  {key:'review',     label:'Review'},
-  {key:'in-progress',label:'In progress'},
-  {key:'draft',      label:'Draft'},
-  {key:null,         label:'Absent du repo'},
-  {key:'deprecated', label:'Supprimé'},
+  {key:'merged',    label:'Merged'},
+  {key:'review',    label:'In review'},
+  {key:'sub',       label:'Submitted'},
+  {key:'none',      label:'Absent du repo'},
+  {key:'deprecated',label:'Supprimé'},
 ];
 
 function renderByStatus(){
@@ -723,13 +722,14 @@ function renderByStatus(){
     if(g.key==='deprecated'){
       docs=allDocs.filter(d=>d.deprecated&&matches(d));
     } else {
-      docs=allDocs.filter(d=>!d.deprecated&&get(d.id).prd.docStatus===g.key&&matches(d));
+      docs=allDocs.filter(d=>!d.deprecated&&get(d.id).prd.base===g.key&&matches(d));
     }
     if(!docs.length) return '';
 
+    const stMap={merged:'pm',review:'pr',sub:'ps',none:'pn'};
     const badge=g.key==='deprecated'
       ?`<span style="font-size:13px;font-weight:700;color:var(--muted);text-decoration:line-through">${esc(g.label)}</span>`
-      :dsTag(g.key);
+      :`<span class="pill ${stMap[g.key]||'pn'}">${esc(g.label)}</span>`;
     const count=`<span style="font-size:12px;color:var(--muted);margin-left:4px">${docs.length} doc${docs.length>1?'s':''}</span>`;
 
     const colHdr=`<div style="display:grid;grid-template-columns:${colTpl};gap:0 12px;padding:9px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
