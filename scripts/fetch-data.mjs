@@ -28,8 +28,6 @@ const CATALOG = [
     { id:'prd13', hint:['prd13-pricing','discount','privilege'] },
     { id:'prd14', hint:['prd14-rates','rates'] },
     { id:'prd12', hint:['prd12','share'] },
-    { id:'prd10', hint:['prd10','save-criteria'] },
-    { id:'prd02', hint:['prd02','basket'] },
   ]},
   { letter:'C', docs:[
     { id:'prd08', hint:['prd08','guest'] },
@@ -40,7 +38,6 @@ const CATALOG = [
     { id:'prd26', hint:['great-member','prd14'] },
     { id:'prd11', hint:['prd11','save-proposal'] },
     { id:'prd22', hint:['prd22','banner'] },
-    { id:'prd27', hint:['prd27','toaster'] },
     { id:'prd21', hint:['prd21','reassurance'] },
   ]},
 ];
@@ -58,6 +55,7 @@ async function gh(path) {
       'X-GitHub-Api-Version': '2022-11-28',
     },
   });
+  if (res.status === 404) throw new Error(`Resource not found (404): ${path}`);
   if (!res.ok) throw new Error(`GitHub ${res.status} on ${path}`);
   return res.json();
 }
@@ -83,19 +81,34 @@ async function fetchContentAtRef(filePath, ref) {
 const SKIP_FILE = (name) =>
   name.endsWith('index.md') || name.endsWith('canonical-memory.md');
 
-function parseDocStatus(content) {
-  // Extract frontmatter block between first pair of ---
-  const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);
-  const src = fmMatch ? fmMatch[1] : content.slice(0, 500);
-  const m = src.match(/^status:\s*(\S+)/m);
-  if (!m) return null;
-  const v = m[1].toLowerCase().replace(/['"]/g, '');
-  if (v === 'in-progress' || v === 'in_progress' || v === 'progress') return 'in-progress';
-  if (v === 'accepted' || v === 'done' || v === 'approved') return 'accepted';
-  if (v === 'review' || v === 'reviewed') return 'review';
-  if (v === 'draft') return 'draft';
-  return null;
+const CX_WEIGHT = { S:1, M:2, L:3, XL:5, XXL:8 };
+
+function parseDocInfo(content, isSpecs) {
+  if (!content) return { docStatus: null, complexity: null };
+  const fm = content.match(/^---\n([\s\S]*?)\n---/);
+  const src = fm ? fm[1] : content.slice(0, 500);
+  // Doc status
+  const sm = src.match(/^status:\s*(\S+)/m);
+  let docStatus = null;
+  if (sm) {
+    const v = sm[1].toLowerCase().replace(/['"]/g, '');
+    if (v === 'in-progress' || v === 'in_progress' || v === 'progress') docStatus = 'in-progress';
+    else if (v === 'accepted' || v === 'done' || v === 'approved') docStatus = 'accepted';
+    else if (v === 'review' || v === 'reviewed') docStatus = 'review';
+    else if (v === 'draft') docStatus = 'draft';
+  }
+  // Complexity (PRD only)
+  let complexity = null;
+  if (!isSpecs) {
+    const cm = src.match(/^complexity:\s*(\S+)/m);
+    if (cm) {
+      const v = cm[1].toUpperCase().replace(/['"]/g, '');
+      if (CX_WEIGHT[v]) complexity = v;
+    }
+  }
+  return { docStatus, complexity };
 }
+function parseDocStatus(content) { return parseDocInfo(content, false).docStatus; }
 
 const DS_ORDER = [null, 'draft', 'in-progress', 'review', 'accepted'];
 function minDocStatus(arr) {
@@ -121,9 +134,7 @@ function prStatus(pr, reviews, commits) {
   if (Object.values(formal).includes('CHANGES_REQUESTED')) return 'review';
   const author = pr.user?.login?.toLowerCase() ?? '__unknown__';
   const external = reviews.some(rv => rv.user.login.toLowerCase() !== author);
-  const externalCommit = (commits || []).some(c =>
-    (c.author?.login || c.commit?.author?.name || '').toLowerCase() !== author
-  );
+  const externalCommit = (commits || []).some(c => c.author?.login && c.author.login.toLowerCase() !== author);
   if (external || externalCommit || pr.requested_reviewers?.length) return 'review';
   return 'sub';
 }
@@ -132,7 +143,7 @@ function findReviewers(pr, reviewMap, commitMap) {
   const author = pr.user?.login?.toLowerCase() ?? '__unknown__';
   const revs    = reviewMap[pr.number] || [];
   const commits = commitMap?.[pr.number] || [];
-  const commitAuthors = commits.map(c => c.author?.login || c.commit?.author?.name || '').filter(Boolean);
+  const commitAuthors = commits.map(c => c.author?.login).filter(Boolean);
   const seen = new Set(), result = [];
   [
     ...(pr.requested_reviewers || []).map(u => u.login),
@@ -192,49 +203,47 @@ const reviewMap  = Object.fromEntries(details.map(d => [d.pr.number, d.reviews])
 const commitMap  = Object.fromEntries(details.map(d => [d.pr.number, d.commits || []]));
 
 // Fetch doc status: from main tree if available, else from PR head
-async function getDocStatus(doc, isSpecs) {
-  // Files on main matching this doc/type (excluding skip files)
+async function getDocInfo(doc, isSpecs) {
   const mainFiles = treeBlobs.filter(f =>
-    pathMatch(f.path.toLowerCase(), doc, isSpecs) &&
-    !SKIP_FILE(f.path.toLowerCase())
+    pathMatch(f.path.toLowerCase(), doc, isSpecs) && !SKIP_FILE(f.path.toLowerCase())
   );
+  const specCount = isSpecs ? mainFiles.length : null;
 
   if (mainFiles.length > 0) {
     const targets = isSpecs ? mainFiles.slice(0, 8) : [mainFiles[0]];
-    const statuses = await Promise.all(targets.map(async f => {
-      try { return parseDocStatus(await fetchBlobContent(f.sha)); } catch { return null; }
+    const infos = await Promise.all(targets.map(async f => {
+      try { return parseDocInfo(await fetchBlobContent(f.sha), isSpecs); } catch { return { docStatus: null, complexity: null }; }
     }));
-    return isSpecs ? minDocStatus(statuses) : (statuses[0] ?? null);
+    if (!isSpecs) return { ...infos[0], specCount };
+    return { docStatus: minDocStatus(infos.map(i => i.docStatus)), complexity: null, specCount };
   }
 
-  // Not on main → try open PR head commit
   const prEntry = details.find(({ files, pr }) =>
     pr.state === 'open' &&
-    files.some(f =>
-      pathMatch(f.filename.toLowerCase(), doc, isSpecs) &&
-      !SKIP_FILE(f.filename.toLowerCase())
-    )
+    files.some(f => pathMatch(f.filename.toLowerCase(), doc, isSpecs) && !SKIP_FILE(f.filename.toLowerCase()))
   );
-  if (!prEntry) return null;
+  if (!prEntry) return { docStatus: null, complexity: null, specCount: isSpecs ? 0 : null };
 
   const prFiles = prEntry.files.filter(f =>
-    pathMatch(f.filename.toLowerCase(), doc, isSpecs) &&
-    !SKIP_FILE(f.filename.toLowerCase())
+    pathMatch(f.filename.toLowerCase(), doc, isSpecs) && !SKIP_FILE(f.filename.toLowerCase())
   );
-  const targets = isSpecs ? prFiles.slice(0, 8) : [prFiles[0]];
   const ref = prEntry.pr.head.sha;
-  const statuses = await Promise.all(targets.map(async f => {
-    try { return parseDocStatus(await fetchContentAtRef(f.filename, ref)); } catch { return null; }
+  const targets = isSpecs ? prFiles.slice(0, 8) : [prFiles[0]];
+  const infos = await Promise.all(targets.map(async f => {
+    try { return parseDocInfo(await fetchContentAtRef(f.filename, ref), isSpecs); } catch { return { docStatus: null, complexity: null }; }
   }));
-  return isSpecs ? minDocStatus(statuses) : (statuses[0] ?? null);
+  const sc = isSpecs ? prFiles.length : null;
+  if (!isSpecs) return { ...infos[0], specCount: null };
+  return { docStatus: minDocStatus(infos.map(i => i.docStatus)), complexity: null, specCount: sc };
 }
+async function getDocStatus(doc, isSpecs) { return (await getDocInfo(doc, isSpecs)).docStatus; }
 
 const map = {};
 let docCount = 0;
 // Pre-compute all doc statuses in parallel
 const _allPairs = CATALOG.flatMap(s => s.docs.flatMap(d => [{doc:d,isSpecs:false},{doc:d,isSpecs:true}]));
-const _statuses = await Promise.all(_allPairs.map(({doc,isSpecs}) => getDocStatus(doc, isSpecs).catch(() => null)));
-const docStatusMap = Object.fromEntries(_allPairs.map(({doc,isSpecs},i) => [`${doc.id}:${isSpecs}`, _statuses[i]]));
+const _infos = await Promise.all(_allPairs.map(({doc,isSpecs}) => getDocInfo(doc, isSpecs).catch(() => ({docStatus:null,complexity:null,specCount:null}))));
+const docInfoMap = Object.fromEntries(_allPairs.map(({doc,isSpecs},i) => [`${doc.id}:${isSpecs}`, _infos[i]]));
 
 for (const sec of CATALOG) {
   for (const doc of sec.docs) {
@@ -248,9 +257,9 @@ for (const sec of CATALOG) {
       const closedMerged = matching.filter(d => d.pr.state === 'closed' && d.pr.merged_at);
       const onMain = mainPaths.some(p => pathMatch(p, doc, isSpecs) && !SKIP_FILE(p));
 
-      const docStatus = docStatusMap[`${doc.id}:${isSpecs}`] ?? null;
+      const {docStatus,complexity,specCount} = docInfoMap[`${doc.id}:${isSpecs}`] ?? {docStatus:null,complexity:null,specCount:null};
       docCount++;
-      process.stdout.write(`  doc status ${docCount}/54\r`);
+      process.stdout.write(`  doc status ${docCount}/${_allPairs.length}\r`);
 
       if (openOnes.length === 0) {
         const base = onMain || closedMerged.length ? 'merged' : 'none';
@@ -265,7 +274,7 @@ for (const sec of CATALOG) {
       const authorKey = LOGIN_MAP[main.pr.user?.login?.toLowerCase()] || null;
       const reviewerKeys = findReviewers(main.pr, reviewMap, commitMap);
       const base = prStatus(main.pr, reviews, commitMap[main.pr.number] || []) || 'sub';
-      map[doc.id][side] = { base, authorKey, reviewerKeys, prNumber: main.pr.number, prCount: openOnes.length, isStale: stale, docStatus };
+      map[doc.id][side] = { base, authorKey, reviewerKeys, prNumber: main.pr.number, prCount: openOnes.length, isStale: stale, docStatus, complexity: complexity??null, specCount: specCount??null };
     }
   }
 }
