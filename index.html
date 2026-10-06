@@ -117,13 +117,6 @@
   <!-- Controls -->
   <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:20px">
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <!-- View switcher -->
-      <div style="display:inline-flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rpill);padding:4px">
-        <button id="bt" class="vbtn on"  onclick="setView('table')">Table</button>
-        <button id="bk" class="vbtn off" onclick="setView('kanban')">Kanban</button>
-      </div>
-      <!-- Divider -->
-      <div style="width:1px;height:20px;background:var(--border)"></div>
       <!-- Type toggles -->
       <button id="bp" class="tbtn on" onclick="toggleType('prd')">PRD</button>
       <button id="bs" class="tbtn on" onclick="toggleType('specs')">Specs</button>
@@ -207,9 +200,6 @@ const ST = {
   review:{ label:'In review', cls:'pr' },
   merged:{ label:'Merged',    cls:'pm' },
 };
-const KAN_COLS = ['none','sub','review','merged'];
-const KAN_LABELS = { none:'Absent du repo', sub:'Submitted', review:'In review', merged:'Merged' };
-
 // Doc status
 const DS = {
   null:          { label:'—',           cls:'ds-none'  },
@@ -219,21 +209,25 @@ const DS = {
   'accepted':   { label:'Accepted ✓',  cls:'ds-done'  },
 };
 const DS_ORDER = [null,'draft','in-progress','review','accepted'];
-// Kanban columns for doc status view
-const KAN_DS_COLS = [null,'draft','in-progress','review','accepted'];
-
-function parseDocStatus(content){
-  if(!content) return null;
+function parseDocInfo(content, isSpecs){
+  if(!content) return { docStatus:null, complexity:null };
   const fm=content.match(/^---\n([\s\S]*?)\n---/);
   const src=fm?fm[1]:content.slice(0,500);
-  const m=src.match(/^status:\s*(\S+)/m);
-  if(!m) return null;
-  const v=m[1].toLowerCase().replace(/['"]/g,'');
-  if(v==='in-progress'||v==='in_progress'||v==='progress') return 'in-progress';
-  if(v==='accepted'||v==='done'||v==='approved') return 'accepted';
-  if(v==='review'||v==='reviewed') return 'review';
-  if(v==='draft') return 'draft';
-  return null;
+  const sm=src.match(/^status:\s*(\S+)/m);
+  let docStatus=null;
+  if(sm){
+    const v=sm[1].toLowerCase().replace(/['"]/g,'');
+    if(v==='in-progress'||v==='in_progress'||v==='progress') docStatus='in-progress';
+    else if(v==='accepted'||v==='done'||v==='approved') docStatus='accepted';
+    else if(v==='review'||v==='reviewed') docStatus='review';
+    else if(v==='draft') docStatus='draft';
+  }
+  let complexity=null;
+  if(!isSpecs){
+    const cm=src.match(/^complexity:\s*(\S+)/m);
+    if(cm){ const v=cm[1].toUpperCase().replace(/['"]/g,''); if(CX_WEIGHT[v]) complexity=v; }
+  }
+  return { docStatus, complexity };
 }
 function minDocStatus(arr){
   const v=arr.filter(s=>s!==null&&s!==undefined);
@@ -245,6 +239,9 @@ function dsTag(status){
   return `<span class="ds ${d.cls}">${d.label}</span>`;
 }
 const DOT = { none:'#ccc', sub:'#008080', review:'#e6a800', merged:'#1e2643' };
+const CX_WEIGHT = { S:1, M:2, L:3, XL:5, XXL:8 };
+const DEFAULT_CX = 2; // M
+const DEFAULT_SC = 4; // 4 specs
 
 // hint[] = path keywords used for GitHub file matching
 // (needed when planning IDs differ from repo file names)
@@ -267,8 +264,8 @@ const CATALOG = [
     { id:'prd13', name:'Pricing discounts & privilege codes', hint:['prd13-pricing','discount','privilege'] },
     { id:'prd14', name:'Rates',                        hint:['prd14-rates','rates'] },
     { id:'prd12', name:'Share',                        hint:['prd12','share','booking-confirmation'] },
-    { id:'prd10', name:'Save — criteria',              hint:['prd10','save-criteria'] },
-    { id:'prd02', name:'Ticket price list — basket layer', hint:['prd02','basket'] },
+    { id:'prd10', name:'Save — criteria',              hint:['prd10','save-criteria'], deprecated:true, note:'Out of scope — Shopping' },
+    { id:'prd02', name:'Ticket price list — basket layer', hint:['prd02','basket'], deprecated:true, note:'Out of scope — Shopping' },
   ]},
   { letter:'C', title:'Tunnel participant → confirmation', sub:'Le participant et le don ouvrent en premier, l\'assurance suit, la réassurance ferme la marche.', docs:[
     { id:'prd08', name:'Guest information form',       hint:['prd08','guest'] },
@@ -279,13 +276,13 @@ const CATALOG = [
     { id:'prd17', name:'Hold an option',               hint:['prd17','hold'] },
     { id:'prd26', name:'Great member program',         hint:['great-member','prd14'] },
     { id:'prd11', name:'Save — proposal (travel plan)',hint:['prd11','save-proposal'] },
-    { id:'prd22', name:'Banners',           hint:['prd22','banner'] },
-    { id:'prd27', name:'Toasters',              hint:['prd27','toaster'] },
-    { id:'prd21', name:'Reassurance (incl. footer)',   hint:['prd21','reassurance'] },
+    { id:'prd22', name:'Information',           hint:['prd22','banner'] },
+    { id:'prd27', name:'Toasters',              hint:['prd27','toaster'], deprecated:true, note:'Dans les PRDs portant les features' },
+    { id:'prd21', name:'Footer',   hint:['prd21','reassurance'] },
   ]},
 ];
 
-function mk(base,ak,rk,n,c,s,ds=null){ return {base,authorKey:ak,reviewerKeys:rk?[rk]:[],prNumber:n,prCount:c,isStale:s,docStatus:ds} }
+function mk(base,ak,rk,n,c,s,ds=null,cx=null,sc=null){ return {base,authorKey:ak,reviewerKeys:rk?[rk]:[],prNumber:n,prCount:c,isStale:s,docStatus:ds,complexity:cx,specCount:sc} }
 const N = mk('none',null,null,null,0,false); // shorthand for absent
 const BASELINE = {
   // A — Socle & offre produit
@@ -324,9 +321,8 @@ const BASELINE = {
 const EMPTY = { prd:N, specs:N };
 
 const GH_PR = 'https://github.com/ClubMediterranee/knowledge-base/pull/';
-let S = { view:'table', showPRD:true, showSpecs:true, sp:'', sds:'', sr:'', map:{...BASELINE} };
+let S = { showPRD:true, showSpecs:true, sp:'', sds:'', sr:'', map:{...BASELINE} };
 function setState(p){ Object.assign(S,p); render(); }
-function setView(v){ setState({view:v}); }
 function get(id){ return S.map[id]||EMPTY; }
 
 function toggleType(t){
@@ -345,7 +341,7 @@ async function gh(o,r,path,t){
   const res=await fetch(`https://api.github.com/repos/${o}/${r}${path}`,{headers:h});
   if(res.status===401) throw new Error('Token invalide (401)');
   if(res.status===403) throw new Error('Accès refusé (403)');
-  if(res.status===404) throw new Error(`Repo introuvable: ${o}/${r}`);
+  if(res.status===404) throw new Error(`Ressource introuvable (404) — vérifie que ${o}/${r} existe et est accessible`);
   if(!res.ok) throw new Error(`GitHub ${res.status}`);
   return res.json();
 }
@@ -361,7 +357,7 @@ function computePrStatus(pr,reviews,commits){
   if(vals.includes('CHANGES_REQUESTED')) return 'review';
   const author=pr.user?.login?.toLowerCase()??'__unknown__';
   const external=reviews.some(rv=>rv.user.login.toLowerCase()!==author);
-  const externalCommit=(commits||[]).some(c=>(c.author?.login||c.commit?.author?.name||'').toLowerCase()!==author);
+  const externalCommit=(commits||[]).some(c=>c.author?.login&&c.author.login.toLowerCase()!==author);
   if(external||externalCommit||pr.requested_reviewers?.length) return 'review';
   return 'sub';
 }
@@ -371,7 +367,7 @@ function findReviewers(pr,reviewMap,commitMap){
   const author=pr.user?.login?.toLowerCase()??'__unknown__';
   const revs=reviewMap[pr.number]||[];
   const commits=commitMap?.[pr.number]||[];
-  const commitLogins=commits.map(c=>c.author?.login||c.commit?.author?.name||'').filter(Boolean);
+  const commitLogins=commits.map(c=>c.author?.login).filter(Boolean);
   const seen=new Set(), result=[];
   [...(pr.requested_reviewers||[]).map(u=>u.login),...revs.map(r=>r.user.login),...commitLogins]
     .filter(l=>l.toLowerCase()!==author)
@@ -438,31 +434,34 @@ async function fetchBlobContent(sha){
     }catch{ return null; }
   }
 
-  async function getDocStatus(doc,isSpecs){
+  async function getDocInfo(doc,isSpecs){
     // Files on main matching this doc/type (excluding skip files)
     const mainFiles=Object.entries(fileMap).filter(([p])=>pathMatch(p,doc,isSpecs)&&!SKIP_FILE(p));
+    const specCount=isSpecs?mainFiles.length:null; // count spec files on main
     if(mainFiles.length){
       const targets=isSpecs?mainFiles.slice(0,8):[mainFiles[0]];
-      const statuses=await Promise.all(targets.map(([,sha])=>fetchBlobContent(sha).then(c=>c?parseDocStatus(c):null)));
-      return isSpecs?minDocStatus(statuses):(statuses[0]??null);
+      const infos=await Promise.all(targets.map(([,sha])=>fetchBlobContent(sha).then(c=>c?parseDocInfo(c,isSpecs):{docStatus:null,complexity:null})));
+      if(!isSpecs) return { ...infos[0], specCount };
+      return { docStatus:minDocStatus(infos.map(i=>i.docStatus)), complexity:null, specCount };
     }
     // Not on main → try open PR head
     const prEntry=details.find(({files:pf,pr})=>
       pr.state==='open'&&pf.some(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)&&!SKIP_FILE(f.filename.toLowerCase()))
     );
-    if(!prEntry) return null;
+    if(!prEntry) return { docStatus:null, complexity:null, specCount:isSpecs?0:null };
     const prFiles=prEntry.files.filter(f=>pathMatch(f.filename.toLowerCase(),doc,isSpecs)&&!SKIP_FILE(f.filename.toLowerCase()));
     const ref=prEntry.pr.head.sha;
     const targets=isSpecs?prFiles.slice(0,8):[prFiles[0]];
-    const statuses=await Promise.all(targets.map(f=>fetchContentAtRef(f.filename,ref).then(c=>c?parseDocStatus(c):null)));
-    return isSpecs?minDocStatus(statuses):(statuses[0]??null);
+    const infos=await Promise.all(targets.map(f=>fetchContentAtRef(f.filename,ref).then(c=>c?parseDocInfo(c,isSpecs):{docStatus:null,complexity:null})));
+    const sc=isSpecs?prFiles.filter(f=>!SKIP_FILE(f.filename.toLowerCase())).length:null;
+    if(!isSpecs) return { ...infos[0], specCount:null };
+    return { docStatus:minDocStatus(infos.map(i=>i.docStatus)), complexity:null, specCount:sc };
   }
-
   const map={};
-  // Pre-compute all doc statuses in parallel (avoid 54 sequential awaits)
+  // Pre-compute all doc info in parallel (docStatus + complexity + specCount)
   const _allPairs=CATALOG.flatMap(s=>s.docs.flatMap(d=>[{doc:d,isSpecs:false},{doc:d,isSpecs:true}]));
-  const _statuses=await Promise.all(_allPairs.map(({doc,isSpecs})=>getDocStatus(doc,isSpecs).catch(()=>null)));
-  const docStatusMap=Object.fromEntries(_allPairs.map(({doc,isSpecs},i)=>[`${doc.id}:${isSpecs}`,_statuses[i]]));
+  const _infos=await Promise.all(_allPairs.map(({doc,isSpecs})=>getDocInfo(doc,isSpecs).catch(()=>({docStatus:null,complexity:null,specCount:null}))));
+  const docInfoMap=Object.fromEntries(_allPairs.map(({doc,isSpecs},i)=>[`${doc.id}:${isSpecs}`,_infos[i]]));
 
   for(const sec of CATALOG){
     for(const doc of sec.docs){
@@ -474,10 +473,11 @@ async function fetchBlobContent(sha){
         const onMain=mainPaths.some(p=>pathMatch(p,doc,isSpecs)&&!SKIP_FILE(p));
         if(!map[id]) map[id]={};
         const side=isSpecs?'specs':'prd';
-        const docStatus=docStatusMap[`${id}:${isSpecs}`]??null;
+        const docInfo=docInfoMap[`${id}:${isSpecs}`]??{docStatus:null,complexity:null,specCount:null};
+        const {docStatus,complexity,specCount}=docInfo;
         if(openOnes.length===0){
           const base=onMain||closedMerged.length?'merged':'none';
-          map[id][side]={base,authorKey:null,reviewerKeys:[],prNumber:null,prCount:0,isStale:false,docStatus};
+          map[id][side]={base,authorKey:null,reviewerKeys:[],prNumber:null,prCount:0,isStale:false,docStatus,complexity:complexity??null,specCount:specCount??null};
           continue;
         }
         const sorted=openOnes.sort((a,b)=>new Date(b.pr.updated_at)-new Date(a.pr.updated_at));
@@ -487,7 +487,7 @@ async function fetchBlobContent(sha){
         const authorKey=LOGIN_MAP[main.pr.user?.login?.toLowerCase()]||null;
         const reviewerKeys=findReviewers(main.pr,revMap,comMap);
         const st=computePrStatus(main.pr,reviews,comMap[main.pr.number]||[])||'sub';
-        map[id][side]={base:st,authorKey,reviewerKeys,prNumber:main.pr.number,prCount:openOnes.length,isStale:stale,docStatus};
+        map[id][side]={base:st,authorKey,reviewerKeys,prNumber:main.pr.number,prCount:openOnes.length,isStale:stale,docStatus,complexity:complexity??null,specCount:specCount??null};
       }
     }
   }
@@ -575,7 +575,7 @@ async function refreshData(){
   } else {
     // No token → load pre-fetched data.json from GitHub Actions
     const ok=await loadDataJson();
-    if(!ok) setBadge('','Données statiques du 2026-08-21 — ⚙ Config pour le live');
+    if(!ok) setBadge('','Données de la dernière mise à jour — ⚙ Config pour le live');
   }
 }
 
@@ -644,6 +644,27 @@ function matches(doc){
   return true;
 }
 
+function computeCompletion(){
+  const all=CATALOG.flatMap(s=>s.docs).filter(d=>!d.deprecated);
+  let prdW=0,prdD=0,specW=0,specD=0;
+  for(const doc of all){
+    const d=get(doc.id);
+    // PRD weight by complexity
+    const w=CX_WEIGHT[d.prd.complexity]??DEFAULT_CX;
+    prdW+=w;
+    if(d.prd.base==='merged') prdD+=w;
+    // Specs weight by spec count
+    const sc=(d.specs.specCount!=null&&d.specs.specCount>0)?d.specs.specCount:DEFAULT_SC;
+    specW+=sc;
+    if(d.specs.base==='merged') specD+=sc;
+  }
+  return {
+    prd:  prdW >0?Math.round(prdD /prdW *100):0,
+    specs:specW>0?Math.round(specD/specW*100):0,
+    prdDone:prdD, prdTotal:prdW, specDone:specD, specTotal:specW
+  };
+}
+
 function renderSummary(){
   const all=CATALOG.flatMap(s=>s.docs);
   const cnt={prd:{none:0,sub:0,review:0,merged:0},specs:{none:0,sub:0,review:0,merged:0}};
@@ -660,119 +681,95 @@ function renderSummary(){
     ).join('<span style="color:var(--border);font-size:12px">·</span>');
     return `<div class="sum-block"><div class="sum-label">${label}</div><div class="sum-pills">${items}</div></div>`;
   };
-  document.getElementById('summary').innerHTML=
-    row('PRDs',cnt.prd,S.showPRD)+row('Specs',cnt.specs,S.showSpecs);
-}
-
-function renderSection(sec){
-  const docs=sec.docs.filter(matches);
-  if(!docs.length) return '';
-  const {showPRD,showSpecs}=S;
-  // 4 data columns: PRD-doc, PRD-repo, Specs-doc, Specs-repo
-  const dataCols=[];
-  if(showPRD){  dataCols.push({label:'PRD status',key:'prd-doc'},{label:'PRD repo',key:'prd-repo'}); }
-  if(showSpecs){ dataCols.push({label:'Specs status',key:'specs-doc'},{label:'Specs repo',key:'specs-repo'}); }
-  const colTemplate='80px minmax(200px,1fr) '+dataCols.map(c=>c.key.endsWith('-doc')?'110px':'1fr').join(' ');
-  const rows=docs.map(doc=>{
-    const d=get(doc.id);
-    const cells=dataCols.map(c=>{
-      if(c.key==='prd-doc')   return `<div style="display:flex;align-items:center">${cellDoc(d.prd)}</div>`;
-      if(c.key==='prd-repo')  return `<div>${cellRepo(d.prd)}</div>`;
-      if(c.key==='specs-doc') return `<div style="display:flex;align-items:center">${cellDoc(d.specs)}</div>`;
-      if(c.key==='specs-repo')return `<div>${cellRepo(d.specs)}</div>`;
-      return '<div></div>';
-    }).join('');
-    if(doc.deprecated){
-      return `<div class="doc-row" style="display:grid;grid-template-columns:${colTemplate};gap:0 12px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);opacity:.45">
-        <div style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;color:var(--muted);text-decoration:line-through">${esc(doc.id)}</div>
-        <div>
-          <div style="font-size:14px;font-weight:600;text-decoration:line-through;color:var(--muted)">${esc(doc.name)}</div>
-          ${doc.note?`<div style="font-size:11px;color:var(--muted);margin-top:2px;font-style:italic">${esc(doc.note)}</div>`:''}
-        </div>
-        ${dataCols.map(()=>'<div></div>').join('')}
-      </div>`;
-    }
-    return `<div class="doc-row" style="display:grid;grid-template-columns:${colTemplate};gap:0 12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)">
-      <div style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;color:var(--muted)">${esc(doc.id)}</div>
-      <div style="font-size:14px;font-weight:600">${esc(doc.name)}</div>
-      ${cells}
-    </div>`;
-  }).join('');
-  const headerCells=dataCols.map(c=>`<div>${esc(c.label)}</div>`).join('');
-  return `<div style="margin-top:28px">
-    <div style="display:flex;align-items:center;gap:12px;background:var(--pearl);border-radius:var(--rsm);padding:10px 16px">
-      <div style="width:24px;height:24px;border-radius:50%;background:var(--ultramarine);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;font-family:var(--fd);flex-shrink:0">${esc(sec.letter)}</div>
-      <div>
-        <div style="font-weight:700;font-size:14px">${esc(sec.title)}</div>
-        ${sec.sub?`<div style="font-size:12px;color:var(--muted);margin-top:1px">${esc(sec.sub)}</div>`:''}
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:${colTemplate};gap:0 12px;padding:9px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
-      <div></div><div>Document</div>${headerCells}
-    </div>
-    ${rows}
+  const cmp=computeCompletion();
+  const bar=(pct,color)=>`<div style="flex:1;background:var(--pearl);border-radius:99px;height:6px;overflow:hidden;min-width:60px">
+    <div style="width:${pct}%;height:100%;background:${color};border-radius:99px;transition:width .4s"></div>
   </div>`;
+  const prdBar=S.showPRD?`<div class="sum-block">
+    <div class="sum-label">Complétion PRDs <span style="font-weight:800;color:var(--ultramarine)">${cmp.prd}%</span></div>
+    <div style="display:flex;align-items:center;gap:8px">${bar(cmp.prd,'var(--ultramarine)')}<span style="font-size:11px;color:var(--muted);white-space:nowrap">pondéré par complexité</span></div>
+  </div>`:'';
+  const specBar=S.showSpecs?`<div class="sum-block">
+    <div class="sum-label">Complétion Specs <span style="font-weight:800;color:var(--ultramarine)">${cmp.specs}%</span></div>
+    <div style="display:flex;align-items:center;gap:8px">${bar(cmp.specs,'var(--teal)')}<span style="font-size:11px;color:var(--muted);white-space:nowrap">pondéré par nb de specs</span></div>
+  </div>`:'';
+  document.getElementById('summary').innerHTML=
+    row('PRDs',cnt.prd,S.showPRD)+row('Specs',cnt.specs,S.showSpecs)+prdBar+specBar;
 }
 
-function renderKanban(){
-  const allCards=CATALOG.flatMap(sec=>sec.docs.flatMap(doc=>{
-    const d=get(doc.id);
-    return [
-      {id:doc.id,name:doc.name,type:'PRD',  ...d.prd},
-      {id:doc.id,name:doc.name,type:'Specs',...d.specs},
-    ].filter(c=>(c.type==='PRD'?S.showPRD:S.showSpecs)&&!doc.deprecated);
-  })).filter(c=>{
-    if(S.sp&&!(c.reviewerKeys||[]).includes(S.sp)&&c.authorKey!==S.sp) return false;
-    if(S.sr&&c.base!==S.sr) return false;
-    return true;
-  });
-  const cols=KAN_DS_COLS.map(key=>{
-    const cards=allCards.filter(c=>c.docStatus===key);
-    // Always show all doc status columns (even empty)
-    const isAbsent=key===null;
-    const colBg=isAbsent?'#f0f0f0':'var(--pearl)';
-    const cardsH=cards.map(c=>{
-      const href=c.prNumber?GH_PR+c.prNumber:null;
-      if(isAbsent){
-        // Absent cards — simpler, no pill
-        return `<div style="background:var(--surface);border:1px dashed var(--border);border-radius:var(--rsm);padding:10px 12px;display:flex;flex-direction:column;gap:4px">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-            <span style="font-family:ui-monospace,monospace;font-size:11px;color:var(--muted)">${esc(c.id)}</span>
-            <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)">${esc(c.type)}</span>
+const STATUS_GROUPS=[
+  {key:'accepted',   label:'Accepted ✓'},
+  {key:'review',     label:'Review'},
+  {key:'in-progress',label:'In progress'},
+  {key:'draft',      label:'Draft'},
+  {key:null,         label:'Absent du repo'},
+  {key:'deprecated', label:'Supprimé'},
+];
+
+function renderByStatus(){
+  // Flatten + sort all docs by prd number ascending
+  const allDocs=CATALOG.flatMap(s=>s.docs)
+    .sort((a,b)=>parseInt(a.id.slice(3))-parseInt(b.id.slice(3)));
+
+  const {showPRD,showSpecs}=S;
+  const dataCols=[];
+  if(showPRD)  { dataCols.push({label:'PRD status',key:'prd-doc'},{label:'PRD repo',key:'prd-repo'}); }
+  if(showSpecs){ dataCols.push({label:'Specs status',key:'specs-doc'},{label:'Specs repo',key:'specs-repo'}); }
+  const colTpl='80px minmax(200px,1fr) '+dataCols.map(c=>c.key.endsWith('-doc')?'110px':'1fr').join(' ');
+  const hdrCells=dataCols.map(c=>`<div>${esc(c.label)}</div>`).join('');
+
+  return STATUS_GROUPS.map(g=>{
+    let docs;
+    if(g.key==='deprecated'){
+      docs=allDocs.filter(d=>d.deprecated&&matches(d));
+    } else {
+      docs=allDocs.filter(d=>!d.deprecated&&get(d.id).prd.docStatus===g.key&&matches(d));
+    }
+    if(!docs.length) return '';
+
+    const badge=g.key==='deprecated'
+      ?`<span style="font-size:13px;font-weight:700;color:var(--muted);text-decoration:line-through">${esc(g.label)}</span>`
+      :dsTag(g.key);
+    const count=`<span style="font-size:12px;color:var(--muted);margin-left:4px">${docs.length} doc${docs.length>1?'s':''}</span>`;
+
+    const colHdr=`<div style="display:grid;grid-template-columns:${colTpl};gap:0 12px;padding:9px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
+      <div></div><div>Document</div>${hdrCells}
+    </div>`;
+
+    const rows=docs.map(doc=>{
+      if(doc.deprecated){
+        return `<div class="doc-row" style="display:grid;grid-template-columns:${colTpl};gap:0 12px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);opacity:.45">
+          <div style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;color:var(--muted);text-decoration:line-through">${esc(doc.id)}</div>
+          <div>
+            <div style="font-size:14px;font-weight:600;text-decoration:line-through;color:var(--muted)">${esc(doc.name)}</div>
+            ${doc.note?`<div style="font-size:11px;color:var(--muted);margin-top:2px;font-style:italic">${esc(doc.note)}</div>`:''}
           </div>
-          <div style="font-size:13px;font-weight:600;line-height:1.3;color:var(--soft)">${esc(c.name)}</div>
+          ${dataCols.map(()=>'<div></div>').join('')}
         </div>`;
       }
-      const pillEl=`<span class="pill ${ST[c.base].cls}">${ST[c.base].label}</span>`;
-      const repoPill=href?`<a href="${href}" target="_blank" rel="noopener" style="text-decoration:none">${pillEl}</a>`:pillEl;
-      const staleEl=c.isStale?`<span class="stale" title="PR inactive depuis + de 7 jours">⏱</span>`:'';
-      return `<div class="card" style="padding:11px;display:flex;flex-direction:column;gap:6px">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-          <span style="font-family:ui-monospace,monospace;font-size:11px;color:var(--muted)">${esc(c.id)}</span>
-          <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)">${esc(c.type)}</span>
-        </div>
-        <div style="font-size:13px;font-weight:600;line-height:1.3">${esc(c.name)}</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
-          <div style="display:flex;align-items:center;gap:4px">${repoPill}${staleEl}</div>
-          <div style="display:flex;align-items:center;gap:4px">
-            ${c.authorKey?avatar(c.authorKey,16):''}
-            ${avatarStack((c.reviewerKeys||[]).filter(k=>k!==c.authorKey),16)}
-          </div>
-        </div>
+      const d=get(doc.id);
+      const cells=dataCols.map(c=>{
+        if(c.key==='prd-doc')   return `<div style="display:flex;align-items:center">${cellDoc(d.prd)}</div>`;
+        if(c.key==='prd-repo')  return `<div>${cellRepo(d.prd)}</div>`;
+        if(c.key==='specs-doc') return `<div style="display:flex;align-items:center">${cellDoc(d.specs)}</div>`;
+        if(c.key==='specs-repo')return `<div>${cellRepo(d.specs)}</div>`;
+        return '<div></div>';
+      }).join('');
+      return `<div class="doc-row" style="display:grid;grid-template-columns:${colTpl};gap:0 12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border)">
+        <div style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:12px;color:var(--muted)">${esc(doc.id)}</div>
+        <div style="font-size:14px;font-weight:600">${esc(doc.name)}</div>
+        ${cells}
       </div>`;
     }).join('');
-    return `<div style="flex:0 0 240px;background:${colBg};border-radius:var(--rmd);padding:12px;max-height:70vh;display:flex;flex-direction:column">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding:0 2px">
-        ${isAbsent
-          ? `<span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Absent</span>`
-          : dsTag(key)}
-        <span style="font-size:12px;color:var(--muted);font-weight:700">${cards.length}</span>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px;overflow-y:auto">${cardsH}</div>
+
+    return `<div style="margin-top:24px">
+      <div style="display:flex;align-items:center;gap:8px;background:var(--pearl);border-radius:var(--rsm);padding:10px 16px">${badge}${count}</div>
+      ${colHdr}
+      ${rows}
     </div>`;
   }).join('');
-  return `<div style="display:flex;gap:16px;overflow-x:auto;padding-bottom:12px;margin-top:24px">${cols}</div>`;
 }
+
 
 function renderFilters(){
   document.getElementById('pf').innerHTML='<option value="">All POs</option>'+
@@ -784,15 +781,11 @@ function renderFilters(){
 }
 
 function render(){
-  document.getElementById('bt').className='vbtn '+(S.view==='table' ?'on':'off');
-  document.getElementById('bk').className='vbtn '+(S.view==='kanban'?'on':'off');
   document.getElementById('bp').className='tbtn '+(S.showPRD  ?'on':'off');
   document.getElementById('bs').className='tbtn '+(S.showSpecs?'on':'off');
   renderFilters();
   renderSummary();
-  document.getElementById('main').innerHTML=S.view==='table'
-    ?CATALOG.map(renderSection).join('')
-    :renderKanban();
+  document.getElementById('main').innerHTML=renderByStatus();
 }
 
 /* ── AES-256-GCM decryption (Web Crypto API) ── */
@@ -869,7 +862,7 @@ document.getElementById('team-avatars').innerHTML=Object.values(PO).map(p=>avata
 render();
 // On page load: always read data.json (fast, no token needed)
 loadDataJson().then(ok=>{
-  if(!ok) setBadge('','Données du 2026-08-21 — ⚙ Config ou ↺ Refresh pour le live');
+  if(!ok) setBadge('','Données de la dernière mise à jour automatique — ⚙ Config ou ↺ Refresh pour le live');
 });
 </script>
 <!-- Password wall -->
