@@ -13,7 +13,7 @@
       --ultramarine:#1e2643;--saffron:#ffbf00;--sienna:#934834;--teal:#008080;
       --dark-grey:#333;--mid-grey:#666;--light-grey:#ccc;
       --sand:#f7f0e9;--pearl:#f7f7f7;--white:#fff;
-      --bg:var(--sand);--surface:var(--white);
+      --bg:var(--white);--surface:var(--white);
       --text:#000;--soft:var(--dark-grey);--muted:var(--mid-grey);--border:var(--light-grey);
       --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 20px -10px rgba(20,20,30,.14);
       --fd:'Nunito',ui-rounded,sans-serif;--fb:'Inter',ui-sans-serif,system-ui,sans-serif;
@@ -64,7 +64,8 @@
     .tbtn.off{background:transparent;color:var(--soft);border:1px solid var(--border)}
     .tbtn.off:hover{border-color:var(--mid-grey)}
 
-    .sum-row{display:flex;gap:24px;flex-wrap:wrap;margin-top:20px;padding:14px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .header{border-bottom:1px solid var(--border);padding-bottom:20px;margin-bottom:4px}
+    .sum-row{display:flex;gap:24px;flex-wrap:wrap;margin-top:20px;padding:14px 20px;border:1px solid var(--border);border-radius:var(--rsm);background:var(--sand)}
     .sum-block{display:flex;flex-direction:column;gap:6px}
     .sum-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
     .sum-pills{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
@@ -732,7 +733,7 @@ function renderByStatus(){
       :`<span class="pill ${stMap[g.key]||'pn'}">${esc(g.label)}</span>`;
     const count=`<span style="font-size:12px;color:var(--muted);margin-left:4px">${docs.length} doc${docs.length>1?'s':''}</span>`;
 
-    const colHdr=`<div style="display:grid;grid-template-columns:${colTpl};gap:0 12px;padding:9px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border)">
+    const colHdr=`<div style="display:grid;grid-template-columns:${colTpl};gap:0 12px;padding:9px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border);background:var(--white)">
       <div></div><div>Document</div>${hdrCells}
     </div>`;
 
@@ -762,8 +763,8 @@ function renderByStatus(){
       </div>`;
     }).join('');
 
-    return `<div style="margin-top:24px">
-      <div style="display:flex;align-items:center;gap:8px;background:var(--pearl);border-radius:var(--rsm);padding:10px 16px">${badge}${count}</div>
+    return `<div style="margin-top:20px;border:1px solid var(--border);border-radius:var(--rmd);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)">
+      <div style="display:flex;align-items:center;gap:8px;background:var(--sand);padding:10px 16px">${badge}${count}</div>
       ${colHdr}
       ${rows}
     </div>`;
