@@ -20,7 +20,7 @@ const CATALOG = [
     { id:'prd19', hint:['prd19','booking-confirmation'] },
     { id:'prd24', hint:['prd24','more-room'] },
     { id:'prd23', hint:['prd23','ski'] },
-    { id:'prd25', hint:['cruise','prd13'] },
+    { id:'prd25', hint:['cruise'] },
   ]},
   { letter:'B', docs:[
     { id:'prd09', hint:['criteria','prd03-criteria'] },
