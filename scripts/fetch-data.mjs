@@ -12,9 +12,9 @@ const PASSWORD = process.env.DASHBOARD_PASSWORD;
 const CATALOG = [
   { letter:'A', docs:[
     { id:'prd00', hint:['prd00'] },
-    { id:'prd05', hint:['prd05','childcare'] },
-    { id:'prd06', hint:['prd06','activit'] },
-    { id:'prd04', hint:['prd04','transport-transfer'] },
+    { id:'prd05', hint:['prd05'] },
+    { id:'prd06', hint:['prd06'] },
+    { id:'prd04', hint:['prd04'] },
     { id:'prd07', hint:['prd07','food'] },
     { id:'prd03', hint:['accommodation'] },
     { id:'prd19', hint:['prd19','booking-confirmation'] },
