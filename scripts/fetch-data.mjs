@@ -21,6 +21,7 @@ const CATALOG = [
     { id:'prd24', hint:['prd24','more-room'] },
     { id:'prd23', hint:['prd23','ski'] },
     { id:'prd25', hint:['cruise'] },
+    { id:'prd28', hint:['prd28','room-comparison'] },
   ]},
   { letter:'B', docs:[
     { id:'prd09', hint:['criteria','prd03-criteria'] },
