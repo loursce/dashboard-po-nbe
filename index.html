@@ -325,10 +325,11 @@ const BASELINE = {
 const EMPTY = { prd:N, specs:N };
 
 const GH_PR = 'https://github.com/ClubMediterranee/knowledge-base/pull/';
-let S = { showPRD:true, showSpecs:true, sp:'', sds:'', sr:'', map:{...BASELINE} };
+let S = { tab:'docs', showPRD:true, showSpecs:true, sp:'', sds:'', sr:'', map:{...BASELINE} };
 function setState(p){ Object.assign(S,p); render(); }
 function get(id){ return S.map[id]||EMPTY; }
 
+function setTab(t){ setState({tab:t}); }
 function toggleType(t){
   if(t==='prd'){ if(S.showSpecs) setState({showPRD:!S.showPRD}); }
   else          { if(S.showPRD)  setState({showSpecs:!S.showSpecs}); }
@@ -704,6 +705,26 @@ function renderSummary(){
     row('PRDs',cnt.prd,S.showPRD)+row('Specs',cnt.specs,S.showSpecs)+completionRow;
 }
 
+const LOTS=[
+  {n:1, date:'En PR',   label:'Auth + bandeau header',
+   prds:['prd00']},
+  {n:2, date:null,      label:'Dashboard read-only',
+   prds:['prd00','prd04','prd05','prd06','prd07']},
+  {n:3, date:'09/10',   label:'Chambre + Transfert',
+   prds:['prd03','prd04']},
+  {n:4, date:'16/10',   label:'Activities · F&D · Cruise · More transport',
+   prds:['prd06','prd07','prd25','prd04']},
+  {n:5, date:'23/10',   label:'Childcare · Ski · Accommodation · More rooms · Room comparison',
+   prds:['prd05','prd23','prd03','prd24','prd28']},
+  {n:6, date:'30/10',   label:'Participants · Ticket prix · Share · Save proposal',
+   prds:['prd08','prd14','prd13','prd09','prd12','prd11']},
+  {n:7, date:'06/11',   label:'Donation · Insurance · Option · Confirmation',
+   prds:['prd16','prd15','prd17','prd19']},
+  {n:8, date:'15/11',   label:'Information · Basket · Tracking',
+   prds:['prd22']},
+];
+
+
 const STATUS_GROUPS=[
   {key:'merged',    label:'Merged'},
   {key:'review',    label:'In review'},
@@ -787,12 +808,59 @@ function renderFilters(){
     ['draft','in-progress','review','accepted'].map(k=>`<option value="${k}" ${S.sds===k?'selected':''}>${DS[k].label}</option>`).join('');
 }
 
+function renderLots(){
+  const allDocs=CATALOG.flatMap(s=>s.docs);
+  return LOTS.map(lot=>{
+    const docs=lot.prds
+      .map(id=>allDocs.find(d=>d.id===id))
+      .filter(d=>d&&!d.deprecated);
+    const done=docs.filter(d=>get(d.id).prd.base==='merged').length;
+    const total=docs.length;
+    const pct=total?Math.round(done/total*100):0;
+
+    const statusColor={merged:'var(--ultramarine)',review:'#e6a800',sub:'var(--teal)',none:'#ccc'};
+    const statusLabel={merged:'Merged',review:'In review',sub:'Submitted',none:'—'};
+
+    const docRows=docs.map(doc=>{
+      const d=get(doc.id);
+      const base=d.prd.base;
+      const isDone=base==='merged';
+      return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
+        <span style="font-family:ui-monospace,monospace;font-size:11px;color:var(--muted);width:40px;flex-shrink:0">${esc(doc.id)}</span>
+        <span style="font-size:13px;font-weight:600;flex:1;${isDone?'color:var(--muted);text-decoration:line-through':''}">${esc(doc.name)}</span>
+        <span style="display:inline-flex;align-items:center;border-radius:99px;padding:.2rem .6rem;font-size:.7rem;font-weight:700;border:1px solid transparent;background:color-mix(in srgb,${statusColor[base]} 12%,var(--white));color:${statusColor[base]};white-space:nowrap">${statusLabel[base]}</span>
+        ${isDone?'<span style="font-size:14px">✓</span>':''}
+      </div>`;
+    }).join('');
+
+    const barFill=isDone=>`<div style="width:${pct}%;height:100%;background:${pct===100?'#088c20':'var(--ultramarine)'};border-radius:99px;transition:width .4s"></div>`;
+
+    return `<div style="border:1px solid var(--border);border-radius:var(--rmd);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)">
+      <div style="background:var(--sand);padding:12px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div style="min-width:0">
+          <div style="font-family:var(--fd);font-weight:800;font-size:1rem">Lot ${lot.n}${lot.date?` <span style="font-weight:600;color:var(--muted);font-size:.8rem">· ${esc(lot.date)}</span>`:''}</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(lot.label)}</div>
+        </div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:10px;min-width:160px">
+          <div style="flex:1;background:var(--pearl);border-radius:99px;height:6px;overflow:hidden">${barFill(pct===100)}</div>
+          <span style="font-weight:800;font-size:14px;color:${pct===100?'#088c20':'var(--ultramarine)'};white-space:nowrap">${pct}% <span style="font-weight:500;color:var(--muted);font-size:11px">${done}/${total}</span></span>
+        </div>
+      </div>
+      ${docs.length?`<div style="padding:0 16px">${docRows}</div>`:'<div style="padding:12px 16px;font-size:12px;color:var(--muted);font-style:italic">Sujets non mappés dans le catalogue</div>'}
+    </div>`;
+  }).join('<div style="height:12px"></div>');
+}
+
+
 function render(){
+  document.getElementById('tab-docs').className='vbtn '+(S.tab==='docs'?'on':'off');
+  document.getElementById('tab-lots').className='vbtn '+(S.tab==='lots'?'on':'off');
+  document.getElementById('doc-controls').style.display=S.tab==='docs'?'':'none';
   document.getElementById('bp').className='tbtn '+(S.showPRD  ?'on':'off');
   document.getElementById('bs').className='tbtn '+(S.showSpecs?'on':'off');
   renderFilters();
   renderSummary();
-  document.getElementById('main').innerHTML=renderByStatus();
+  document.getElementById('main').innerHTML=S.tab==='docs'?renderByStatus():renderLots();
 }
 
 /* ── AES-256-GCM decryption (Web Crypto API) ── */
