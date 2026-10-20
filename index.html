@@ -829,15 +829,20 @@ function renderLots(){
     const statusColor={merged:'var(--ultramarine)',review:'#e6a800',sub:'var(--teal)',none:'#ccc'};
     const statusLabel={merged:'Merged',review:'In review',sub:'Submitted',none:'—'};
 
+    const pill=(base,label)=>`<span style="display:inline-flex;align-items:center;border-radius:99px;padding:.18rem .55rem;font-size:.65rem;font-weight:700;border:1px solid transparent;background:color-mix(in srgb,${statusColor[base]} 12%,var(--white));color:${statusColor[base]};white-space:nowrap">${label}: ${statusLabel[base]}</span>`;
     const docRows=docs.map(doc=>{
       const d=get(doc.id);
-      const base=d.prd.base;
-      const isDone=base==='merged';
-      return `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)">
+      const prdBase=d.prd.base;
+      const specBase=d.specs.base;
+      const isDone=prdBase==='merged'&&(specBase==='merged'||specBase==='none');
+      return `<div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border);flex-wrap:wrap">
         <span style="font-family:ui-monospace,monospace;font-size:11px;color:var(--muted);width:40px;flex-shrink:0">${esc(doc.id)}</span>
-        <span style="font-size:13px;font-weight:600;flex:1;${isDone?'color:var(--muted);text-decoration:line-through':''}">${esc(doc.name)}</span>
-        <span style="display:inline-flex;align-items:center;border-radius:99px;padding:.2rem .6rem;font-size:.7rem;font-weight:700;border:1px solid transparent;background:color-mix(in srgb,${statusColor[base]} 12%,var(--white));color:${statusColor[base]};white-space:nowrap">${statusLabel[base]}</span>
-        ${isDone?'<span style="font-size:14px">✓</span>':''}
+        <span style="font-size:13px;font-weight:600;flex:1;min-width:120px;${isDone?'color:var(--muted)':''}">${esc(doc.name)}</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${pill(prdBase,'PRD')}
+          ${specBase!=='none'?pill(specBase,'Specs'):'<span style="font-size:.65rem;color:var(--muted);padding:.18rem .55rem">Specs —</span>'}
+        </div>
+        ${isDone?'<span style="font-size:13px;color:#088c20">✓</span>':''}
       </div>`;
     }).join('');
 
