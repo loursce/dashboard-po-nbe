@@ -118,7 +118,14 @@
   <!-- Controls -->
   <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-top:20px">
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <!-- Type toggles -->
+      <!-- View tabs -->
+      <div style="display:inline-flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rpill);padding:4px">
+        <button id="tab-docs" class="vbtn on" onclick="setTab('docs')">Documents</button>
+        <button id="tab-lots" class="vbtn off" onclick="setTab('lots')">Lots</button>
+      </div>
+      <div style="width:1px;height:20px;background:var(--border)"></div>
+      <!-- Type toggles (hidden in Lots tab) -->
+      <div id="doc-controls" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
       <button id="bp" class="tbtn on" onclick="toggleType('prd')">PRD</button>
       <button id="bs" class="tbtn on" onclick="toggleType('specs')">Specs</button>
     </div>
@@ -130,6 +137,7 @@
         style="padding:8px 12px;border-radius:var(--rsm);border:1px solid var(--border);font-size:13px;font-family:var(--fb);background:var(--surface);color:var(--text);cursor:pointer"></select>
       <select id="dsf" onchange="setState({sds:this.value})"
         style="padding:8px 12px;border-radius:var(--rsm);border:1px solid var(--border);font-size:13px;font-family:var(--fb);background:var(--surface);color:var(--text);cursor:pointer"></select>
+      </div><!-- /doc-controls -->
     </div>
   </div>
 
