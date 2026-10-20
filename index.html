@@ -697,8 +697,11 @@ function renderSummary(){
     <div class="sum-label">Complétion Specs <span style="font-weight:800;color:var(--ultramarine)">${cmp.specs}%</span></div>
     <div style="display:flex;align-items:center;gap:8px">${bar(cmp.specs,'var(--teal)')}<span style="font-size:11px;color:var(--muted);white-space:nowrap">pondéré par nb de specs</span></div>
   </div>`:'';
+  const completionRow=(prdBar||specBar)
+    ?`<div style="width:100%;display:flex;gap:20px;flex-wrap:wrap;padding-top:10px;margin-top:6px;border-top:1px solid var(--border)">${prdBar}${specBar}</div>`
+    :'';
   document.getElementById('summary').innerHTML=
-    row('PRDs',cnt.prd,S.showPRD)+row('Specs',cnt.specs,S.showSpecs)+prdBar+specBar;
+    row('PRDs',cnt.prd,S.showPRD)+row('Specs',cnt.specs,S.showSpecs)+completionRow;
 }
 
 const STATUS_GROUPS=[
