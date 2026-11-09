@@ -16,7 +16,7 @@ const CATALOG = [
     { id:'prd06', hint:['prd06'] },
     { id:'prd04', hint:['prd04'] },
     { id:'prd07', hint:['prd07','food'] },
-    { id:'prd03', hint:['accommodation'] },
+    { id:'prd03', hint:['prd03'] },
     { id:'prd19', hint:['prd19','booking-confirmation'] },
     { id:'prd24', hint:['prd24','more-room'] },
     { id:'prd23', hint:['prd23','ski'] },
@@ -24,7 +24,7 @@ const CATALOG = [
     { id:'prd28', hint:['prd28','room-comparison'] },
   ]},
   { letter:'B', docs:[
-    { id:'prd09', hint:['criteria','prd03-criteria'] },
+    { id:'prd09', hint:['prd09'] },
     { id:'prd01', hint:['prd01','ticket-price'] },
     { id:'prd13', hint:['prd13-pricing','discount','privilege'] },
     { id:'prd14', hint:['prd14-rates','rates'] },
